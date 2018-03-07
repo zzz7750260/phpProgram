@@ -20,6 +20,39 @@
 			print_r($jsonListRoleArray);
 		}
 
+		function delRole($theId){
+			//echo "获取的id为".$theId;
+			$delSql = "delete from role where rid = '$theId'";
+			$delSql_db = mysql_query($delSql);
+			if($delSql_db){			
+				$delRoleArray = array("status"=>200,"msg"=>"角色删除成功","result"=>1);
+				$delRoleJson = json_encode($delRoleArray); 
+			}
+			else{
+				$delRoleArray = array("status"=>404,"msg"=>"角色删除失败","result"=>2);
+				$delRoleJson = json_encode($delRoleArray);
+			}
+			print_r($delRoleJson);
+			return $delRoleJson;
+		}
+		
+		function editRole($theId){			
+			$editRoleSql = "select * from role where rid = '$theId'";
+			$editRoleSql_db = mysql_query($editRoleSql);
+			$theEditRoleArray =  array();
+			while($editRoleArray = mysql_fetch_assoc($editRoleSql_db)){
+				$theEditRoleArray[] = $editRoleArray;		
+			}
+			if($theEditRoleArray){
+				$editRoleJson = array("status"=>200,"msg"=>"编辑角色获取角色成功","result"=>1);
+			}
+			else{
+				$editRoleJson = array("status"=>100,"msg"=>"编辑角色获取角色失败","result"=>2);				
+			}
+			print_r($editRoleJson);
+			return $editRoleJson;
+		}
+		
 		function theRuturnRole($turl){
 			if($turl == "addRole"){
 				$theRoleName = $_POST['getRoleName'];
@@ -36,6 +69,17 @@
 				$this->listRole();
 				
 			}
+			
+			if($turl == "delRole"){
+				$theId = $_GET['getId'];
+				//echo "获取的id为".$theId;
+				$this->delRole($theId);			
+			}
+			
+			if($turl == "editRole"){
+				$theId = $_GET["getId"];
+				$this->editRole($theId);
+			}		
 		}
 	}
 ?>

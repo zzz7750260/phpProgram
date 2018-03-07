@@ -187,7 +187,7 @@
 						<th width="70">操作</th>
 					</tr>
 				</thead>
-				<tbody>
+				<tbody class="role-table-body">
 					<tr class="text-c">
 						<td><input type="checkbox" value="" name=""></td>
 						<td>1</td>
@@ -238,6 +238,7 @@
 <script type="text/javascript" src="lib/My97DatePicker/4.8/WdatePicker.js"></script>
 <script type="text/javascript" src="lib/datatables/1.10.0/jquery.dataTables.min.js"></script>
 <script type="text/javascript" src="lib/laypage/1.2/laypage.js"></script>
+<script type="text/javascript" src="../js/admin_ajax.js"></script>
 <script type="text/javascript">
 /*管理员-角色-添加*/
 function admin_role_add(title,url,w,h){
@@ -246,18 +247,41 @@ function admin_role_add(title,url,w,h){
 /*管理员-角色-编辑*/
 function admin_role_edit(title,url,id,w,h){
 	layer_show(title,url,w,h);
+	//根据id获取对应的数据
+	
+	
 }
 /*管理员-角色-删除*/
 function admin_role_del(obj,id){
 	layer.confirm('角色删除须谨慎，确认要删除吗？',function(index){
 		//此处请求后台程序，下方是成功后的前台处理……
-				
-		$(obj).parents("tr").remove();
-		layer.msg('已删除!',{icon:1,time:1000});
+		var thedata;
+		$.ajax({
+			url:'../server/ajax/therole.php',
+			tyle:'get',
+			data:{turl:"delRole",getId:id},
+			dataType:'json',
+			async:false,
+			success:function(data){
+				console.log("============返回删除用户获取的json数据==============");
+				console.log(data)
+				//var jsonData = JSON.parse(data);
+				//console.log("==============转换后返回的结果为===================");
+				//console.log(jsonData);
+				thedata = data;
+			}
+		
+		})
+		if(thedata.result ==1){
+			$(obj).parents("tr").remove();
+			layer.msg('已删除!',{icon:1,time:1000});
+		}
+		else{
+			layer.msg('角色删除失败!',{icon:1,time:1000});
+		}
 	});
 }
 </script>
-<script type="text/javascript" src="../js/admin_ajax.js"></script>
 <!--/请在上方写此页面业务相关的脚本-->
 </body>
 </html>

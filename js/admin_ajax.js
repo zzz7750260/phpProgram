@@ -159,12 +159,21 @@ function adminRoleAjax(){
 				success:function(data){
 					console.log("==========获取用户角色列表================");
 					console.log(data);
-					
-					
+					//后端返回的json数据必须要通过JSON.parse转换成json数据
+					var dataJson = JSON.parse(data)
+					console.log("===============转换后的json==============");
+					console.log(dataJson);
+					$.each(dataJson,function(index,item){
+						//前端渲染
+						$listHtml = '<tr class="text-c"><td><input type="checkbox" value="" name=""></td><td>'+item.rid+'</td><td>'+item.rolename+'</td><td><a href="#">赵六</a>，<a href="#">钱七</a></td><td>'+item.rolems+'</td><td class="f-14"><a title="编辑" href="javascript:;" onclick="admin_role_edit(\'角色编辑\',\'admin-role-add.html\',\''+item.rid+'\')" style="text-decoration:none"><i class="Hui-iconfont">&#xe6df;</i></a> <a title="删除" href="javascript:;" onclick="admin_role_del(this,\''+item.rid+'\')" class="ml-5" style="text-decoration:none"><i class="Hui-iconfont">&#xe6e2;</i></a></td></tr>';
+						
+						alert(item);
+						$($listHtml).appendTo(".role-table-body");
+						
+					})					
 				}
 			})			
-		}
-		
+		},		
 	}
 	theRole.addRole();
 	theRole.listRole();

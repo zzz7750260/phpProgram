@@ -84,7 +84,7 @@ class theLogin{
 		return $menuList;
 		
 	}
-	
+		
 	//根据传进来的页面参数调用
 	function theReturn($theUrl){
 		if($theUrl =='loginusername'){
