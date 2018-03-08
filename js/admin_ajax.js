@@ -149,6 +149,7 @@ function adminRoleAjax(){
 						
 					})
 				}
+				window.location.reload();
 			})
 		},
 		listRole:function(){
@@ -165,7 +166,7 @@ function adminRoleAjax(){
 					console.log(dataJson);
 					$.each(dataJson,function(index,item){
 						//前端渲染
-						$listHtml = '<tr class="text-c"><td><input type="checkbox" value="" name=""></td><td>'+item.rid+'</td><td>'+item.rolename+'</td><td><a href="#">赵六</a>，<a href="#">钱七</a></td><td>'+item.rolems+'</td><td class="f-14"><a title="编辑" href="javascript:;" onclick="admin_role_edit(\'角色编辑\',\'admin-role-add.html\',\''+item.rid+'\')" style="text-decoration:none"><i class="Hui-iconfont">&#xe6df;</i></a> <a title="删除" href="javascript:;" onclick="admin_role_del(this,\''+item.rid+'\')" class="ml-5" style="text-decoration:none"><i class="Hui-iconfont">&#xe6e2;</i></a></td></tr>';
+						$listHtml = '<tr class="text-c"><td><input type="checkbox" value="" name=""></td><td>'+item.rid+'</td><td>'+item.rolename+'</td><td><a href="#">赵六</a>，<a href="#">钱七</a></td><td>'+item.rolems+'</td><td class="f-14"><a title="编辑" href="javascript:;" onclick="admin_role_edit(\'角色编辑\',\'admin-role-add.html?rid='+item.rid+'\',\''+item.rid+'\')" style="text-decoration:none"><i class="Hui-iconfont">&#xe6df;</i></a> <a title="删除" href="javascript:;" onclick="admin_role_del(this,\''+item.rid+'\')" class="ml-5" style="text-decoration:none"><i class="Hui-iconfont">&#xe6e2;</i></a></td></tr>';
 						
 						alert(item);
 						$($listHtml).appendTo(".role-table-body");
@@ -173,8 +174,177 @@ function adminRoleAjax(){
 					})					
 				}
 			})			
-		},		
+		},	
+		getEditRole:function(){
+			//var _this = this;
+			//获取链接参数
+			var theUrlParams = window.location.search;
+			alert("当前链接参数："+theUrlParams);			
+			
+			if(theUrlParams){
+				//根据有没参数判断是增加角色的页面还是更改角色的页面，从而更改button的显示
+				$("#admin-role-save").css("display","none");
+				$("#admin-role-update").css("display","inline-block");
+				
+				//使用分类时必须要new一个				
+				var theUtil = new util();
+				
+				//var theUtil = Object.create(theReg);		
+				console.log("=============获取链接参数==============");		
+				var theUrlParams = theUtil.theReg.getUrlParamsReg("rid");
+				console.log(theUrlParams)						
+				//alert(theUrlParams);
+				
+				//根据获取到的参数提交对于id的ajax并返回对于的角色对象
+				$.ajax({
+					url:'../server/ajax/therole.php',
+					type:'get',
+					data:{turl:"editRole",getId:theUrlParams},
+					dataType:'json',
+					async:false,
+					success:function(data){
+						console.log("============根据链接id获取的参数============");
+						console.log(data);					
+						//var dataJson = JSON.parse(data)
+						//console.log("==============根据链接id获取的参数转换成json===========");
+						//console.log(dataJson)
+						
+						//返回到html中
+						alert("获取name：" + data.result[0].rolename);
+						$("#roleName").val(data.result[0].rolename);
+						$("#roleYw").val(data.result[0].roleyw);
+						$("#RoleMs").val(data.result[0].rolems);
+						
+						//给checkbox赋值
+						var theUtil = new util();
+						var lmtheArr = theUtil.commUtil.strChangeArr(data.result[0].rolelmqx);	
+						var wztheArr = theUtil.commUtil.strChangeArr(data.result[0].rolewzqx);	
+						var yhtheArr = theUtil.commUtil.strChangeArr(data.result[0].roleyhqx);
+						console.log("返回的数组"+lmtheArr);
+						console.log("第一个数组的值"+lmtheArr[0]);
+						
+						//根据返回的权限对checkbox进行赋值
+						$.each(lmtheArr,function(item){
+							console.log("循环数组的值："+lmtheArr[item]);
+							$('input[name="user-Character-0-0-0"][value='+lmtheArr[item]+']').prop('checked',true);				
+						})
+					
+						$.each(wztheArr,function(item){
+							console.log("循环数组的值："+wztheArr[item]);
+							$('input[name="user-Character-0-1-0"][value='+wztheArr[item]+']').prop('checked',true);				
+						})
+						
+						$.each(yhtheArr,function(item){
+							console.log("循环数组的值："+yhtheArr[item]);
+							$('input[name="user-Character-1-0-0"][value='+yhtheArr[item]+']').prop('checked',true);				
+						})							
+						
+					}
+				})
+				//this.updataRole(theUrlParams);
+			}
+			else{
+				return false;
+			}
+		},
+		
+		updataRole:function(theId){
+			var theRoleName = $('#roleName').val();
+			var theRoleYw = $('#roleYw').val();
+			var theRoleMs = $('#RoleMs').val();
+			var theRoleLmArray = [];
+			var theRoleWzArray = [];
+			var theRoleYhArray = [];
+						
+			//获取checkbox的值
+			$("input[name='user-Character-0-0-0']:checked").each(function(item){
+				//alert("item:"+item);
+				//alert($(this).val());					
+				var theLmVal = $(this).val();
+				theRoleLmArray.push(theLmVal);
+				
+			})
+			
+			//获取文章管理checkbox的值
+			$("input[name='user-Character-0-1-0']:checked").each(function(item){
+				var theWzVal = $(this).val();
+				theRoleWzArray.push(theWzVal);
+			})
+			
+			//获取用户中心管理的checkbox的值
+			$("input[name='user-Character-1-0-0']:checked").each(function(item){
+				var theYhVal = $(this).val();
+				theRoleYhArray.push(theYhVal);										
+			})
+			
+			if(theRoleLmArray == ''){
+				theRoleLmArray = ['lmcheck']
+				
+			}
+				
+			if(theRoleWzArray == ''){
+				theRoleWzArray = ['wzcheck']
+				
+			}
+			
+			if(theRoleYhArray == ''){
+				theRoleYhArray = ['yhcheck']
+				
+			}
+			
+			//将数组转成字符串存放数据库
+			var stheRoleLmArray = theRoleLmArray.toString();
+			var stheRoleWzArray = theRoleWzArray.toString();
+			var stheRoleYhArray = theRoleYhArray.toString();								
+			
+			//数据提交
+			$("#admin-role-update").click(function(theId){
+				$.ajax({
+					url:'../server/ajax/therole.php',
+					type:'post',
+					data:{turl:"updateRole",postId:theId,postrolename:theRoleName,postroleyw:theRoleYw,postrolems:theRoleMs,postrolelmqx:stheRoleLmArray,postrolewzqx:stheRoleWzArray,postroleyhqx:stheRoleYhArray},
+					dataType:'json',
+					async:false,
+					success:function(data){
+						console.log("===============更改角色返回的数据==============");
+						console.log(data);						
+					}
+					
+				})				
+			})
+		}
+		
 	}
 	theRole.addRole();
 	theRole.listRole();
+	theRole.getEditRole();
+	theRole.updataRole(5);
+}
+
+//正则表达式分类
+function util(){
+	var that = this;
+	this.theReg = {
+		//获取链接参数的正则表达式
+			getUrlParamsReg:function(name){
+			//正则表达式
+			reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)","i");
+			//window.location.search 获取链接的参数并进行相关的匹配
+			var r = window.location.search.substr(1).match(reg);
+			if(r != null){
+				return unescape(r[2])
+			}
+			return null;
+		}		
+	}
+	//theReg.getUrlParamsReg(name);
+	
+	//综合通用
+	this.commUtil = {
+		strChangeArr:function(theStr){
+			var arr = theStr.split(",")	
+			return arr;
+		}
+		
+	}			
 }

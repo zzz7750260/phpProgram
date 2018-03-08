@@ -44,13 +44,36 @@
 				$theEditRoleArray[] = $editRoleArray;		
 			}
 			if($theEditRoleArray){
-				$editRoleJson = array("status"=>200,"msg"=>"编辑角色获取角色成功","result"=>1);
+				$editRoleArrayValue = array("status"=>200,"msg"=>"编辑角色获取角色成功","result"=>$theEditRoleArray);
 			}
 			else{
-				$editRoleJson = array("status"=>100,"msg"=>"编辑角色获取角色失败","result"=>2);				
+				$editRoleArrayValue = array("status"=>100,"msg"=>"编辑角色获取角色失败","result"=>2);				
 			}
+			
+			$editRoleJson = json_encode($editRoleArrayValue);
 			print_r($editRoleJson);
+			
+			
 			return $editRoleJson;
+		}
+		
+		function updataRole($theId,$theRoleName,$theRoleYw,$theRoleMs,$theRoleLmQx,$theRoleWzQx,$theRoleYhQx){
+			$updataRoleSql = "update role set rolename = '$theRoleName', roleyw = '$theRoleYw', rolems = '$theRoleMs', 	rolelmqx ='$theRoleLmQx', rolewzqx = '$theRoleWzQx', roleyhqx = '$theRoleYhQx' where rid = $theId";
+			
+			$updataRoleSql_db = mysql_query($updataRoleSql);
+			
+		
+			if($updataRoleSql_db){
+				$updataArray = array("status"=>200,"msg"=>"角色更改成功","result"=>1);				
+			}
+			else{
+				$updataArray = array("status"=>400,"msg"=>"角色更改失败","result"=>2);	
+			}				
+			//返回JSON数据		
+			$updataJson = json_encode($updataArray);			
+			print_r($updataJson);
+			
+			return $updataJson;
 		}
 		
 		function theRuturnRole($turl){
@@ -79,7 +102,20 @@
 			if($turl == "editRole"){
 				$theId = $_GET["getId"];
 				$this->editRole($theId);
-			}		
+			}
+			
+			if($turl == "updateRole"){
+				$theId = $_POST['postId'];
+				$theRoleName = $_POST['postrolename'];
+				$theRoleYw = $_POST['postroleyw'];
+				$theRoleMs = $_POST['postrolems'];
+				$theRoleLmQx = $_POST['postrolelmqx'];
+				$theRoleWzQx = $_POST['postrolewzqx'];
+				$theRoleYhQx = $_POST['postroleyhqx'];
+				
+				$this->updataRole($theId,$theRoleName,$theRoleYw,$theRoleMs,$theRoleLmQx,$theRoleWzQx,$theRoleYhQx);			
+			}
 		}
+		
 	}
 ?>
