@@ -1,5 +1,8 @@
 <?php 
-	class theRole{
+/////////////////////
+//管理员管理
+/////////////////////
+	class theRole{	
 		function addRole($theRoleName,$theRoleYw,$theRoleMs,$theRoleLmQx,$theRoleWzQx,$theRoleYhQx){			
 			$roleAddSql = "insert into role (rolename,roleyw,rolems,rolelmqx,rolewzqx,roleyhqx) values ('$theRoleName','$theRoleYw','$theRoleMs','$theRoleLmQx','$theRoleWzQx','$theRoleYhQx')" ;
 			$roleAddSql_db = mysql_query($roleAddSql);
@@ -76,6 +79,78 @@
 			return $updataJson;
 		}
 		
+		
+		function addRoleMenu($theMpid,$theMenuname,$theMenurole,$theMenuyw,$theMenuurl){			
+			$addRoleMenuSql = "insert into menu (mpid,menuname,menurole,menuyw,menuurl) values ('$theMpid','$theMenuname','$theMenurole','$theMenuyw','$theMenuurl')";
+			$addRoleMenuSql_db = mysql_query($addRoleMenuSql);
+			if($addRoleMenuSql_db){
+				$addRoleMenuArray = array("status"=>200,"msg"=>"菜单插入成功","result"=>1);			
+			}
+			else{
+				$addRoleMenuArray = array("status"=>400,"msg"=>"菜单插入失败","result"=>2);				
+			}
+				$addRoleMenuJson = json_encode($addRoleMenuArray);	
+				print_r($addRoleMenuJson);
+				return $addRoleMenuJson;
+		}
+		
+		function listRoleMenu($mpid){
+			if(!$mpid){
+				$mpid = 0;				
+			}
+			$listRoleMenuArray = array();
+			$listRoleMenuSql = "select * from menu where mpid = '$mpid'";
+			$listRoleMenuSql_db = mysql_query($listRoleMenuSql);
+			$i = 0;
+			while($listRoleMenuSql_db_array = mysql_fetch_assoc($listRoleMenuSql_db)){
+				$listRoleMenuArray[$i] = $listRoleMenuSql_db_array;		
+				$listRoleMenuArray[$i]['child'] = $this->listRoleMenu($listRoleMenuArray[$i]['mid']);
+				$i++;
+				//$listRoleMenuArray['child'] = $this->listRoleMenu($listRoleMenuArray['mid']);
+			}
+			//print_r($listRoleMenuArray);			
+			//$listRoleMenuJson = json_encode($listRoleMenuArray);
+			//print_r($listRoleMenuJson);
+			return $listRoleMenuArray;	
+		}
+		
+		function getListRoleMenu(){
+			$getListRoleMenuSql = "select * from role";
+			$getListRoleMenuSql_db = mysql_query($getListRoleMenuSql);
+			$getListRoleMenuSqlArray = array();
+			$i = 0;
+			while($getListRoleMenuSql_db_array = mysql_fetch_assoc($getListRoleMenuSql_db)){
+				$getListRoleMenuSqlArray[$i] = 	$getListRoleMenuSql_db_array;
+				$i++;
+			}
+			$getListRoleMenuSqlJson = json_encode($getListRoleMenuSqlArray);
+			print_r($getListRoleMenuSqlJson);
+			return $getListRoleMenuSqlJson;
+		}
+		
+		function getMenuFather(){
+			$getMenuFatherSql = "select * from menu where mpid = 0";
+			$getMenuFatherSql_db = mysql_query($getMenuFatherSql);
+			$getMenuFatherSqlArray = array();
+			$i = 0;
+			while($getMenuFatherSql_db_array = mysql_fetch_assoc($getMenuFatherSql_db)){
+				$getMenuFatherSqlArray[$i] = $getMenuFatherSql_db_array;
+				$i++;
+			}
+			if($getMenuFatherSqlArray){
+				$getMenuFatherSqlArrayBack = array("status"=>200,"msg"=>"菜单父类查询成功","result"=>$getMenuFatherSqlArray);			
+			}
+			else{
+				$getMenuFatherSqlArrayBack = array("status"=>400,"msg"=>"菜单父类查询失败","result"=>2);			
+			}
+			
+			$getMenuFatherSqlJsonBack = json_encode($getMenuFatherSqlArrayBack);
+			
+			print_r($getMenuFatherSqlJsonBack);	
+			
+			return $getMenuFatherSqlJsonBack;			
+		}
+		
 		function theRuturnRole($turl){
 			if($turl == "addRole"){
 				$theRoleName = $_POST['getRoleName'];
@@ -114,6 +189,30 @@
 				$theRoleYhQx = $_POST['postroleyhqx'];
 				
 				$this->updataRole($theId,$theRoleName,$theRoleYw,$theRoleMs,$theRoleLmQx,$theRoleWzQx,$theRoleYhQx);			
+			}
+			
+			if($turl == "addRoleMenu"){
+				$theMpid = $_POST['postMpid'];				
+				$theMenuname = $_POST['postMenuname'];
+				$theMenurole = $_POST['postMenurole'];
+				$theMenuyw = $_POST['postMenuyw'];
+				$theMenuurl	= $_POST['postMenuurl'];
+				$this->addRoleMenu($theMpid,$theMenuname,$theMenurole,$theMenuyw,$theMenuurl);								
+			}
+			
+			if($turl == "listRoleMenu"){
+				$mpid = $_GET['getMpid'];
+				$listMenuList = $this->listRoleMenu($mpid);
+				$listMenuListJson = json_encode($listMenuList);
+				print_r($listMenuListJson);
+			}
+			
+			if($turl == "getListRoleMenu"){
+				$this->getListRoleMenu();
+			}
+			
+			if($turl == "getListRoleMenuFather"){
+				$this->getMenuFather();			
 			}
 		}
 		

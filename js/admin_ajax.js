@@ -66,9 +66,12 @@ function adminMenuAjax(){
 }
 
 /////////////////////
-//角色管理
+//管理员管理
 /////////////////////
 function adminRoleAjax(){
+	/////////////////////
+	//角色管理
+	/////////////////////
 	var theRole = {
 		addRole:function(){
 			alert("点击");
@@ -176,7 +179,7 @@ function adminRoleAjax(){
 			})			
 		},	
 		getEditRole:function(){
-			//var _this = this;
+			var _this = this;
 			//获取链接参数
 			var theUrlParams = window.location.search;
 			alert("当前链接参数："+theUrlParams);			
@@ -237,72 +240,83 @@ function adminRoleAjax(){
 						$.each(yhtheArr,function(item){
 							console.log("循环数组的值："+yhtheArr[item]);
 							$('input[name="user-Character-1-0-0"][value='+yhtheArr[item]+']').prop('checked',true);				
-						})							
-						
+						})			
+						console.log("================这个是theUrlParams的值================");
+						console.log(theUrlParams);
+						_this.updataRole(theUrlParams);
 					}
 				})
-				//this.updataRole(theUrlParams);
+				
 			}
 			else{
 				return false;
 			}
 		},
 		
-		updataRole:function(theId){
-			var theRoleName = $('#roleName').val();
-			var theRoleYw = $('#roleYw').val();
-			var theRoleMs = $('#RoleMs').val();
-			var theRoleLmArray = [];
-			var theRoleWzArray = [];
-			var theRoleYhArray = [];
-						
-			//获取checkbox的值
-			$("input[name='user-Character-0-0-0']:checked").each(function(item){
-				//alert("item:"+item);
-				//alert($(this).val());					
-				var theLmVal = $(this).val();
-				theRoleLmArray.push(theLmVal);
+		updataRole:function(rtheId){	
+				console.log("=============(外部)rtheId的值==============");
+				console.log(rtheId);
+				var rId = rtheId
+				//数据提交
+				$("#admin-role-update").click(function(){
+				var theRoleName = $('#roleName').val();
+				var theRoleYw = $('#roleYw').val();
+				var theRoleMs = $('#RoleMs').val();
+				var theRoleLmArray = [];
+				var theRoleWzArray = [];
+				var theRoleYhArray = [];
+							
+				//获取checkbox的值
+				$("input[name='user-Character-0-0-0']:checked").each(function(item){
+					//alert("item:"+item);
+					//alert($(this).val());					
+					var theLmVal = $(this).val();
+					theRoleLmArray.push(theLmVal);
+					
+				})
 				
-			})
-			
-			//获取文章管理checkbox的值
-			$("input[name='user-Character-0-1-0']:checked").each(function(item){
-				var theWzVal = $(this).val();
-				theRoleWzArray.push(theWzVal);
-			})
-			
-			//获取用户中心管理的checkbox的值
-			$("input[name='user-Character-1-0-0']:checked").each(function(item){
-				var theYhVal = $(this).val();
-				theRoleYhArray.push(theYhVal);										
-			})
-			
-			if(theRoleLmArray == ''){
-				theRoleLmArray = ['lmcheck']
+				//获取文章管理checkbox的值
+				$("input[name='user-Character-0-1-0']:checked").each(function(item){
+					var theWzVal = $(this).val();
+					theRoleWzArray.push(theWzVal);
+				})
 				
-			}
+				//获取用户中心管理的checkbox的值
+				$("input[name='user-Character-1-0-0']:checked").each(function(item){
+					var theYhVal = $(this).val();
+					theRoleYhArray.push(theYhVal);										
+				})
 				
-			if(theRoleWzArray == ''){
-				theRoleWzArray = ['wzcheck']
+				if(theRoleLmArray == ''){
+					theRoleLmArray = ['lmcheck']
+					
+				}
+					
+				if(theRoleWzArray == ''){
+					theRoleWzArray = ['wzcheck']
+					
+				}
 				
-			}
-			
-			if(theRoleYhArray == ''){
-				theRoleYhArray = ['yhcheck']
+				if(theRoleYhArray == ''){
+					theRoleYhArray = ['yhcheck']
+					
+				}
 				
-			}
-			
-			//将数组转成字符串存放数据库
-			var stheRoleLmArray = theRoleLmArray.toString();
-			var stheRoleWzArray = theRoleWzArray.toString();
-			var stheRoleYhArray = theRoleYhArray.toString();								
-			
-			//数据提交
-			$("#admin-role-update").click(function(theId){
+				//将数组转成字符串存放数据库
+				var stheRoleLmArray = theRoleLmArray.toString();
+				var stheRoleWzArray = theRoleWzArray.toString();
+				var stheRoleYhArray = theRoleYhArray.toString();	
+				alert("点击获取id"+rtheId);
+				console.log("=============(内部)rtheId的值==============");
+				console.log(rtheId);
+				alert(theRoleName)
+				alert(stheRoleLmArray)
+				
+				
 				$.ajax({
 					url:'../server/ajax/therole.php',
-					type:'post',
-					data:{turl:"updateRole",postId:theId,postrolename:theRoleName,postroleyw:theRoleYw,postrolems:theRoleMs,postrolelmqx:stheRoleLmArray,postrolewzqx:stheRoleWzArray,postroleyhqx:stheRoleYhArray},
+					type:"post",					
+					data:{turl:"updateRole",postId:rtheId,postrolename:theRoleName,postroleyw:theRoleYw,postrolems:theRoleMs,postrolelmqx:stheRoleLmArray,postrolewzqx:stheRoleWzArray,postroleyhqx:stheRoleYhArray},
 					dataType:'json',
 					async:false,
 					success:function(data){
@@ -310,15 +324,89 @@ function adminRoleAjax(){
 						console.log(data);						
 					}
 					
-				})				
+				})	
+				window.location.reload();
 			})
 		}
 		
 	}
+	
+	var menuRole = {
+		listMenuRole:function(){
+			$.ajax({
+				url:'../server/ajax/therole.php',
+				type:'get',
+				data:{turl:"listRoleMenu",getMpid:0},
+				dataType:'json',
+				success:function(data){
+					console.log("=============用户菜单列表返回================");
+					console.log(data);
+					$.each(data,function(index,item){
+						console.log("================用户菜单循环=============");
+						console.log(item);
+						
+						//HTML渲染
+						var menuHtml = '<tr class="text-c"><td><input type="checkbox" value="'+item.mid+'" name=""></td><td>'+item.mid+'</td><td>'+item.mpid+'</td><td>'+item.menuname+'</td><td>'+item.menurole+'</td><td><a title="编辑" href="javascript:;" onclick="admin_permission_edit(\'角色编辑\',\'admin-permission-add.html\',\''+item.mid+'\',\'\',\'310\')" class="ml-5" style="text-decoration:none"><i class="Hui-iconfont">&#xe6df;</i></a> <a title="删除" href="javascript:;" onclick="admin_permission_del(this,\''+item.mid+'\')" class="ml-5" style="text-decoration:none"><i class="Hui-iconfont">&#xe6e2;</i></a></td></tr>';
+						
+						$(menuHtml).appendTo(".list-menu-qx");
+						
+						$.each(item.child,function(index,items){
+							var childMenuHtml = '<tr class="text-c"><td><input type="checkbox" value="'+items.mid+'" name=""></td><td>'+items.mid+'</td><td>'+items.mpid+'</td><td>'+items.menuname+'</td><td>'+items.menurole+'</td><td><a title="编辑" href="javascript:;" onclick="admin_permission_edit(\'角色编辑\',\'admin-permission-add.html\',\''+items.mid+'\',\'\',\'450\')" class="ml-5" style="text-decoration:none"><i class="Hui-iconfont">&#xe6df;</i></a> <a title="删除" href="javascript:;" onclick="admin_permission_del(this,\''+items.mid+'\')" class="ml-5" style="text-decoration:none"><i class="Hui-iconfont">&#xe6e2;</i></a></td></tr>';
+							
+							$(childMenuHtml).appendTo(".list-menu-qx");
+							
+						})
+					})
+					
+				}							
+			})			
+		},
+		
+		addMenuRole:function(){
+			
+			
+		},
+		
+		listMenuRoleList:function(){
+			$.ajax({
+				url:'../server/ajax/therole.php',
+				type:'get',
+				dataType:'json',
+				data:{turl:"getListRoleMenu"},
+				success:function(data){
+					console.log("==============获取返回的角色列表================");
+					console.log(data);
+					//html渲染
+					$.each(data,function(index,item){
+						var roleListHtml = '<label class=""><input type="checkbox" value="'+item.roleyw+'" name="role-Character-0-0-0" id="role-Character-0-0-'+item.rid+'">'+item.rolename+'</label>';
+						$(roleListHtml).appendTo(".permission-list-role");
+					})									
+				}
+			})			
+		},
+		
+		listMenuRoleFather:function(){
+			$.ajax({
+				url:'../server/ajax/therole.php',
+				type:'get',
+				data:{turl:"getListRoleMenuFather"},
+				dataType:'json',
+				success:function(data){
+					console.log("===================获取菜单的父类===================");
+					console.log(data);
+				}
+			})			
+		}		
+	}
+	
 	theRole.addRole();
 	theRole.listRole();
 	theRole.getEditRole();
-	theRole.updataRole(5);
+	
+	menuRole.listMenuRole();
+	menuRole.listMenuRoleList();
+	menuRole.listMenuRoleFather();
+	//theRole.updataRole(5);
 }
 
 //正则表达式分类
