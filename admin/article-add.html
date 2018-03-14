@@ -46,7 +46,7 @@
 		<div class="row cl">
 			<label class="form-label col-xs-4 col-sm-2"><span class="c-red">*</span>分类栏目：</label>
 			<div class="formControls col-xs-8 col-sm-9"> <span class="select-box">
-				<select name="" class="select">
+				<select name="" class="select" id="category_select">
 					<option value="0">全部栏目</option>
 					<option value="1">新闻资讯</option>
 					<option value="11">├行业动态</option>
@@ -169,6 +169,8 @@
 <script type="text/javascript" src="lib/ueditor/1.4.3/ueditor.config.js"></script> 
 <script type="text/javascript" src="lib/ueditor/1.4.3/ueditor.all.min.js"> </script> 
 <script type="text/javascript" src="lib/ueditor/1.4.3/lang/zh-cn/zh-cn.js"></script>
+<script type="text/javascript" src="../js/admin_ajax.js"></script>
+
 <script type="text/javascript">
 $(function(){
 	$('.skin-minimal input').iCheck({
@@ -276,11 +278,24 @@ $(function(){
             uploader.upload();
         }
     });
-	
-	var ue = UE.getEditor('editor');
+				
 	
 });
+
+var ue = UE.getEditor('editor');
+
+function article_save(){
+	alert("点击");	
+	var str = ue.getContent();
+	//var str = UE.getEditor('editor').getContent();
+	alert(str);
+	
+	var t = $('#form-article-add').serializeArray();
+	alert(t);
+}
 </script>
+
+
 <!--/请在上方写此页面业务相关的脚本-->
 </body>
 </html>

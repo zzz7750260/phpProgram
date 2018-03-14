@@ -32,31 +32,37 @@
 <article class="cl pd-20">
 	<form action="" method="post" class="form form-horizontal" id="form-admin-role-add">
 		<div class="row cl">
-			<label class="form-label col-xs-4 col-sm-3"><span class="c-red">*</span>权限名称：</label>
+			<label class="form-label col-xs-4 col-sm-3"><span class="c-red">*</span>菜单名称：</label>
 			<div class="formControls col-xs-8 col-sm-9">
-				<input type="text" class="input-text" value="" placeholder="" id="roleName" name="roleName" datatype="*4-16" nullmsg="用户账户不能为空">
+				<input type="text" class="input-text" value="" placeholder="" id="roleMenuName" name="roleName" datatype="*4-16" nullmsg="用户账户不能为空">
 			</div>
 		</div>
 		
 		<div class="row cl">
-			<label class="form-label col-xs-4 col-sm-3"><span class="c-red">*</span>权限英文：</label>
+			<label class="form-label col-xs-4 col-sm-3"><span class="c-red">*</span>菜单英文：</label>
 			<div class="formControls col-xs-8 col-sm-9">
-				<input type="text" class="input-text" value="" placeholder="" id="roleYw" name="roleYw" datatype="*4-16" nullmsg="权限英文不能为空">
+				<input type="text" class="input-text" value="" placeholder="" id="roleMenuYw" name="roleYw" datatype="*4-16" nullmsg="权限英文不能为空">
+			</div>
+		</div>
+
+		<div class="row cl">
+			<label class="form-label col-xs-4 col-sm-3">菜单地址：</label>
+			<div class="formControls col-xs-8 col-sm-9">
+				<input type="text" class="input-text" value="" placeholder="" id="RoleMenuUrl" name="RoleMenuUrl">
 			</div>
 		</div>		
 		
 		<div class="row cl">
 			<label class="form-label col-xs-4 col-sm-3">备注：</label>
 			<div class="formControls col-xs-8 col-sm-9">
-				<input type="text" class="input-text" value="" placeholder="" id="RoleMs" name="RoleMs">
+				<input type="text" class="input-text" value="" placeholder="" id="RoleMenuMs" name="RoleMenuMs">
 			</div>
 		</div>
-		
+				
 		<div class="row cl">
 			<label class="form-label col-xs-4 col-sm-3">父类选择：</label>
 			<div class="formControls col-xs-8 col-sm-9">
-				<select class="role-menu-select"> </select>
-				<input type="text" class="input-text" value="" placeholder="" id="RoleMs" name="RoleMs">
+				<select class="role-menu-select" id="roleMenuSelect"><option value="0">请选择</option></select>				
 			</div>
 		</div>
 		
@@ -78,7 +84,7 @@
 							</dt>
 							
 							<dd class="permission-list-role">
-								<label class="">
+								<!--<label class="">
 									<input type="checkbox" value="lmadd" name="user-Character-0-0-0" id="user-Character-0-0-0">
 									添加</label>
 								<label class="">
@@ -93,10 +99,11 @@
 								<label class="">
 									<input type="checkbox" value="lmxz" name="user-Character-0-0-0" id="user-Character-0-0-4">
 									审核</label>
-								<label class="c-orange"><input type="checkbox" value="" name="user-Character-0-0-0" id="user-Character-0-0-5"> 只能操作自己发布的</label>
+								<label class="c-orange"><input type="checkbox" value="" name="user-Character-0-0-0" id="user-Character-0-0-5"> 只能操作自己发布的</label>-->
 							</dd>
 						</dl>
-						<dl class="cl permission-list2">
+						
+						<!--<dl class="cl permission-list2">
 							<dt>
 								<label class="">
 									<input type="checkbox" value="" name="user-Character-0-1" id="user-Character-0-1">
@@ -155,13 +162,13 @@
 							</dd>
 						</dl>
 					</dd>
-				</dl>
+				</dl>-->
 			</div>
 		</div>
 		<div class="row cl">
 			<div class="col-xs-8 col-sm-9 col-xs-offset-4 col-sm-offset-3">
-				<button type="button" class="btn btn-success radius" id="admin-role-save" name="admin-role-save"><i class="icon-ok"></i> 确定</button>
-				<button type="button" class="btn btn-success radius" id="admin-role-update" name="admin-role-update" style="display:none;"><i class="icon-ok"></i> 更新</button>
+				<button type="button" class="btn btn-success radius" id="admin-roleMenu-save" name="admin-role-save"><i class="icon-ok"></i> 确定</button>
+				<button type="button" class="btn btn-success radius" id="admin-roleMenu-update" name="admin-role-update" style="display:none;"><i class="icon-ok"></i> 更新</button>
 				
 			</div>
 		</div>

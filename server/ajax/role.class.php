@@ -151,6 +151,21 @@
 			return $getMenuFatherSqlJsonBack;			
 		}
 		
+		function delRoleMenu($theId){
+			$delRoleMenuSql = "delete from menu where mid = '$theId'";
+			$delRoleMenuSql_db = mysql_query($delRoleMenuSql);
+			if(delRoleMenuSql_db){
+				$delRoleMenuSql_db_array = array("status"=>200,"msg"=>"删除菜单成功","result"=>1);				
+			}
+			else{
+				$delRoleMenuSql_db_array = array("status"=>400,"msg"=>"删除菜单失败","result"=>2);				
+			}
+			
+			$delRoleMenuSql_db_json = json_encode($delRoleMenuSql_db_array);
+			print_r($delRoleMenuSql_db_json);
+			return $delRoleMenuSql_db_json;
+		}
+		
 		function theRuturnRole($turl){
 			if($turl == "addRole"){
 				$theRoleName = $_POST['getRoleName'];
@@ -197,6 +212,11 @@
 				$theMenurole = $_POST['postMenurole'];
 				$theMenuyw = $_POST['postMenuyw'];
 				$theMenuurl	= $_POST['postMenuurl'];
+				echo $theMpid;
+				echo $theMenuname;
+				echo $theMenurole;
+				echo $theMenuyw;
+				echo $theMenuurl;
 				$this->addRoleMenu($theMpid,$theMenuname,$theMenurole,$theMenuyw,$theMenuurl);								
 			}
 			
@@ -214,7 +234,13 @@
 			if($turl == "getListRoleMenuFather"){
 				$this->getMenuFather();			
 			}
-		}
-		
+			
+			if($turl == "delRoleMenu"){
+				$delmid = $_GET['getDelMid'];
+				$this->delRoleMenu($delmid);				
+			}
+			
+			
+		}	
 	}
 ?>
