@@ -488,10 +488,36 @@ function adminCategory(){
 					
 				}
 			})			
-		}		
+		},
+		//菜单管理页列表
+		pageListCategory:function(){
+			$.ajax({
+				url:"../server/ajax/theCategory.php",
+				type:'get',
+				data:{
+					turl:"pageListCategory",
+				},
+				dataType:'json',
+				success:function(data){
+					console.log("===============菜单页面后端传过来的数据=============");
+					console.log(data);
+					
+					//html渲染
+					$.each(data,function(index,item){
+						var listHtml = '<tr class="text-c"><td><input type="checkbox" value="" name=""></td><td>'+item['cid']+'</td><td class="text-l"><u style="cursor:pointer" class="text-primary" onClick="article_edit(\'查看\',\'article-zhang.html\',\'10001\')" title="查看">'+item['categoryname']+'</u></td><td>'+item['categoryyw']+'</td><td>'+item['cpid']+'</td><td>'+item['categoryms']+'</td><td>aaa.html</td><td class="f-14 td-manage"><a style="text-decoration:none" onClick="article_stop(this,\'10001\')" href="javascript:;" title="下架"><i class="Hui-iconfont">&#xe6de;</i></a><a style="text-decoration:none" class="ml-5" onClick="article_edit(\'资讯编辑\',\'article-add.html\',\'10001\')" href="javascript:;" title="编辑"><i class="Hui-iconfont">&#xe6df;</i></a><a style="text-decoration:none" class="ml-5" onClick="article_del(this,\'10001\')" href="javascript:;" title="删除"><i class="Hui-iconfont">&#xe6e2;</i></a></td></tr>';
+						
+						$(listHtml).appendTo(".page-category-list");
+					})
+					
+				}
+				
+			})
+			
+		}
 		
 	}
 	theCategory.listCategory();
+	theCategory.pageListCategory();
 		
 }
 

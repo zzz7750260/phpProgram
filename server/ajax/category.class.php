@@ -35,9 +35,49 @@ class theCategory{
 		return $result;		
 	}
 	
+	//在菜单管理中对菜单进行排列
+	function categoryListPageArray(){
+		//对分类进行输出并组成数组
+		$categoryListSql = "select * from category";
+		$categoryListSql_db = mysql_query($categoryListSql);
+		$categoryListArray = array();
+		while($categoryListSql_db_array = mysql_fetch_assoc($categoryListSql_db)){
+			$categoryListArray[] = $categoryListSql_db_array;
+		}
+		//将取到的数组放在全局的控制变量中
+		$this->categoryListPageSj = $categoryListArray;
+		//将新组的数组以json数据返回
+		$categoryListJson = json_encode($this->dgCategoryList());
+		print_r($categoryListJson);	
+		return $categoryListJson;	
+	}
+	
+	//对全局得到的数组进行递归分类
+	function dgCategoryList($pid=0,&$listResult = array()){
+		//echo "获取数组";
+		//print_r($this->categoryListPageSj);
+		$getDgCategoryListArray = $this->categoryListPageSj;
+		//print_r("========aaaArray===========");
+		//print_r($getDgCategoryListArray);
+		foreach($getDgCategoryListArray as $keyDgCategoryListArray => $value){
+			if($value['cpid'] == $pid){
+				$listResult[] = $value;
+				//print_r("=============循环的================");
+				$this->dgCategoryList($value['cid'],$listResult);
+				//print_r($listResult);
+			}		
+		}
+		return $listResult;		
+	}
+	
+	
 	function theReturn($turl){
 		if($turl == "listCategory"){
 			$this->listCategory();			
-		}	
+		}
+		if($turl == "pageListCategory"){
+			$this->categoryListPageArray();
+		}
+		
 	}		
 }
