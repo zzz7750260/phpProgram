@@ -2,6 +2,7 @@ $(document).ready(function(){
 	adminMenuAjax();
 	adminRoleAjax();
 	adminCategory();
+	adminArticle();
 })
 
 
@@ -467,6 +468,7 @@ function adminCategory(){
 		listCategory:function(){
 			$.ajax({
 				url:"../server/ajax/thecategory.php",
+				type:'get',
 				data:{
 					turl:"listCategory",		
 				},
@@ -518,6 +520,95 @@ function adminCategory(){
 	}
 	theCategory.listCategory();
 	theCategory.pageListCategory();
+		
+}
+
+
+//资讯管理
+function adminArticle(){
+	//将this赋值于that，引用当前变量的全局变量
+	var that = this;
+	console.log("============这个为that================");
+	console.log(that);
+	var theArticle = {
+		//GlobalVar:function(){
+		//	var pictureName;			
+		//},
+		addArticle:function(){
+			//图片上传预览,将图片转成base64
+			$("#article-fileList").change(function(){
+				var theFile = this.files[0];
+				reader = new FileReader();
+				reader.readAsDataURL(theFile);//调用自带方法进行转换    
+				reader.onload = function(){
+					var theImgSrc = reader.result;
+					alert(theImgSrc);	
+					$(".show-picture").attr("src",theImgSrc);
+				}
+				//同时获取上传图片的名称
+				//this.GlobalVar.pictureName = theFile['name'];
+				that.pictureName = theFile['name'];
+				//console.log("图片名称"+this.GlobalVar.pictureName);
+				console.log("图片名称"+that.pictureName);
+			})
+			
+			$("#btn-save").click(function(){
+				var thePostArray = {};
+				$("#form-article-add").find(".row").each(function(){
+					var theValue = $(this).find('.value-v').val();
+					var theKey = $(this).find('.value-v').attr("name");	
+					
+					//当为评论状态选择时(input为checkbox)
+					if(theKey == "article-pl"){
+						//获取是否为选中状态
+						var thePL = $(this).find('.value-v').prop('checked');
+						alert(thePL)
+						if(thePL == true){
+							theValue = "true";
+						}
+						else{
+							theValue = "false";
+						}
+						
+					}
+					//console.log(theKey +":"+ theValue);
+					thePostArray[theKey] = theValue;
+				})
+				
+				console.log("=============获取文章内容==============");
+				var ue = UE.getEditor('editor');
+				var str = ue.getContent();
+				alert(str);	
+				console.log("===========获取表单信息==============");
+				console.log(thePostArray);
+				console.log("图片名称"+that.pictureName);
+				
+				
+				//将提交的数据进行修改
+				thePostArray['turl'] = "addArticle";
+				thePostArray['article-pic'] = that.pictureName;
+				thePostArray['the-article'] = str;
+				thePostArray['article-status'] = 'false';
+				console.log("===========修改后的表单信息==============");
+				console.log(thePostArray);
+				
+				
+				//向后端提交数据
+				$.ajax({
+					url:'../server/ajax/thearticle.php',
+					type:'post',
+					data:thePostArray,
+					dataType:'json',
+					success:function(data){
+						console.log("===========提交文章草稿的返回值============");
+						console.log(data);
+					}
+										
+				})
+			})			
+		}		
+	}
+	theArticle.addArticle();
 		
 }
 
