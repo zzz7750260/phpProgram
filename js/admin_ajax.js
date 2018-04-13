@@ -552,7 +552,29 @@ function adminArticle(){
 				console.log("图片名称"+that.pictureName);
 			})
 			
-			$("#btn-save").click(function(){
+			$("#btn-save").on("click",function(){
+				saveArticle("true");
+			});
+			
+			$("#article-save").on("click",function(){
+				saveArticle("false");
+				
+			});
+			
+			//提交文档的方法，是正式发布还是存草稿
+			
+			function saveArticle(isPublic){
+				var theArticleStatus;
+				//存草稿赋值
+				if(isPublic == "draft"){
+					theArticleStatus == 'false';
+					
+				}
+				if(isPublic == "public"){
+					theArticleStatus == 'true';
+					
+				}
+												
 				var thePostArray = {};
 				$("#form-article-add").find(".row").each(function(){
 					var theValue = $(this).find('.value-v').val();
@@ -588,7 +610,7 @@ function adminArticle(){
 				thePostArray['turl'] = "addArticle";
 				thePostArray['article-pic'] = that.pictureName;
 				thePostArray['the-article'] = str;
-				thePostArray['article-status'] = 'false';
+				thePostArray['article-status'] = isPublic;
 				console.log("===========修改后的表单信息==============");
 				console.log(thePostArray);
 				
@@ -605,7 +627,8 @@ function adminArticle(){
 					}
 										
 				})
-			})			
+				
+			}
 		}		
 	}
 	theArticle.addArticle();
