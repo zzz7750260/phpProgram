@@ -47,11 +47,27 @@ class theArticleClass{
 		
 	}
 	
+	//展示文章列表
+	function articleList(){
+		//获取文章是否查询的文章状态，是查询草稿还是查询公开的，或者是查询所有
+		$theStatus = $_GET['status']; 
+		$articleListSql = "select * from article where 1 = 1 and if('$theStatus' is NULL, 0 = 0, article_status like CONCAT('%$theStatus%'))";
+		$articleListSql_db = mysql_query($articleListSql);
+		$articleListSqlArray = array();
+		while($articleListSql_db_array = mysql_fetch_assoc($articleListSql_db)){
+			$articleListSqlArray[] = $articleListSql_db_array;
+		}
+		print_r($articleListSqlArray);		
+	}
+		
 	//调用功能类
 	function theReturn($turl){
 		if($turl == "addArticle"){
 			$this->addArticle();
-		}		
+		}
+		if($turl == 'articleList'){
+			$this->articleList();			
+		}
 	}
 	
 }

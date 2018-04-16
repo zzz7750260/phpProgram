@@ -553,11 +553,11 @@ function adminArticle(){
 			})
 			
 			$("#btn-save").on("click",function(){
-				saveArticle("true");
+				saveArticle("draft");
 			});
 			
 			$("#article-save").on("click",function(){
-				saveArticle("false");
+				saveArticle("public");
 				
 			});
 			
