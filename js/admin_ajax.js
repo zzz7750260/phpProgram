@@ -629,9 +629,75 @@ function adminArticle(){
 				})
 				
 			}
-		}		
+		},
+		
+		articleList:function(){
+			//文章查询的方法
+			//在页面加载进去时进行查询所有的操作
+			
+			//获取用户信息
+			var theComm = new util();
+			var getInfo = theComm.commUser.getUserInfo();
+			console.log("=========网络查询类获取用户信息（外）============");
+			console.log(getInfo);
+			
+			
+			function articleListAjax(articleStatus,theUsername){
+				$.ajax({
+					url:"../server/ajax/thearticle.php",
+					data:{turl:"articleList",status:articleStatus,author:theUsername},
+					type:"get",
+					dataType:"json",
+					success:function(data){
+						console.log("===============后端传递的文章列表数据===============");
+						console.log(data);
+						
+						var res = data.result;		
+						
+						data.result.forEach(function(item){
+							
+							var articleSh;							
+							if(item.article_sh == "0"){
+								articleSh = "未审核";
+								
+							}
+							if(item.article_sh == "1"){
+								articleSh = "已审核";
+								
+							}	
+							
+							var articleStatus;
+							if(item.article_status == "draft"){
+								articleStatus = "草稿";
+								
+							}
+							if(item.article_status == "public"){
+								articleStatus = "公开";								
+							}								
+							
+							var theHtml = '<tr class="text-c"><td><input type="checkbox" value="" name=""></td><td>'+item.aid+'</td><td class="text-l"><u style="cursor:pointer" class="text-primary" onClick="article_edit(\'查看\',\'article-zhang.html?rid='+item.aid+'\',\'10002\')" title="查看">'+item.title+'</u></td><td>'+item.categoryname+'</td><td>'+item.article_author+'</td><td>'+item.commit_start+'</td><td>21212</td><td class="td-status"><span class="label label-success radius">'+articleStatus+'</span></td><td class="wz-status"><span class="label label-success radius">'+articleSh+'</span></td><td class="f-14 td-manage"><a style="text-decoration:none" onClick="article_shenhe(this,\'10001\')" href="javascript:;" title="审核">审核</a><a style="text-decoration:none" class="ml-5" onClick="article_edit(\'资讯编辑\',\'article-add.html\',\'10001\')" href="javascript:;" title="编辑"><i class="Hui-iconfont">&#xe6df;</i></a><a style="text-decoration:none" class="ml-5" onClick="article_del(this,\'10001\')" href="javascript:;" title="删除"><i class="Hui-iconfont">&#xe6e2;</i></a></td></tr>';		
+
+							$(theHtml).appendTo(".article-body");						
+							
+						})
+	
+					}	
+
+					
+				})				
+			}
+			
+			//页面加载时直接调用出所有的数据查询
+			articleListAjax('',getInfo.username);
+			
+			//查询发布文章
+					
+				
+		}
+		
 	}
 	theArticle.addArticle();
+	theArticle.articleList();
 		
 }
 
@@ -661,5 +727,30 @@ function util(){
 			return arr;
 		}
 		
-	}			
+	}
+	
+	//网络查询类
+	//获取用户信息
+	this.commUser = {
+		getUserInfo:function(){
+			$.ajax({
+				url:"../server/ajax/thelogin.php",
+				type:"get",
+				data:{turl:'theUser'},
+				dataType:"json",
+				async:false,
+				success:function(data){
+					alert(data);
+					console.log(data)
+					theData = data;
+					var theDataArray = theData;
+					that.userInfo = theDataArray;
+				}
+			})
+			console.log("=========网络查询类获取用户信息（内）============");
+			console.log(that.userInfo)
+			return that.userInfo;
+		}
+				
+	}
 }

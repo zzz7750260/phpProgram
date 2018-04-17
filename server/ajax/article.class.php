@@ -51,13 +51,34 @@ class theArticleClass{
 	function articleList(){
 		//获取文章是否查询的文章状态，是查询草稿还是查询公开的，或者是查询所有
 		$theStatus = $_GET['status']; 
-		$articleListSql = "select * from article where 1 = 1 and if('$theStatus' is NULL, 0 = 0, article_status like CONCAT('%$theStatus%'))";
+		$theAuthor = $_GET['author'];
+		//$articleListSql = "select a.*,b.* from article as a left outer join category as b on a.category_id = b.cid where 1 = 1 and if('$theStatus' is NULL, 0 = 0, a.article_status like CONCAT('%$theStatus%'))";
+		
+		//根据用户名来查询结果
+		$articleListSql = "select a.*,b.* from article as a left outer join category as b on a.category_id = b.cid where a.article_author = '$theAuthor' and if('$theStatus' is NULL, 0 = 0, a.article_status like CONCAT('%$theStatus%'))";
+		
 		$articleListSql_db = mysql_query($articleListSql);
 		$articleListSqlArray = array();
 		while($articleListSql_db_array = mysql_fetch_assoc($articleListSql_db)){
 			$articleListSqlArray[] = $articleListSql_db_array;
 		}
-		print_r($articleListSqlArray);		
+		//print_r($articleListSqlArray);		
+		
+		//组装返回数组
+		$returnArray = array(
+			"status" => 200,
+			"ms" => "后台文章列表返回成功",
+			"result" => $articleListSqlArray
+		);
+		$atheJson = $this->returnJson($returnArray);
+		print_r($atheJson);
+	}
+	
+	//组装返回json数组给前端
+	function returnJson($arr){
+		//将获取到的数组转成json并进行返回
+		$theJson = json_encode($arr);
+		return $theJson;
 	}
 		
 	//调用功能类
