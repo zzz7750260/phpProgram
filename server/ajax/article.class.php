@@ -74,13 +74,35 @@ class theArticleClass{
 		print_r($atheJson);
 	}
 	
+	//查看文章接口
+	function checkArticle(){
+		$theArticleId = $_GET['article_Id'];
+		$articleSql = "select * from article where aid = '$theArticleId'";
+		$articleSql_db = mysql_query($articleSql);
+		$articleArray = array();
+		while($articleSql_db_array = mysql_fetch_assoc($articleSql_db)){
+			$articleArray = $articleSql_db_array;
+		}
+		
+		//组装返回文章结果的值
+		$returnArticleArray = array(
+			"status" => 200,
+			"msg" => "文章返回成功",
+			"result" => $articleArray
+		);
+		
+		//将array转换为json
+		$returnArticleJson = $this->returnJson($returnArticleArray);
+		print_r($returnArticleJson);
+	}
+	
 	//组装返回json数组给前端
 	function returnJson($arr){
 		//将获取到的数组转成json并进行返回
 		$theJson = json_encode($arr);
 		return $theJson;
 	}
-		
+			
 	//调用功能类
 	function theReturn($turl){
 		if($turl == "addArticle"){
@@ -88,6 +110,9 @@ class theArticleClass{
 		}
 		if($turl == 'articleList'){
 			$this->articleList();			
+		}
+		if($turl == 'checkArticle'){
+			$this->checkArticle();
 		}
 	}
 	

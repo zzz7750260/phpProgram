@@ -187,67 +187,70 @@ function adminRoleAjax(){
 			alert("当前链接参数："+theUrlParams);			
 			
 			if(theUrlParams){
-				//根据有没参数判断是增加角色的页面还是更改角色的页面，从而更改button的显示
-				$("#admin-role-save").css("display","none");
-				$("#admin-role-update").css("display","inline-block");
-				
-				//使用分类时必须要new一个				
-				var theUtil = new util();
-				
-				//var theUtil = Object.create(theReg);		
-				console.log("=============获取链接参数==============");		
-				var theUrlParams = theUtil.theReg.getUrlParamsReg("rid");
-				console.log(theUrlParams)						
-				//alert(theUrlParams);
-				
-				//根据获取到的参数提交对于id的ajax并返回对于的角色对象
-				$.ajax({
-					url:'../server/ajax/therole.php',
-					type:'get',
-					data:{turl:"editRole",getId:theUrlParams},
-					dataType:'json',
-					async:false,
-					success:function(data){
-						console.log("============根据链接id获取的参数============");
-						console.log(data);					
-						//var dataJson = JSON.parse(data)
-						//console.log("==============根据链接id获取的参数转换成json===========");
-						//console.log(dataJson)
-						
-						//返回到html中
-						alert("获取name：" + data.result[0].rolename);
-						$("#roleName").val(data.result[0].rolename);
-						$("#roleYw").val(data.result[0].roleyw);
-						$("#RoleMs").val(data.result[0].rolems);
-						
-						//给checkbox赋值
-						var theUtil = new util();
-						var lmtheArr = theUtil.commUtil.strChangeArr(data.result[0].rolelmqx);	
-						var wztheArr = theUtil.commUtil.strChangeArr(data.result[0].rolewzqx);	
-						var yhtheArr = theUtil.commUtil.strChangeArr(data.result[0].roleyhqx);
-						console.log("返回的数组"+lmtheArr);
-						console.log("第一个数组的值"+lmtheArr[0]);
-						
-						//根据返回的权限对checkbox进行赋值
-						$.each(lmtheArr,function(item){
-							console.log("循环数组的值："+lmtheArr[item]);
-							$('input[name="user-Character-0-0-0"][value='+lmtheArr[item]+']').prop('checked',true);				
-						})
+				if(theUrlParams.indexOf("rid")>-1){
+					//根据有没参数判断是增加角色的页面还是更改角色的页面，从而更改button的显示
+					$("#admin-role-save").css("display","none");
+					$("#admin-role-update").css("display","inline-block");
 					
-						$.each(wztheArr,function(item){
-							console.log("循环数组的值："+wztheArr[item]);
-							$('input[name="user-Character-0-1-0"][value='+wztheArr[item]+']').prop('checked',true);				
-						})
+					//使用分类时必须要new一个				
+					var theUtil = new util();
+					
+					//var theUtil = Object.create(theReg);		
+					console.log("=============获取链接参数==============");		
+					var theUrlParams = theUtil.theReg.getUrlParamsReg("rid");
+					console.log(theUrlParams)						
+					//alert(theUrlParams);
+					
+					//根据获取到的参数提交对于id的ajax并返回对于的角色对象
+					$.ajax({
+						url:'../server/ajax/therole.php',
+						type:'get',
+						data:{turl:"editRole",getId:theUrlParams},
+						dataType:'json',
+						async:false,
+						success:function(data){
+							console.log("============根据链接id获取的参数============");
+							console.log(data);					
+							//var dataJson = JSON.parse(data)
+							//console.log("==============根据链接id获取的参数转换成json===========");
+							//console.log(dataJson)
+							
+							//返回到html中
+							alert("获取name：" + data.result[0].rolename);
+							$("#roleName").val(data.result[0].rolename);
+							$("#roleYw").val(data.result[0].roleyw);
+							$("#RoleMs").val(data.result[0].rolems);
+							
+							//给checkbox赋值
+							var theUtil = new util();
+							var lmtheArr = theUtil.commUtil.strChangeArr(data.result[0].rolelmqx);	
+							var wztheArr = theUtil.commUtil.strChangeArr(data.result[0].rolewzqx);	
+							var yhtheArr = theUtil.commUtil.strChangeArr(data.result[0].roleyhqx);
+							console.log("返回的数组"+lmtheArr);
+							console.log("第一个数组的值"+lmtheArr[0]);
+							
+							//根据返回的权限对checkbox进行赋值
+							$.each(lmtheArr,function(item){
+								console.log("循环数组的值："+lmtheArr[item]);
+								$('input[name="user-Character-0-0-0"][value='+lmtheArr[item]+']').prop('checked',true);				
+							})
 						
-						$.each(yhtheArr,function(item){
-							console.log("循环数组的值："+yhtheArr[item]);
-							$('input[name="user-Character-1-0-0"][value='+yhtheArr[item]+']').prop('checked',true);				
-						})			
-						console.log("================这个是theUrlParams的值================");
-						console.log(theUrlParams);
-						_this.updataRole(theUrlParams);
-					}
-				})
+							$.each(wztheArr,function(item){
+								console.log("循环数组的值："+wztheArr[item]);
+								$('input[name="user-Character-0-1-0"][value='+wztheArr[item]+']').prop('checked',true);				
+							})
+							
+							$.each(yhtheArr,function(item){
+								console.log("循环数组的值："+yhtheArr[item]);
+								$('input[name="user-Character-1-0-0"][value='+yhtheArr[item]+']').prop('checked',true);				
+							})			
+							console.log("================这个是theUrlParams的值================");
+							console.log(theUrlParams);
+							_this.updataRole(theUrlParams);
+						}
+					})
+				
+				}
 				
 			}
 			else{
@@ -675,7 +678,7 @@ function adminArticle(){
 								articleStatus = "公开";								
 							}								
 							
-							var theHtml = '<tr class="text-c"><td><input type="checkbox" value="" name=""></td><td>'+item.aid+'</td><td class="text-l"><u style="cursor:pointer" class="text-primary" onClick="article_edit(\'查看\',\'article-zhang.html?rid='+item.aid+'\',\'10002\')" title="查看">'+item.title+'</u></td><td>'+item.categoryname+'</td><td>'+item.article_author+'</td><td>'+item.commit_start+'</td><td>21212</td><td class="td-status"><span class="label label-success radius">'+articleStatus+'</span></td><td class="wz-status"><span class="label label-success radius">'+articleSh+'</span></td><td class="f-14 td-manage"><a style="text-decoration:none" onClick="article_shenhe(this,\'10001\')" href="javascript:;" title="审核">审核</a><a style="text-decoration:none" class="ml-5" onClick="article_edit(\'资讯编辑\',\'article-add.html\',\'10001\')" href="javascript:;" title="编辑"><i class="Hui-iconfont">&#xe6df;</i></a><a style="text-decoration:none" class="ml-5" onClick="article_del(this,\'10001\')" href="javascript:;" title="删除"><i class="Hui-iconfont">&#xe6e2;</i></a></td></tr>';		
+							var theHtml = '<tr class="text-c"><td><input type="checkbox" value="" name=""></td><td>'+item.aid+'</td><td class="text-l"><u style="cursor:pointer" class="text-primary" onClick="article_edit(\'查看\',\'article-zhang.html?article_id='+item.aid+'\',\'10002\')" title="查看">'+item.title+'</u></td><td>'+item.categoryname+'</td><td>'+item.article_author+'</td><td>'+item.commit_start+'</td><td>21212</td><td class="td-status"><span class="label label-success radius">'+articleStatus+'</span></td><td class="wz-status"><span class="label label-success radius">'+articleSh+'</span></td><td class="f-14 td-manage"><a style="text-decoration:none" onClick="article_shenhe(this,\'10001\')" href="javascript:;" title="审核">审核</a><a style="text-decoration:none" class="ml-5" onClick="article_edit(\'资讯编辑\',\'article-add.html\',\'10001\')" href="javascript:;" title="编辑"><i class="Hui-iconfont">&#xe6df;</i></a><a style="text-decoration:none" class="ml-5" onClick="article_del(this,\'10001\')" href="javascript:;" title="删除"><i class="Hui-iconfont">&#xe6e2;</i></a></td></tr>';		
 
 							$(theHtml).appendTo(".article-body");						
 							
@@ -691,13 +694,53 @@ function adminArticle(){
 			articleListAjax('',getInfo.username);
 			
 			//查询发布文章
-					
-				
-		}
+			$("#check_article").on("click",function(){
+				articleListAjax('public',getInfo.username);
+			})
+			
+			//查询草稿文章
+			$("#check_draft").on("click",function(){
+				articleListAjax('draft',getInfo.username);
+			})				
+		},
+		//查看文章功能
+		checkArticle:function(){
+			//检测是否有参数
+			var hasUrlParames = window.location.search;
+			if(hasUrlParames){
+				if(hasUrlParames.indexOf("article_id")>-1){
+					//获取当前文章的id
+					var useUtil = new util();
+					var theId = useUtil.theReg.getUrlParamsReg("article_id")
+					alert("当前的文章id为:"+theId);
+					$.ajax({
+						url:"../server/ajax/thearticle.php",
+						data:{turl:"checkArticle",article_Id:theId},
+						type:"get",
+						dataType:"json",
+						success:function(data){
+							console.log("==============从后端返回的文章数据=============");
+							console.log(data)
+							
+							var res = data.result;
+							//前端dom渲染
+							$(".page-title").find("h3").text(res.title);
+							$(".page-info-author").text(res.article_author);
+							$(".page-info-source").text(res.article_source);
+							$(".page-info-data").text(res.commit_start);
+							$(".page-short").find("p").text(res.article_short);
+							$(".page-contain").html(res.article_container);
+						}
+					})				
+				}
+			}
+			
+		}		
 		
 	}
 	theArticle.addArticle();
 	theArticle.articleList();
+	theArticle.checkArticle();
 		
 }
 
