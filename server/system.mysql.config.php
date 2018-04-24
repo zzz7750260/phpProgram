@@ -18,6 +18,8 @@ class theSql{
 			//echo "数据库服务器连接成功<br/>";
 			$cont_db = mysql_select_db("myprogram",$this->line);
 			mysql_query("set names utf8");
+			//设置header也为utf-8
+			 header("Content-type: text/html; charset=utf-8");
 			if($cont_db){
 				//echo "数据库连接成功";				
 			}								
