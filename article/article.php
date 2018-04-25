@@ -46,21 +46,23 @@ echo "当前目录下的文件路径".APP_PATH;
 
 //文件静态化
 //读取缓存区的内容
-$out1 = ob_get_contents();
+$out1 = ob_get_clean();
 
 echo $out1;
 
 //判断是否存在参数，存在参数就实现页面静态化
 $theOb = $_GET['getOb'];
 
-//将内容静态化输出
-if(file_put_contents(APP_PATH.'/article/'.$articleArray['categoryyw'].'/'.$articleArray['aid'].'.html',$out1)){
-	echo "输出成功";
+if($theOb == "ob")
+{
+	//将内容静态化输出
+	if(file_put_contents(APP_PATH.'/article/'.$articleArray['categoryyw'].'/'.$articleArray['aid'].'.html',$out1)){
+		echo "输出成功";
+	}
+	else{
+		echo "输出失败";
+	}
 }
-else{
-	echo "输出失败";
-}
-
 
 
 

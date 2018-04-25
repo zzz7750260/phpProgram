@@ -678,7 +678,7 @@ function adminArticle(){
 								articleStatus = "公开";								
 							}								
 							
-							var theHtml = '<tr class="text-c"><td><input type="checkbox" value="" name=""></td><td>'+item.aid+'</td><td class="text-l"><u style="cursor:pointer" class="text-primary" onClick="article_edit(\'查看\',\'article-zhang.html?article_id='+item.aid+'\',\'10002\')" title="查看">'+item.title+'</u></td><td>'+item.categoryname+'</td><td>'+item.article_author+'</td><td>'+item.commit_start+'</td><td>21212</td><td class="td-status"><span class="label label-success radius">'+articleStatus+'</span></td><td class="wz-status"><span class="label label-success radius">'+articleSh+'</span></td><td class="f-14 td-manage"><a style="text-decoration:none" onClick="article_shenhe(this,\'10001\')" href="javascript:;" title="审核">审核</a><a style="text-decoration:none" class="ml-5" onClick="article_edit(\'资讯编辑\',\'article-add.html\',\'10001\')" href="javascript:;" title="编辑"><i class="Hui-iconfont">&#xe6df;</i></a><a style="text-decoration:none" class="ml-5" onClick="article_del(this,\'10001\')" href="javascript:;" title="删除"><i class="Hui-iconfont">&#xe6e2;</i></a></td></tr>';		
+							var theHtml = '<tr class="text-c"><td><input type="checkbox" value="" name=""></td><td>'+item.aid+'</td><td class="text-l"><u style="cursor:pointer" class="text-primary" onClick="article_edit(\'查看\',\'article-zhang.html?article_id='+item.aid+'\',\'10002\')" title="查看">'+item.title+'</u></td><td>'+item.categoryname+'</td><td>'+item.article_author+'</td><td>'+item.commit_start+'</td><td>21212</td><td class="td-status"><span class="label label-success radius">'+articleStatus+'</span></td><td class="wz-status"><span class="label label-success radius">'+articleSh+'</span></td><td class="f-14 td-manage"><a style="text-decoration:none" onClick="article_shenhe(this,\'10001\')" href="javascript:;" title="审核">审核</a><a style="text-decoration:none" class="ml-5" onClick="article_edit(\'资讯编辑\',\'article-add.html\',\'10001\')" href="javascript:;" title="编辑"><i class="Hui-iconfont">&#xe6df;</i></a><a style="text-decoration:none" class="ml-5" onClick="article_del(this,\'10001\')" href="javascript:;" title="删除"><i class="Hui-iconfont">&#xe6e2;</i></a><a style="text-decoration:none" class="ml-5"  href="../article/article.php?article_id='+item.aid+'&getOb=ob" title="生成文件"><i class="Hui-iconfont">&#xe645;</i></a></td></tr>';		
 
 							$(theHtml).appendTo(".article-body");						
 							
@@ -733,14 +733,61 @@ function adminArticle(){
 						}
 					})				
 				}
-			}
+			}									
+		},	
+
+		//根据分类页面静态化请求
+		articleHtml:function(){
+			//向后端请求取得分类列表
+			$.ajax({
+				url:"../server/ajax/thecategory.php",
+				type:"get",
+				data:{turl:"listCategory"},
+				dataType:"json",
+				success:function(data){
+					console.log("===============后端返回的文章静态化分类列表数据==========");
+					console.log(data);
+					
+					//html渲染
+					data.forEach(function(item){
+						var itemHtml = '<option value='+item.cid+'>'+item.categoryname+'</option>';
+						$(itemHtml).appendTo("#ob-select-category-s");
+					})
+					
+				}
+				
+			})
 			
-		}		
-		
+			//选择选择框，根据选中的值来进行查询
+			//获取选中值
+			$("#ob-select-category-s").change(function(){
+				var theSelect = $("#ob-select-category-s").find("option:selected").val();
+				alert("内部值："+theSelect);
+				that.theSelectVal = theSelect;
+				
+			});
+			
+			//点击提交并进行相关操作
+			$("#get-ob").click(function(){
+				alert("外部值："+that.theSelectVal);
+				//根据选中的分类请求相关的后台查询
+				$.ajax({
+					url:"../article/articleMore.php",
+					type:"get",
+					data:{categoryNum:that.theSelectVal},
+					dataType:"json",
+					success:function(data){
+						console.log(data);						
+					}
+				})
+			})
+		}
+
 	}
 	theArticle.addArticle();
 	theArticle.articleList();
 	theArticle.checkArticle();
+	theArticle.articleHtml();
 		
 }
 
