@@ -678,7 +678,7 @@ function adminArticle(){
 								articleStatus = "公开";								
 							}								
 							
-							var theHtml = '<tr class="text-c"><td><input type="checkbox" value="" name=""></td><td>'+item.aid+'</td><td class="text-l"><u style="cursor:pointer" class="text-primary" onClick="article_edit(\'查看\',\'article-zhang.html?article_id='+item.aid+'\',\'10002\')" title="查看">'+item.title+'</u></td><td>'+item.categoryname+'</td><td>'+item.article_author+'</td><td>'+item.commit_start+'</td><td>21212</td><td class="td-status"><span class="label label-success radius">'+articleStatus+'</span></td><td class="wz-status"><span class="label label-success radius">'+articleSh+'</span></td><td class="f-14 td-manage"><a style="text-decoration:none" onClick="article_shenhe(this,\'10001\')" href="javascript:;" title="审核">审核</a><a style="text-decoration:none" class="ml-5" onClick="article_edit(\'资讯编辑\',\'article-add.html\',\'10001\')" href="javascript:;" title="编辑"><i class="Hui-iconfont">&#xe6df;</i></a><a style="text-decoration:none" class="ml-5" onClick="article_del(this,\'10001\')" href="javascript:;" title="删除"><i class="Hui-iconfont">&#xe6e2;</i></a><a style="text-decoration:none" class="ml-5"  href="../article/article.php?article_id='+item.aid+'&getOb=ob" title="生成文件"><i class="Hui-iconfont">&#xe645;</i></a></td></tr>';		
+							var theHtml = '<tr class="text-c"><td><input type="checkbox" value="" name=""></td><td>'+item.aid+'</td><td class="text-l"><u style="cursor:pointer" class="text-primary" onClick="article_edit(\'查看\',\'article-zhang.html?article_id='+item.aid+'\',\'10002\')" title="查看">'+item.title+'</u></td><td>'+item.categoryname+'</td><td>'+item.article_author+'</td><td>'+item.commit_start+'</td><td>21212</td><td class="td-status"><span class="label label-success radius">'+articleStatus+'</span></td><td class="wz-status"><span class="label label-success radius">'+articleSh+'</span></td><td class="f-14 td-manage"><a style="text-decoration:none" onClick="article_shenhe(this,\'10001\')" href="javascript:;" title="审核">审核</a><a style="text-decoration:none" class="ml-5" onClick="article_edit(\'资讯编辑\',\'article-add.html\',\'10001\')" href="javascript:;" title="编辑"><i class="Hui-iconfont">&#xe6df;</i></a><a style="text-decoration:none" class="ml-5" onClick="article_del(this,\'10001\')" href="javascript:;" title="删除"><i class="Hui-iconfont">&#xe6e2;</i></a><a style="text-decoration:none" class="ml-5"  href="../server/ajax/thearticle.php?turl=oBarticle&article_id='+item.aid+'&getOb=ob" title="生成文件"><i class="Hui-iconfont">&#xe645;</i></a></td></tr>';		
 
 							$(theHtml).appendTo(".article-body");						
 							
@@ -772,10 +772,10 @@ function adminArticle(){
 				alert("外部值："+that.theSelectVal);
 				//根据选中的分类请求相关的后台查询
 				$.ajax({
-					url:"../article/articleMore.php",
+					url:"../server/ajax/thearticle.php",
 					type:"get",
-					data:{categoryNum:that.theSelectVal},
-					dataType:"json",
+					data:{turl:'theObMoreArticle',getOb:"obMore",categoryNum:that.theSelectVal},
+					//dataType:"json",
 					success:function(data){
 						console.log(data);						
 					}

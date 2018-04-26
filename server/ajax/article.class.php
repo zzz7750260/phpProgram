@@ -1,4 +1,6 @@
 <?php 
+ob_start();
+include('../system.util.php');
 class theArticleClass{
 	function addArticle(){
 		$theTitle = $_POST['article-title'];
@@ -102,6 +104,128 @@ class theArticleClass{
 		$theJson = json_encode($arr);
 		return $theJson;
 	}
+	
+	//单文章静态化
+	function oBarticle(){
+		$theAid = $_GET['article_id'];
+		//数据库查询
+		$articleSql = "select a.*,b.* from article as a left join category as b on a.category_id = b.cid where a.aid = '$theAid'";
+		$articleSql_db = mysql_query($articleSql);
+
+		$articleArray = array();
+
+		while($articleSql_db_array = mysql_fetch_assoc($articleSql_db)){
+			$articleArray = $articleSql_db_array;	
+		}
+
+		print_r($articleArray);
+
+		/*
+		//定义路径
+		define('APP_PATH', dirname(dirname(__FILE__)));
+		//echo APP_PATH;
+
+		echo "文件名1：".$articleArray[0]['categoryyw']."<br/>";
+		echo "文件名2：".$articleArray['categoryyw'];
+		//创建文件夹
+		if(!file_exists($articleArray[0]['categoryyw'])){
+			mkdir($articleArray['categoryyw'],0777,true);
+			echo "文件夹传建成功";
+		}
+		else{
+			echo "该文件夹已经存在";
+			
+		}
+
+		*/
+
+		//调用传建的文件夹
+		$theUtil = new util();
+		$theUtil->mkdirWj($articleArray['categoryyw']);
+
+		//获取当前的路径
+		define('APP_PATH',dirname(dirname(__FILE__)));
+		echo "当前目录下的文件路径".APP_PATH;
+
+		//文件静态化
+		//读取缓存区的内容
+		$out1 = ob_get_clean();
+
+		echo $out1;
+
+		//判断是否存在参数，存在参数就实现页面静态化
+		$theOb = $_GET['getOb'];
+
+		if($theOb == "ob")
+		{
+			//将内容静态化输出
+			if(file_put_contents(APP_PATH.'/article/'.$articleArray['categoryyw'].'/'.$articleArray['aid'].'.html',$out1)){
+				echo "输出成功";
+			}
+			else{
+				echo "输出失败";
+			}
+		}		
+	}
+	
+	function theObMoreArticle(){
+		$theCategory = $_GET['categoryNum'];
+		//查询数据库
+
+		$theCategorySql = "select a.*,b.* from article as a left join category as b on a.category_id = b.cid where 1 = 1 and IF('$theCategory' = 0,0 = 0, a.category_id = '$theCategory')";
+		$theCategorySql_db = mysql_query($theCategorySql);
+
+		$theCategoryArray = array();
+
+		while($theCategorySql_db_array = mysql_fetch_assoc($theCategorySql_db)){
+			$theCategoryArray[] = $theCategorySql_db_array;
+			
+		}
+
+		//封装返回数组
+		$theReturnArray = array(
+			"status" => 200,
+			"msg" => "返回数组成功",
+			"result" => $theCategoryArray
+		);
+
+		//将返回的数组转换为json
+
+		$theReturnJson = json_encode($theReturnArray);
+
+		print_r($theReturnJson);
+
+		//获取当前文章的位置
+		define("APP_PATH2",dirname(dirname(dirname(__FILE__))));
+		echo "当前路径为".APP_PATH2;
+		//检测article对应的category文件夹是否存在,并创建出对应的文件夹
+		$theUtilFile = new util();
+
+		//判断是否有静态化请求，如果有，需对文件进行相关的输出
+		$theOb = $_GET['getOb'];
+		if($theOb == 'obMore'){
+			//循环数组，并输出静态文件
+			foreach($theCategoryArray as $key => $value){
+				//生成文章对于分类的文件夹
+				$theUtilFile->mkdirWj($value['categoryyw']);
+				//文章页静态化输出
+				print_r($value);
+				$moreOut = ob_get_contents();
+				//echo $moreOut;
+				if(file_put_contents(APP_PATH2.'/article/'.$value['categoryyw'].'/'.$value['aid'].'.html',$moreOut)){
+					echo $value['aid']."输出成功";		
+					
+					//清除缓冲区,防止内容重复输出;
+					ob_clean();
+				}
+				else{
+					echo $value['aid']."输出失败";
+				}
+			}		
+		}
+	
+	}
+
 			
 	//调用功能类
 	function theReturn($turl){
@@ -114,6 +238,11 @@ class theArticleClass{
 		if($turl == 'checkArticle'){
 			$this->checkArticle();
 		}
+		if($turl == 'oBarticle'){
+			$this->oBarticle();
+		}
+		if($turl == 'theObMoreArticle'){
+			$this-> theObMoreArticle();	
+		}		
 	}
-	
 }
