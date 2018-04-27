@@ -45,11 +45,10 @@ class theArticleClass{
 		//将数组转为json
 		$resJson = json_encode($resArray);	
 		print_r($resJson);
-		
-		
+				
 	}
 	
-	//展示文章列表
+	//后端展示文章列表
 	function articleList(){
 		//获取文章是否查询的文章状态，是查询草稿还是查询公开的，或者是查询所有
 		$theStatus = $_GET['status']; 
@@ -225,6 +224,33 @@ class theArticleClass{
 		}
 	
 	}
+	
+	//前端返回的文章列表
+	function frontArticleList(){
+		//获取当前的分类
+		$theCategory = $_GET['category_id'];
+		//获取当前页数
+		$thePage = $_GET['page_num'];
+		//获取查询文章数量
+		$theLimit = $_GET['limit_num'];
+		
+		//将页数和查询文章数转换为数字
+		$thePageNum = intval($thePage);
+		$theLimitNum = intval($theLimit);
+		echo $theCategory;
+		
+		//返回的文章数据查询
+		$theArticleSql = "select a.*,b.* from article as a left join category as b on a.category_id = b.cid where b.categoryyw = '$theCategory' limit $thePageNum,$theLimitNum";
+		
+		$theArticleSql_db = mysql_query($theArticleSql);
+		
+		$theArticleArray = array();
+		
+		while($theArticleSql_db_array = mysql_fetch_assoc($theArticleSql_db)){
+			$theArticleArray[] = $theArticleSql_db_array;
+		}
+		print_r($theArticleArray);		
+	}
 
 			
 	//调用功能类
@@ -236,13 +262,16 @@ class theArticleClass{
 			$this->articleList();			
 		}
 		if($turl == 'checkArticle'){
-			$this->checkArticle();
+			$this->checkArticle();.
 		}
 		if($turl == 'oBarticle'){
 			$this->oBarticle();
 		}
 		if($turl == 'theObMoreArticle'){
 			$this-> theObMoreArticle();	
-		}		
+		}	
+		if($turl == 'frontArticleList'){
+			$this->frontArticleList();
+		}
 	}
 }
