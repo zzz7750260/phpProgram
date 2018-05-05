@@ -112,13 +112,13 @@ class theArticleClass{
 		$articleSql_db = mysql_query($articleSql);
 
 		$articleArray = array();
-
+		
 		while($articleSql_db_array = mysql_fetch_assoc($articleSql_db)){
 			$articleArray = $articleSql_db_array;	
 		}
 
 		print_r($articleArray);
-
+		$value = $articleArray;
 		/*
 		//定义路径
 		define('APP_PATH', dirname(dirname(__FILE__)));
@@ -137,7 +137,10 @@ class theArticleClass{
 		}
 
 		*/
-
+		
+		/*引入文章页模板*/
+		include("../template/article.php");
+		
 		//调用传建的文件夹
 		$theUtil = new util();
 		$theUtil->mkdirWj($articleArray['categoryyw']);
@@ -262,7 +265,7 @@ class theArticleClass{
 			$this->articleList();			
 		}
 		if($turl == 'checkArticle'){
-			$this->checkArticle();.
+			$this->checkArticle();
 		}
 		if($turl == 'oBarticle'){
 			$this->oBarticle();
