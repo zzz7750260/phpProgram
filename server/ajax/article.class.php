@@ -210,6 +210,9 @@ class theArticleClass{
 			foreach($theCategoryArray as $key => $value){
 				//生成文章对于分类的文件夹
 				$theUtilFile->mkdirWj($value['categoryyw']);
+				
+				//引入文章模板
+				include('../template/article.php');
 				//文章页静态化输出
 				print_r($value);
 				$moreOut = ob_get_contents();
@@ -252,7 +255,97 @@ class theArticleClass{
 		while($theArticleSql_db_array = mysql_fetch_assoc($theArticleSql_db)){
 			$theArticleArray[] = $theArticleSql_db_array;
 		}
-		print_r($theArticleArray);		
+		print_r($theArticleArray);	
+		//引入列表模板
+		include('../template/list.php');
+		
+		
+		//获取当前路径
+		//define("APP_PATH2",dirname(dirname(dirname(__FILE__))));
+		//echo APP_PATH2;
+		
+		//静态化
+		//$theOb = $_GET['getOb'];
+		//if($theOb == 'ob'){
+			
+		//}
+	}
+	
+	//前端文章列表静态化
+	function frontArticleListOb(){
+		//获取分类
+		$theCategoryObId = $_GET['getCategoryId'];
+		//获取展示的文章数量
+		$theLimitOb = $_GET['getLimit'];
+		
+		$categoryArticleListSql = "select a.*,b.* from article as a left join category as b on a.category_id = b.cid where 1 = 1 and IF('$theCategoryObId' = 0, 0 = 0, category_id = '$theCategoryObId')";
+		
+		$categoryArticleListSql_db = mysql_query($categoryArticleListSql);
+		
+		$categoryArticleListSql_db_num = mysql_num_rows($categoryArticleListSql_db);
+		//echo $categoryArticleListSql_db_num;
+		//页数（如果存在余数，页数就加1）
+		$pageNum = $categoryArticleListSql_db_num/$theLimitOb;
+		//取pageNum的整数
+		$pageNumZ =  floor($pageNum); 
+		//echo '$pageNum'.$pageNum;
+		//echo '$pageNumZ'.$pageNumZ;
+		//检测是否存在余数
+		$pageNumYs = $categoryArticleListSql_db_num%$theLimitOb;		
+		//echo '$pageNumYs'.$pageNumYs;
+		if($pageNumYs>0){
+			$pageNumZ = $pageNumZ+1;
+			
+		}
+		//定义当前位置
+		define("APP_PATH3",dirname(dirname(dirname(__FILE__))));
+		//echo APP_PATH3;
+		
+
+		//列表页静态化
+		$theOb = $_GET['getOb'];
+		if($theOb == 'ob'){
+			//循环查询列表,并静态化输出列表页面
+			for($i=0;$i<$pageNumZ;$i++){
+				//起始位置为页面乘以每页面的数量
+				$qsNum = $i * $theLimitOb;
+				$listSql = "select a.*,b.* from article as a left join category as b on a.category_id = b.cid where 1 = 1 and IF('$theCategoryObId' = 0, 0 = 0, category_id = '$theCategoryObId') limit $qsNum,$theLimitOb";		
+				$listSql_db = mysql_query($listSql);
+				$theArticleArray = array();
+				while($listSql_db_array = mysql_fetch_assoc($listSql_db)){
+					$theArticleArray[] = $listSql_db_array;
+				}
+				//print_r($theArticleArray);
+				
+				//传建对应的文件夹	
+				$theUtil = new util();
+				$theUtil->mkdirWj($theArticleArray[0]['categoryyw']);	
+				//引入列表模板
+				include('../template/list.php');
+				 
+				 //获取缓存信息
+				$info = ob_get_contents();
+				 //echo $info;
+				//header('content-type:text/html;charset=utf-8');
+				 //将缓存信息输出
+				 
+				 //检测源码类型，解决乱码问题
+				 //$encode = mb_detect_encoding($info, array("ASCII",'UTF-8',"GB2312","GBK",'BIG5'));
+				 //echo $encode;
+				file_put_contents(APP_PATH3.'/article/'.$theArticleArray[0]['categoryyw'].'/'.$theArticleArray[0]['categoryyw'].'-'.$i.'.html', utf8_encode($info));
+				 
+				//输出完后，将缓存清除
+				ob_clean();
+				 
+				//echo "<br/><hr/>";					
+			}
+									
+				
+		}
+		
+		
+		$thePageNumOb = $_GET['getPageNum'];
+		
 	}
 
 			
@@ -275,6 +368,9 @@ class theArticleClass{
 		}	
 		if($turl == 'frontArticleList'){
 			$this->frontArticleList();
+		}
+		if($turl == 'frontArticleListOb'){
+			$this->frontArticleListOb();
 		}
 	}
 }

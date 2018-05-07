@@ -1,19 +1,20 @@
+	<?php 
+		print(chr(0xEF).chr(0xBB).chr(0xBF));
+		//
+		//echo "<br><hr/>=======这个是模板中的值==========<br/>";
+		//print_r($theArticleArray);
+		//echo "<hr/>";
+		//echo $value['title'];
+		
+	?>
 <!DOCTYPE html>
 <html lang="zh-CN">
   <head>
-	<?php 
-		//
-		echo "=======这个是模板中的值==========<br/><hr/>";
-		print_r($value);
-		echo "<hr/>";
-		echo $value['title'];
-		
-	?>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <!-- 上述3个meta标签*必须*放在最前面，任何其他内容都*必须*跟随其后！ -->
-    <title><?php echo $value['title']?></title>
+    <title><?php echo $theArticleArray[0]['categoryname'];?></title>
 
     <!-- Bootstrap -->
     <link href="https://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
@@ -28,13 +29,17 @@
   <body>
 	<div class="container">
 		<section>
-			<article class="theArticle col-md-10">
-				<div class="theArticle-title">
-					<h1><?php echo $value['title'];?></h1>
-					<hr/>
-				</div>
-				<div class="theArticle-container">
-					<?php echo $value['article_container'];?>
+			<article class="thelist col-md-10">
+				
+				<?php 
+					//循环输出文章列表
+					foreach($theArticleArray as $item => $value){
+						$theList .= '<div class="thelist-k"><div class="thelist-k-title"><h4>'.$value['title'].'</h4></div><div class="thelist-k-container">'.$value['article_short'].'</div></div><hr/>';					
+					}
+					echo $theList;
+					//由于$theList是使用字符串连接，因而在输出完后，需要将字符串清除，以免得到之前获取的数据
+					$theList = '';
+				?>	
 				</div>
 			</article>
 			

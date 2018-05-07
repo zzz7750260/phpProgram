@@ -752,6 +752,7 @@ function adminArticle(){
 					data.forEach(function(item){
 						var itemHtml = '<option value='+item.cid+'>'+item.categoryname+'</option>';
 						$(itemHtml).appendTo("#ob-select-category-s");
+						
 					})
 					
 				}

@@ -11,6 +11,15 @@ class theCategory{
 		$this->listArray = $listCategoryArray;		
 		//$this->getListCategory();
 		//echo "外部调用";
+		
+		//组装返回的array数据
+		//$listCategoryArrayReturn = array(
+		//	'status' => 200,
+		//	'msg' => '分类列表返回成功',
+		//	'result' => array(
+		//		'articleNum' =>
+		//	)
+		//);
 		$listCategoryJson = json_encode($this->getListCategory());
 		print_r($listCategoryJson);
 		//print_r($this->getListCategory());
