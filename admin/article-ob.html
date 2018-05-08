@@ -270,8 +270,9 @@
 		资讯列表
 		<a class="btn btn-success radius r" style="line-height:1.6em;margin-top:3px" href="javascript:location.replace(location.href);" title="刷新" ><i class="Hui-iconfont">&#xe68f;</i></a>
 	</nav>
-	<div class="Hui-article">
+	<div class="Hui-articles">
 		<div class="ob-select-category">
+			<h4>文章类静态化</h4>
 			<br/>
 			<span>选择需要静态化的分类：</span>
 			<span>
@@ -284,8 +285,39 @@
 		<div>
 			<input class="btn btn-default" type="button" value="静态化" id="get-ob">
 		</div>
-	
+		<hr/>
 	</div>
+	
+	<div class="Hui-articles">
+		<div class="ob-select-category">
+			<h4>列表类静态化</h4>
+			<br/>
+			<span>选择需要静态化的分类：</span>
+			<span>
+				<select class="ob-select-category-lb" id="ob-select-category-lb">
+					<option value="0" select = "selected">全选</option>
+				</select>
+			</span>
+		</div>
+		
+		<div>
+			<input class="btn btn-default" type="button" value="静态化" id="get-lb-ob">
+		</div>
+		<hr/>
+	</div>	
+	
+	<div class="Hui-articles">
+		<div class="ob-select-category">
+			<h4>首页静态化</h4>
+			
+		</div>
+		
+		<div>
+			<input class="btn btn-default" type="button" value="静态化" id="get-index-ob">
+		</div>
+		<hr/>
+	</div>	
+	
 </section>
 
 <!--_footer 作为公共模版分离出去-->

@@ -332,15 +332,23 @@ class theArticleClass{
 				 //检测源码类型，解决乱码问题
 				 //$encode = mb_detect_encoding($info, array("ASCII",'UTF-8',"GB2312","GBK",'BIG5'));
 				 //echo $encode;
-				file_put_contents(APP_PATH3.'/article/'.$theArticleArray[0]['categoryyw'].'/'.$theArticleArray[0]['categoryyw'].'-'.$i.'.html', utf8_encode($info));
+				file_put_contents(APP_PATH3.'/article/'.$theArticleArray[0]['categoryyw'].'/'.$theArticleArray[0]['categoryyw'].'-'.$i.'.html', $info);
 				 
 				//输出完后，将缓存清除
 				ob_clean();
 				 
 				//echo "<br/><hr/>";					
 			}
-									
-				
+			
+			//返回给前端的信息
+			$returnArray = array(
+				"status" => 200,
+				"msg" => '列表页静态化成功',
+				"result" => 'ok'
+			);
+			//将数组转换为json
+			$returnJson = json_encode($returnArray);
+			print_r($returnJson);
 		}
 		
 		

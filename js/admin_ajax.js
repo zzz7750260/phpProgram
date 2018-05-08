@@ -752,7 +752,7 @@ function adminArticle(){
 					data.forEach(function(item){
 						var itemHtml = '<option value='+item.cid+'>'+item.categoryname+'</option>';
 						$(itemHtml).appendTo("#ob-select-category-s");
-						
+						$(itemHtml).appendTo("#ob-select-category-lb");
 					})
 					
 				}
@@ -781,6 +781,48 @@ function adminArticle(){
 						console.log(data);						
 					}
 				})
+			})
+			
+			$("#ob-select-category-lb").change(function(){
+				var lbSelectVal = $("#ob-select-category-lb").find("option:selected").val();
+				//将作用域内部的选中值传递给外部
+				that.lbSelectVal = lbSelectVal;		
+				alert("选中的分类值"+lbSelectVal);
+			})
+			
+			$("#get-lb-ob").click(function(){
+				alert("选中的外部分类值"+that.lbSelectVal);			
+				//向后台提交静态化请求
+				if(that.lbSelectVal != 0){
+					$.ajax({
+						url:'../server/ajax/thearticle.php',
+						type:'get',
+						data:{turl:"frontArticleListOb",getCategoryId:that.lbSelectVal,getLimit:2,getOb:"ob"},
+						dataType:'json',
+						success:function(data){
+							console.log(data);
+						}
+					})
+				}
+				//that.lbSelectVal为0时，为全选，因而需要对select进行便利，并对所有的分类值进行请求
+				if(that.lbSelectVal == 0){
+					$("#ob-select-category-lb").find("option").each(function(){
+						var lbAllSelect = $(this).val();
+						alert("全选的值为" + lbAllSelect);
+						//对所有的分类进行静态化处理
+						if(lbAllSelect != 0){
+							$.ajax({
+								url:'../server/ajax/thearticle.php',
+								type:'get',
+								data:{turl:"frontArticleListOb",getCategoryId:lbAllSelect,getLimit:2,getOb:"ob"},
+								dataType:'json',
+								success:function(data){
+									console.log(data);
+								}
+							})
+						}
+					})					
+				}
 			})
 		}
 
