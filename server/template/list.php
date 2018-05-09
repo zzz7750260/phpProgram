@@ -32,31 +32,51 @@
   <body>
 	<div class="container">
 		<?php 
-		include('c-menu.php');?>
+		include_once('c-menu.php');?>
 		<section>
-			<article class="thelist col-md-10">
+			<div class="row">
+				<article class="thelist col-md-10">
+					
+					<?php 
+						//循环输出文章列表
+						foreach($theArticleArray as $item => $value){
+							$theList .= '<div class="thelist-k"><div class="thelist-k-title"><h4>'.$value['title'].'</h4></div><div class="thelist-k-container">'.$value['article_short'].'</div></div><hr/>';					
+						}
+						echo $theList;
+						//由于$theList是使用字符串连接，因而在输出完后，需要将字符串清除，以免得到之前获取的数据
+						$theList = '';
+					?>	
+					
+				</article>
 				
-				<?php 
-					//循环输出文章列表
-					foreach($theArticleArray as $item => $value){
-						$theList .= '<div class="thelist-k"><div class="thelist-k-title"><h4>'.$value['title'].'</h4></div><div class="thelist-k-container">'.$value['article_short'].'</div></div><hr/>';					
-					}
-					echo $theList;
-					//由于$theList是使用字符串连接，因而在输出完后，需要将字符串清除，以免得到之前获取的数据
-					$theList = '';
-				?>	
-				
-			</article>
-			
-			<aside class="col-md-2">
-				<?php //print_r($articleUtil->getRandArticleList(5,2));
-					$getListArray = $articleUtil->getRandArticleList(5,2);
-					foreach($getListArray as $key =>$value ){
-						$listHtml .= '<div class="side-list"><div class="side-list-title">'.$value['title'].'</div><div class="side-list-container">'.$value['article_short'].'</div></div>';
-					}
-					echo $listHtml;
-				?>
-			</aside>
+				<aside class="col-md-2">
+					<?php //print_r($articleUtil->getRandArticleList(5,2));
+						$getListArray = $articleUtil->getRandArticleList(5,2);
+						foreach($getListArray as $key =>$value ){
+							$listHtml .= '<div class="side-list"><div class="side-list-title">'.$value['title'].'</div><div class="side-list-container">'.$value['article_short'].'</div></div>';
+						}
+						echo $listHtml;
+					?>
+				</aside>
+			</div>
+			<div>
+				<ul class="pager">
+					<li><?php //echo "总共页数：".$pageNumZ?></li>
+					<li><a href="#">上一页</a></li>
+					<li><a href="#">下一页</a></li>
+					<li>
+						<select>
+							<?php 
+								$pageNumS = $pageNumZ;
+								for($r = 0;$r<$pageNumS;$r++){
+									$p = $r+1;
+									echo '<option><a href="#">第'.$p.'页</option>';
+								}
+							?>
+						</select>
+					</li>
+				</ul>
+			</div>
 			
 		</section>
 		

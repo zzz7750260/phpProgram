@@ -336,7 +336,7 @@ class theArticleClass{
 				 
 				//输出完后，将缓存清除
 				ob_clean();
-				 
+				 $this->s = $i;
 				//echo "<br/><hr/>";					
 			}
 			
@@ -344,7 +344,7 @@ class theArticleClass{
 			$returnArray = array(
 				"status" => 200,
 				"msg" => '列表页静态化成功',
-				"result" => 'ok'
+				"result" => $this->s,
 			);
 			//将数组转换为json
 			$returnJson = json_encode($returnArray);
