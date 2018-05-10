@@ -308,11 +308,8 @@ class Uploader
         if (substr($fullname, 0, 1) != '/') {
             $fullname = '/' . $fullname;
         }
-		//修改图片上传路径
-        //return $rootPath . $fullname;(原)
-		//echo substr($fullname,3)."<br><hr>";
-		//echo $rootPath .'/program/'. substr($fullname,3);
-		return $rootPath .'/program/'. substr($fullname,3);
+
+        return $rootPath . $fullname;
     }
 
     /**

@@ -62,15 +62,29 @@
 			<div>
 				<ul class="pager">
 					<li><?php //echo "总共页数：".$pageNumZ?></li>
-					<li><a href="#">上一页</a></li>
-					<li><a href="#">下一页</a></li>
+					
+					<?php
+						if($i == 0){
+							$pageHtml = '<li><a href="../../article/'.$theArticleArray[0]['categoryyw'].'/'.$theArticleArray[0]['categoryyw'].'-'.($i+1).'.html">下一页</a></li></li>';
+						}
+						if($i > 0 && $i< $pageNumZ){
+							$pageHtml = '<li><a href="../../article/'.$theArticleArray[0]['categoryyw'].'/'.$theArticleArray[0]['categoryyw'].'-'.($i-1).'.html">上一页</a></li></li><li><a href="../../article/'.$theArticleArray[0]['categoryyw'].'/'.$theArticleArray[0]['categoryyw'].'-'.($i+1).'.html">下一页</a></li></li>';
+							
+						}						
+						if(($i+1) == $pageNumZ){
+							$pageHtml = '<li><a href="../../article/'.$theArticleArray[0]['categoryyw'].'/'.$theArticleArray[0]['categoryyw'].'-'.($i-1).'.html">上一页</a></li></li>';
+						}	
+						echo $pageHtml;
+					?>
+					<!--<li><a href="#">上一页</a></li>
+					<li><a href="#">下一页</a></li>-->
 					<li>
 						<select>
 							<?php 
 								$pageNumS = $pageNumZ;
 								for($r = 0;$r<$pageNumS;$r++){
 									$p = $r+1;
-									echo '<option><a href="#">第'.$p.'页</option>';
+									echo '<option><a href="../../article/'.$theArticleArray[0]['categoryyw'].'/'.$theArticleArray[0]['categoryyw'].'-'.($p).'.html">第'.$p.'页</option>';
 								}
 							?>
 						</select>
