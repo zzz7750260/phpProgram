@@ -54,4 +54,4 @@ function getChildMenu($fArr,$fid){
 	return $cHtml;
 }
 
-getMenu();
+

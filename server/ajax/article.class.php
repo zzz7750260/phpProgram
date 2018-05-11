@@ -2,6 +2,13 @@
 ob_start();
 include('../system.util.php');
 class theArticleClass{
+	
+	//获取当前的路径	
+	function getAppPath(){
+		define("THEAPPPATH",dirname(dirname(dirname(__FILE__))));
+		return THEAPPPATH;
+	}
+	
 	function addArticle(){
 		$theTitle = $_POST['article-title'];
 		$articleShortTitle = $_POST['article-short-title'];
@@ -46,6 +53,67 @@ class theArticleClass{
 		$resJson = json_encode($resArray);	
 		print_r($resJson);
 				
+	}
+	
+	//接受上传文章封面,并存文件
+	function getBaseImgSave(){
+		//获取传递过来的图片名字
+		$theImgName = $_POST['getImgName'];
+		
+		//获取传递过来的图片base64
+		$theBaseImg = $_POST['getBaseImg'];		
+		//设置需要上传的路径
+		$uploadUrl = '/upload/cover/';
+		//获取根目前根路径
+		//echo $this->getAppPath().'<br/>';
+		$picRootPath = $this->getAppPath();
+		
+		//将获取的base64进行图片数据的提取
+		//$base64=preg_replace("/^(data:s*image/(w+);base64,)/","",$base64); 
+		if(preg_match('/^(data:\s*image\/(\w+);base64,)/', $theBaseImg, $result)){
+			//preg_match('/^(data:\s*image\/(\w+);base64,)/', $theBaseImg, $result);
+			print_r($result);
+			//echo("<br/>=====================<br/>");
+			//获取上传图片的类型
+			$type = $result[2];	
+			//将获取的base64数据转换成图片数据，并用file_put_contents存储到文件夹中
+			echo $type;
+			//检测是否为图片的常见类型
+			if(in_array($type,array('pjpeg','jpeg','jpg','gif','bmp','png'))){
+				//将图片进行base64数据转换
+				$theImg = base64_decode(str_replace($result[1],'',$theBaseImg));
+				//echo $theImg;
+				
+				//根据日期获取图片文件的名称
+				//$picName = date('YmdHis_').'.'.$type;
+				
+				//组成图片文件的名称
+				$picName = $theImgName;
+				
+				//通过file_put_contents对文件进行存储
+				
+				//组成需要具体生成的图片
+				$thePic = $picRootPath . $uploadUrl . $picName; 
+				//echo $thePic;
+				//组件返回数据
+				if(file_put_contents($thePic,$theImg)){
+					$baseArray = array(
+						"status" => 200,
+						'msg' => "封面上传成功",
+						'result' => $thePic,
+					);
+				}
+				else{
+					$baseArray = array(
+						"status" => 400,
+						'msg' => "封面上传失败",
+						'result' => '',
+					);
+				}
+				print_r($baseArray);
+			}
+		}
+		
 	}
 	
 	//后端展示文章列表
@@ -379,6 +447,9 @@ class theArticleClass{
 		}
 		if($turl == 'frontArticleListOb'){
 			$this->frontArticleListOb();
+		}
+		if($turl == 'getBaseImgSave'){
+			$this->getBaseImgSave();
 		}
 	}
 }

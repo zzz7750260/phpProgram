@@ -32,7 +32,9 @@
   <body>
 	<div class="container">
 		<?php 
-		include_once('c-menu.php');?>
+		include_once('c-menu.php');
+		getMenu();
+		?>
 		<section>
 			<div class="row">
 				<article class="thelist col-md-10">
@@ -40,7 +42,7 @@
 					<?php 
 						//循环输出文章列表
 						foreach($theArticleArray as $item => $value){
-							$theList .= '<div class="thelist-k"><div class="thelist-k-title"><h4>'.$value['title'].'</h4></div><div class="thelist-k-container">'.$value['article_short'].'</div></div><hr/>';					
+							$theList .= '<div class="thelist-k"><a href="../../article/'.$value['categoryyw'].'/'.$value['aid'].'.html"><div class="thelist-k-c col-md-9"><div class="thelist-k-title"><h4>'.$value['title'].'</h4></div><div class="thelist-k-container">'.$value['article_short'].'</div></div><div class="thelist-k-img col-md-3"><img src="../../upload/cover/'.$value['article_img'].'" class="img-responsive" ></div></a></div><hr/>';					
 						}
 						echo $theList;
 						//由于$theList是使用字符串连接，因而在输出完后，需要将字符串清除，以免得到之前获取的数据
@@ -71,8 +73,15 @@
 							$pageHtml = '<li><a href="../../article/'.$theArticleArray[0]['categoryyw'].'/'.$theArticleArray[0]['categoryyw'].'-'.($i-1).'.html">上一页</a></li></li><li><a href="../../article/'.$theArticleArray[0]['categoryyw'].'/'.$theArticleArray[0]['categoryyw'].'-'.($i+1).'.html">下一页</a></li></li>';
 							
 						}						
-						if(($i+1) == $pageNumZ){
-							$pageHtml = '<li><a href="../../article/'.$theArticleArray[0]['categoryyw'].'/'.$theArticleArray[0]['categoryyw'].'-'.($i-1).'.html">上一页</a></li></li>';
+						if(($i+1) == $pageNumZ)
+						{
+							if($pageNumZ == 1){
+								$pageHtml = '<li><a href="../../article/'.$theArticleArray[0]['categoryyw'].'/'.$theArticleArray[0]['categoryyw'].'-'.($i).'.html">当前页</a></li></li>';	
+								
+							}
+							if($pageNumZ > 1){
+								$pageHtml = '<li><a href="../../article/'.$theArticleArray[0]['categoryyw'].'/'.$theArticleArray[0]['categoryyw'].'-'.($i-1).'.html">上一页</a></li></li>';
+							}							
 						}	
 						echo $pageHtml;
 					?>

@@ -541,18 +541,41 @@ function adminArticle(){
 			//图片上传预览,将图片转成base64
 			$("#article-fileList").change(function(){
 				var theFile = this.files[0];
+				console.log("==============图片中的信息=============")
+				console.log(theFile);
 				reader = new FileReader();
 				reader.readAsDataURL(theFile);//调用自带方法进行转换    
 				reader.onload = function(){
 					var theImgSrc = reader.result;
 					alert(theImgSrc);	
 					$(".show-picture").attr("src",theImgSrc);
+					//将获取到的图片base64传递到外部对象
+					that.baseImgurl = theImgSrc;
 				}
 				//同时获取上传图片的名称
 				//this.GlobalVar.pictureName = theFile['name'];
 				that.pictureName = theFile['name'];
 				//console.log("图片名称"+this.GlobalVar.pictureName);
 				console.log("图片名称"+that.pictureName);
+			})
+			
+			//上传封面图
+			$("#article-pic-push").click(function(){
+				//获取图片的base64
+				var baseImg = that.baseImgurl;
+				//获取图片的名称
+				var imgName = that.pictureName;
+				alert(baseImg);
+				//将base64向后台提交
+				$.ajax({
+					url:'../server/ajax/thearticle.php',
+					data:{turl:'getBaseImgSave',getBaseImg:baseImg,getImgName:imgName},
+					type:'post',
+					//dataType:'json',
+					success:function($data){
+						console.log($data);
+					}
+				})
 			})
 			
 			$("#btn-save").on("click",function(){
@@ -563,6 +586,7 @@ function adminArticle(){
 				saveArticle("public");
 				
 			});
+			
 			
 			//提交文档的方法，是正式发布还是存草稿
 			
