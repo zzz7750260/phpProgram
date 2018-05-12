@@ -3,6 +3,7 @@ $(document).ready(function(){
 	adminRoleAjax();
 	adminCategory();
 	adminArticle();
+	systemControl();
 })
 
 
@@ -858,6 +859,41 @@ function adminArticle(){
 		
 }
 
+//用户系统管理
+function systemControl(){
+	var theSystem = {
+		setIndex:function(){
+			var getInfoArr = {};
+			//点击获取网站的信息
+			$("#system-index-save").click(function(){
+				$(".theSystemInfo").each(function(){
+					var theValue = $(this).find(".value-v").val();
+					//alert(theValue);
+					//获取name的值
+					var theName = $(this).find(".value-v").attr('name');
+					//alert(theName);
+					getInfoArr[theName] = theValue;
+				})
+				getInfoArr['turl'] = "setIndexInfo";
+				console.log(getInfoArr);
+				//ajax向后端提交信息
+				$.ajax({
+					url:'../server/ajax/theindex.php',
+					data:getInfoArr,
+					type:'post',
+					//dataType:'json',
+					success:function(data){
+						console.log("===============提交网站信息返回的数据===========");
+						console.log(data);
+					}
+				})
+			})
+
+			
+		}		
+	}
+	theSystem.setIndex();
+}
 
 //正则表达式分类
 function util(){

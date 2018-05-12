@@ -13,7 +13,7 @@
 
     <!-- Bootstrap -->
     <link href="https://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
-
+    <link href="../../css/common.css" rel="stylesheet">
     <!-- HTML5 shim 和 Respond.js 是为了让 IE8 支持 HTML5 元素和媒体查询（media queries）功能 -->
     <!-- 警告：通过 file:// 协议（就是直接将 html 页面拖拽到浏览器中）访问页面时 Respond.js 不起作用 -->
     <!--[if lt IE 9]>
@@ -28,7 +28,7 @@
 		?>
 		<div class="jumbotron">
 			<div class="container">
-				<h1>欢迎登陆页面！</h1>
+				<h1>课间十分钟</h1>
 				<p>这是一个超大屏幕（Jumbotron）的实例。</p>
 				<p><a class="btn btn-primary btn-lg" role="button">
 				 学习更多</a>
@@ -37,10 +37,29 @@
 		</div>
 		
 		<section>
-			<?php 
-				$indexListSql = "select a.*,b.* from article as a left join category as b on a.category_id = b.cid where article_status = ''";
-				$listHtml = 
-			?>
+			<div class="container list-container">
+				<div class="list-left col-md-9">
+				<?php 
+					$indexListSql = "select a.*,b.* from article as a left join category as b on a.category_id = b.cid where article_status = 'public' limit 0,10";
+					
+					$indexListSql_db = mysql_query($indexListSql);				
+					$indexArray = array();	
+					
+					while($indexListSql_db_array = mysql_fetch_assoc($indexListSql_db)){
+						$indexArray[] = $indexListSql_db_array;
+					}
+					//print_r($indexArray);
+					foreach($indexArray as $key => $value){
+						//html渲染
+						$listHtml .= '<div class="list-container-k row"><a href="../../article/'.$value['categoryyw'].'/'.$value['aid'].'.html"><div class="list-container-k-left col-md-9"><div class="list-container-k-left-title"><h4>'.$value['title'].'</h4></div><div class="list-container-k-left-container">'.$value['article_short'].'</div></div><div class="list-container-k-right col-md-3"><img src="../../upload/cover/'.$value['article_img'].'" class="img-responsive"></div><div class="clear"></div><hr/></a></div>';  				
+					}
+					echo $listHtml;
+				?>
+				</div>
+				<div class="list-right col-md-3">
+				
+				</div>
+			</div>
 		</section>
     <!-- jQuery (Bootstrap 的所有 JavaScript 插件都依赖 jQuery，所以必须放在前边) -->
     <script src="https://cdn.bootcss.com/jquery/1.12.4/jquery.min.js"></script>
