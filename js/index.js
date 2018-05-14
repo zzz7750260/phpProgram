@@ -1,6 +1,6 @@
 $(document).ready(function(){
 	loginYZ();
-	
+	userControl();
 })
 
 //登录查询用户名是否存在
@@ -57,6 +57,32 @@ function loginYZ(){
 	
 	$(".tpassword").focus(function(){
 		$(".passwordis").text("");		
-	})
+	})	
+	
+}
+
+function userControl(){
+	var theClick = {
+		//搜索提交
+		searchClick:function(){
+			//设置搜索的方法
+			function theSearch(inputVal){
+				//获取连接
+				var theUrl = window.location.href;
+				//页面跳转
+				window.location.href= theUrl+"server/template/search.php?&getPage=0&getLimit=2&getKeyWord="+inputVal; 
+			}
+			
+			//进行相关操作
+			$('.the-button').on('click',function(){
+				//获取input的value值
+				var theInputV = $('.form-control').val()
+				alert(theInputV);
+				//调用跳转
+				theSearch(theInputV)
+			})
+		}	
+	}
+	theClick.searchClick()
 	
 }

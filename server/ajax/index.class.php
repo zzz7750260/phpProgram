@@ -1,5 +1,12 @@
 <?php
 class theIndex{		
+	//设置文件的路径
+	function getTheParh(){
+		define('THEPART', dirname(dirname(dirname(__FILE__))));
+		//echo THEPART;
+		return THEPART;
+	}
+	
 	//设置网站信息后端接口
 	function setIndexInfo(){
 		//获取传递过来的用户信息
@@ -75,6 +82,22 @@ class theIndex{
 		print_r($returnGetInfArray);
 	}
 	
+	//主页静态化请求
+	function obHtml(){
+		//开启缓冲区功能
+		ob_start();
+		//引入主页的模板
+		include('../template/index-template.php');
+		//获取文件存放的路径
+		$thePath = $this->getTheParh();
+		//是否进行静态化处理
+		$theOb = $_GET['getob'];
+		if($theOb == 'ob'){
+			//将数据存入文件
+			file_put_contents($thePath.'/index.html',ob_get_clean());
+		}		
+	}
+	
 	function returnIndex($turl){
 		if($turl == 'setIndexInfo'){
 			$this->setIndexInfo();
@@ -82,5 +105,12 @@ class theIndex{
 		if($turl == 'getIndexInfo'){
 			$this->getIndexInfo();
 		}
+		if($turl =='obHtml'){
+			$this->obHtml();
+		}
 	}	
 }
+
+//测试
+//$a = new theIndex();
+//$a->getTheParh();

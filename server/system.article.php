@@ -2,9 +2,16 @@
 include_once('system.mysql.int.php');
 class articleUtil{	
 	//随机获取文章数
-	function getRandArticleList($categoryId,$limitNum){
-		$listSql = "select a.* from article as a join (select round(rand()*(select max(aid) from article)) as aid) as b on a.aid >= b.aid where category_id = '$categoryId' order by a.aid ASC limit $limitNum";
+	function getRandArticleList($categoryId,$limitNum,$isRand = 'rand'){
 		
+		//默认为获取随机，可进行设置
+		if($isRand = 'rand'){
+			$listSql = "select a.* from article as a join (select round(rand()*(select max(aid) from article)) as aid) as b on a.aid >= b.aid where category_id = '$categoryId' order by a.aid ASC limit $limitNum";
+		}
+		if($isRand == 'common'){
+			$listSql = "select * from article where category_id = '$categoryId' order by ASC limit $limitNum";
+			
+		}
 		//$listSql = "SELECT * FROM `table`  AS t1 JOIN (SELECT ROUND(RAND() * (SELECT MAX(id) FROM `table`)) AS id) AS t2 WHERE t1.id >= t2.id";
 		
 		$listSql_db = mysql_query($listSql);

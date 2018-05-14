@@ -1,7 +1,13 @@
 <!DOCTYPE html>
 <?php 
 	include_once('../system.mysql.int.php');
-	
+	//查询网站的设置信息
+	$getIndexSql = "select * from web_info where 1 = 1";
+	$getIndexSql_db = mysql_query($getIndexSql);
+	$getIndexArray = array();
+	while($getIndexSql_db_array = mysql_fetch_assoc($getIndexSql_db)){
+		$getIndexArray[] =  $getIndexSql_db_array;
+	}	
 ?>
 <html lang="zh-CN">
   <head>
@@ -9,11 +15,12 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <!-- 上述3个meta标签*必须*放在最前面，任何其他内容都*必须*跟随其后！ -->
-    <title>Bootstrap 101 Template</title>
-
+    <title><?php echo $getIndexArray[0]['web_title'];?></title>
+	<meta name="keywords" content="<?php echo $getIndexArray[0]['web_keyword']?>" />
+	<meta name="description" content="<?php echo $getIndexArray[0]['web_short']?>" />
     <!-- Bootstrap -->
     <link href="https://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
-    <link href="../../css/common.css" rel="stylesheet">
+    <link href="./css/common.css" rel="stylesheet">
     <!-- HTML5 shim 和 Respond.js 是为了让 IE8 支持 HTML5 元素和媒体查询（media queries）功能 -->
     <!-- 警告：通过 file:// 协议（就是直接将 html 页面拖拽到浏览器中）访问页面时 Respond.js 不起作用 -->
     <!--[if lt IE 9]>
@@ -28,13 +35,32 @@
 		?>
 		<div class="jumbotron">
 			<div class="container">
-				<h1>课间十分钟</h1>
+				<h1><?php echo  $getIndexArray[0]['web_name'];?></h1>
 				<p>这是一个超大屏幕（Jumbotron）的实例。</p>
 				<p><a class="btn btn-primary btn-lg" role="button">
 				 学习更多</a>
 				</p>
 			</div>
 		</div>
+		<section>
+			<div class="container">
+				<div style="padding: 10px 100px 10px;">
+					<form class="bs-example bs-example-form" role="form">
+						<div class="row">
+							<div class="col-md-6 col-md-offset-3">
+								<div class="input-group">
+									<input type="text" class="form-control" name="getKeyWord" >
+									<span class="input-group-btn">
+										<button class="btn btn-default the-button" type="button">Go!</button>
+										<!--<input class="btn btn-default" type="submit" value="Submit" />-->
+									</span>
+								</div><!-- /input-group -->
+							</div><!-- /.col-lg-6 -->
+						</div><!-- /.row -->
+					</form>
+				</div>
+			</div>
+		</section>
 		
 		<section>
 			<div class="container list-container">
@@ -51,7 +77,7 @@
 					//print_r($indexArray);
 					foreach($indexArray as $key => $value){
 						//html渲染
-						$listHtml .= '<div class="list-container-k row"><a href="../../article/'.$value['categoryyw'].'/'.$value['aid'].'.html"><div class="list-container-k-left col-md-9"><div class="list-container-k-left-title"><h4>'.$value['title'].'</h4></div><div class="list-container-k-left-container">'.$value['article_short'].'</div></div><div class="list-container-k-right col-md-3"><img src="../../upload/cover/'.$value['article_img'].'" class="img-responsive"></div><div class="clear"></div><hr/></a></div>';  				
+						$listHtml .= '<div class="list-container-k row"><a href="http://'.$_SERVER['HTTP_HOST'].'/program/article/'.$value['categoryyw'].'/'.$value['aid'].'.html"><div class="list-container-k-left col-md-9"><div class="list-container-k-left-title"><h4>'.$value['title'].'</h4></div><div class="list-container-k-left-container">'.$value['article_short'].'</div></div><div class="list-container-k-right col-md-3"><img src="http://'.$_SERVER['HTTP_HOST'].'/program/upload/cover/'.$value['article_img'].'" class="img-responsive"></div><div class="clear"></div><hr/></a></div>';  				
 					}
 					echo $listHtml;
 				?>
@@ -65,5 +91,7 @@
     <script src="https://cdn.bootcss.com/jquery/1.12.4/jquery.min.js"></script>
     <!-- 加载 Bootstrap 的所有 JavaScript 插件。你也可以根据需要只加载单个插件。 -->
     <script src="https://cdn.bootcss.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+	
+	<script src="./js/index.js"></script>
   </body>
 </html>
