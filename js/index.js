@@ -81,8 +81,46 @@ function userControl(){
 				//调用跳转
 				theSearch(theInputV)
 			})
-		}	
+		},
+		
+		//评论提交
+		commentPush:function(){
+			$('#comment-push').click(function(){				
+				//获取data中的文章id
+				var articleId = $('.the-comment-set').data("article")
+				alert(articleId);
+				
+				//声明获取信息的数组
+				var commentArray = {};
+				//获取评论中的相关信息
+				$(".the-comment-set").find(".comment-v").each(function(){
+					var theName = $(this).attr("name");
+					var theVal = $(this).val();
+					commentArray[theName] = theVal;
+				})
+				
+				commentArray['articleId'] = articleId;
+				commentArray['turl'] = "insertComment";
+				console.log("=============获取到的评论信息===========");
+				console.log(commentArray);
+				
+				//将获取到的信息提交到后台
+				$.ajax({
+					url:'/program/server/ajax/thecomment.php',
+					type:'post',
+					data:commentArray,
+					dataType:'json',
+					success:function(data){
+						console.log("=============插入信息返回的状态=============");
+						console.log(data);
+					}
+				})
+				
+			})		
+		}
+		
 	}
-	theClick.searchClick()
+	theClick.searchClick();
+	theClick.commentPush();
 	
 }

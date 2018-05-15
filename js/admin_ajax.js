@@ -849,6 +849,19 @@ function adminArticle(){
 					})					
 				}
 			})
+			
+			//首页静态化
+			$('#get-index-ob').click(function(){
+				$.ajax({
+					url:'../server/ajax/theindex.php',
+					data:{turl:'obHtml',getob:'ob'},
+					type:'get',
+					dataType:'json',
+					success:function(data){
+						console.log(data);
+					}
+				})				
+			})
 		}
 
 	}

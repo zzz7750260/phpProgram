@@ -88,13 +88,17 @@ $theKeyWord = $_GET['getKeyWord'];
 							//获取当前页面
 							echo $thePage;
 							if($thePage == 0){								
-								$searchPage = '<li><a href="./search.php?&getPage='.$thePageP.'&getLimit=2">下一页</a></li>';								
+								$searchPage = '<li><a href="./search.php?&getPage='.$thePageP.'&getLimit=2&getKeyWord='.$theKeyWord.'">下一页</a></li>';
+								
 							}
 							if($thePage > 0 && $thePage < $searchPageSize){
-								$searchPage = '<li><a href="./search.php?&getPage='.$thePageS.'&getLimit=2">上一页</a></li><li><a href="./search.php?&getPage='.$thePageP.'&getLimit=2">下一页</a></li>';
+								$searchPage = '<li><a href="./search.php?&getPage='.$thePageS.'&getLimit=2&getKeyWord='.$theKeyWord.'">上一页</a></li><li><a href="./search.php?&getPage='.$thePageP.'&getLimit=2&getKeyWord='.$theKeyWord.'">下一页</a></li>';
 							}
 							if(($thePage+1) == $searchPageSize){
-								$searchPage = '<li><a href="./search.php?&getPage='.$thePageS.'&getLimit=2">上一页</a></li>';								
+								$searchPage = '<li><a href="./search.php?&getPage='.$thePageS.'&getLimit=2&getKeyWord='.$theKeyWord.'">上一页</a></li>';	
+								if($searchPageSize == 1){
+									$searchPage = '<li><a href="./search.php?&getPage='.$thePage.'&getLimit=2&getKeyWord='.$theKeyWord.'">当前页</a></li>';	
+								}
 							}
 							echo $searchPage;
 						?>

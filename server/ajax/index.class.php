@@ -95,7 +95,17 @@ class theIndex{
 		if($theOb == 'ob'){
 			//将数据存入文件
 			file_put_contents($thePath.'/index.html',ob_get_clean());
-		}		
+		}	
+		//组建返回的数据
+		$obHtmlReturnArray = array(
+			status => 200,
+			msg => "首页静态化成功",
+			result => ''
+		);
+		
+		//返回给前端的数据
+		$obHtmlReturnJson = json_encode($obHtmlReturnArray); 
+		print_r($obHtmlReturnJson);
 	}
 	
 	function returnIndex($turl){
