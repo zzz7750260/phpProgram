@@ -28,6 +28,10 @@
     <![endif]-->
   </head>
   <body>
+	<?php 
+		include_once('c-menu.php');
+		getMenu();
+	?>
 	<div class="container">
 		<section>
 			<article class="theArticle col-md-10">
@@ -53,8 +57,21 @@
 		</section>
 		
 		<section>
-			<?php include('c-comment-input.php');?>
-		
+			<div class="article-comment-input">
+			<?php 
+				if($value['commit_status'] == true){
+					include('c-comment-input.php');					
+				}
+				else{
+					echo '<div data-article="">该文章不支持评论</div>';				
+				}
+						
+			?>
+			<div class="article-comment-list">
+				<ul class="article-comment-list-k">
+				
+				</ul>
+			</div>		
 		</section>
 		
 	</div>

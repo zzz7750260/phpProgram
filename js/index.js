@@ -1,6 +1,7 @@
 $(document).ready(function(){
 	loginYZ();
-	userControl();
+	autoLoad();
+	userControl();	
 })
 
 //登录查询用户名是否存在
@@ -62,6 +63,7 @@ function loginYZ(){
 }
 
 function userControl(){
+	that = this;
 	var theClick = {
 		//搜索提交
 		searchClick:function(){
@@ -116,11 +118,90 @@ function userControl(){
 					}
 				})
 				
-			})		
+			})
+			
+
+			//评论回复
+			//需要用$(document)进行重新绑定
+			$(document).on('click','.article-comment-list-k-li-put',function(){
+				//alert("aa");
+				
+				var commentId = $(this).parent().data("commentid");
+				var articleId = $(this).parent().data("articleid");
+				console.log("评论的id："+commentId);
+				console.log("文章的id："+articleId);
+				
+				$(".the-reply").css("display","block");		
+				
+				//提交评论的回复
+				$("#reply-push").click(function(){
+					//声明需提交的数据组
+					var replyArray = {};
+					
+					//获取评论回复的相关信息
+					$('.the-reply').find('.reply-v').each(function(){
+						//获取每项的name
+						var replyName = $(this).attr("name");
+						
+						//获取每项的value
+						var replyVal = $(this).val();
+						replyArray[replyName] = replyVal;
+					})
+					replyArray['turl'] = 'insertComment';
+					replyArray['theCPid'] = commentId;
+					replyArray['articleId'] = articleId;
+					
+					console.log("===========组装的数据值为===========");
+					console.log(replyArray);
+					
+					//向后端提交ajax
+					$.ajax({
+						url:"../../server/ajax/thecomment.php",
+						type:"post",
+						data:replyArray,
+						dataType:"json",
+						success:function(data){
+							console.log(data);
+						}					
+					})
+				})				
+			})						
+			
 		}
-		
 	}
 	theClick.searchClick();
 	theClick.commentPush();
 	
+}
+
+//打开时自动加载的
+function autoLoad(){
+	var theLoad = {
+		//文章页面自动加载
+		commentLoad:function(){
+			//获取加载评论对应的文章id
+			var articleId = $('.the-comment-set').data("article")
+			alert(articleId);
+			if(articleId){
+				$.ajax({
+					url:"../../server/ajax/thecomment.php",
+					type:"get",
+					data:{turl:"listComment",getArticleId:articleId,getCommentPage:0,getCommentLimit:2},
+					dataType:'json',
+					success:function(data){
+						console.log(data);
+						//遍历data组装html
+						data.result.forEach(function(item){
+							//data-commentid 存储评论的对应id
+							//data-articleid 存储评论的对应的文章的id
+							var listHtml = '<li class="article-comment-list-k-li" data-commentid="'+item['cmid']+'" data-articleid="'+item['cmtid']+'"><div class="">'+item['cm_comment']+'</div><input type="button" value="提交评论" class="article-comment-list-k-li-put"><br/><hr/</li>';
+							$(listHtml).appendTo(".article-comment-list-k");
+						})				
+					}
+				})				
+			}						
+		}
+		
+	}
+	theLoad.commentLoad();
 }

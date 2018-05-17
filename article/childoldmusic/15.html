@@ -20,7 +20,7 @@
     <![endif]-->
   </head>
   <body>
-	<div class="container">
+	<nav class="navbar navbar-default" role="navigation"><div class="container-fluid"><div class="navbar-header"><a class="navbar-brand" href="#">课间十分钟</a></div><div><ul class="nav navbar-nav"><li><a href="http://localhost/program/article/music/music-0.html" class="dropdown-toggle" data-toggle="dropdown">音乐<b class="caret"></b><ul class="dropdown-menu"><li><a href="http://localhost/program/article/oldmusic/oldmusic-0.html">古典音乐</a></li><li><a href="http://localhost/program/article/lxmusic/lxmusic-0.html">流行音乐</a></li></ul></a></li><li><a href="http://localhost/program/article/article/article-0.html" class="dropdown-toggle" data-toggle="dropdown">文章<b class="caret"></b><ul class="dropdown-menu"></ul></a></li></div></ul></nav>	<div class="container">
 		<section>
 			<article class="theArticle col-md-10">
 				<div class="theArticle-title">
@@ -44,6 +44,7 @@
 		</section>
 		
 		<section>
+			<div class="article-comment-input">
 			<div class="the-comment">
 	<div class="the-comment-set" data-article='15'>
 		<div>
@@ -64,7 +65,31 @@
 			<input type="button" value="提交评论" id="comment-push">
 		</div>
 	</div>
-</div>		
+	<!--回复框，只有点击评论回复的时候才会出现-->
+	<div class="the-reply" style="display:none">
+		<div>
+			<span>名称：<input class="reply-v" type="text" name="theName" autocomplete="on"></span>
+			<span>邮箱：<input class="reply-v" type="text" name="theEmail" autocomplete="on"></span>
+			<span>网站：<input class="reply-v" type="text" name="theWeb" autocomplete="on"></span>
+			<br/>
+			<br/>		
+		</div>
+		<div>
+			<textarea class="reply-v" rows="8" cols="80" name="theComment" autocomplete="on">
+				
+			</textarea>
+			<br/>
+			<br/>	
+		</div>
+		<div class="">
+			<input type="button" value="提交评论" id="reply-push">
+		</div>
+	</div>
+</div>			<div class="article-comment-list">
+				<ul class="article-comment-list-k">
+				
+				</ul>
+			</div>		
 		</section>
 		
 	</div>
