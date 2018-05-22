@@ -35,20 +35,23 @@
 			print_r($returnCommentJson);
 		}
 		
-		//列出评论
+		//列出父类评论
 		function listComment(){
 			//获取传递过来的文章参数
 			//echo "获取传递过来的文章参数";
 			$theArticleId  = $_GET['getArticleId'];
 			$theCommentPage = $_GET['getCommentPage'];
-			$theCommentLimit = $_GET['getCommentLimit'];			
+			$theCommentLimit = $_GET['getCommentLimit'];		
 			$theCommentLimitNum = $theCommentPage*$theCommentLimit;	
 			//echo $theArticleId;
-			$listComnetSql = "select * from comment where cmtid = '$theArticleId' limit $theCommentLimitNum, $theCommentLimit";						
+			$listComnetSql = "select * from comment where cmtid = '$theArticleId' and cmpid = 0 limit $theCommentLimitNum, $theCommentLimit";						
 			$listComnetSql_db = mysql_query($listComnetSql);
 			$listComnetSqlArray = array();
+			$i = 0;
 			while($listComnetSql_db_array = mysql_fetch_assoc($listComnetSql_db)){
-				$listComnetSqlArray[] = $listComnetSql_db_array;	
+				$listComnetSqlArray[$i] = $listComnetSql_db_array;
+				$listComnetSqlArray[$i]['childComment'] = $this->listChildComment($listComnetSql_db_array['cmid']);
+				$i++;				
 			}
 			//组织返回数据
 			//判断是否有数据
@@ -71,6 +74,17 @@
 			print_r($returnListComnetJson);
 			
 		}		
+		
+		//列出子评论
+		function listChildComment($cpid){
+			$listChildSql = "select * from comment where cmpid = '$cpid' limit 0 , 3";
+			$listChildSql_db = mysql_query($listChildSql);
+			$listChildArray = array();
+			while($listChildSql_db_array = mysql_fetch_assoc($listChildSql_db)){
+				$listChildArray[] = $listChildSql_db_array;		
+			}
+			return $listChildArray;
+		}
 		
 		function returnComment($turl){
 			if($turl == "insertComment"){

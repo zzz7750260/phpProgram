@@ -194,13 +194,36 @@ function autoLoad(){
 						data.result.forEach(function(item){
 							//data-commentid 存储评论的对应id
 							//data-articleid 存储评论的对应的文章的id
-							var listHtml = '<li class="article-comment-list-k-li" data-commentid="'+item['cmid']+'" data-articleid="'+item['cmtid']+'"><div class="">'+item['cm_comment']+'</div><input type="button" value="提交评论" class="article-comment-list-k-li-put"><br/><hr/</li>';
+							var listHtml = '<li class="article-comment-list-k-li" data-commentid="'+item['cmid']+'" data-articleid="'+item['cmtid']+'"><div class="">'+item['cm_comment']+'</div><input type="button" value="回复" class="article-comment-list-k-li-put"><br/><ul>'+childComment(item['childComment'])+'</ul><hr/></li>';
 							$(listHtml).appendTo(".article-comment-list-k");
+							
+							//console.log(childComment(item['childComment']));
 						})				
 					}
 				})				
-			}						
-		}
+			}	
+
+			//评论回复
+			function childComment(childCommentArray){
+				var childHtml ='';
+				if(childCommentArray.length > 0){
+					
+					childCommentArray.forEach(function(item){
+						
+						//console.log(typeof(item));
+						if(typeof(item) != "undefined"){
+							//console.log(item);
+							childHtml += '<li class="article-child-comment-list-k-li" data-commentid="'+item['cmid']+'" data-articleid="'+item['cmtid']+'"><div class="">'+item['cm_comment']+'</div><input type="button" value="回复" class="article-comment-list-k-li-put"><br/><hr/></li>';														
+						}
+
+					})	
+					
+					
+				}	
+				//console.log(childHtml)
+				return childHtml;
+			}
+		},
 		
 	}
 	theLoad.commentLoad();
