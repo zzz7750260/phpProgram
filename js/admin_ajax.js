@@ -862,8 +862,14 @@ function adminArticle(){
 					}
 				})				
 			})
+		},
+		
+		//单篇文章内容采集
+		curlArticle:function(){
+			
+			
 		}
-
+		
 	}
 	theArticle.addArticle();
 	theArticle.articleList();
