@@ -45,11 +45,11 @@ class theCurl{
 		if(!$theAdd){
 			//组装返回数据
 			$returnCurlArray = array(
-				status => 200,
+				status => 300,
 				msg => '返回数据内容成功',
 				result => array(
-					//curlTitle => $arr,
-					curlContainer => $this->changeHtml($arrCon[0]),
+					curlTitle => $htmlTitle,
+					curlContainer =>$htmlContainer,
 				)
 			);
 			
@@ -65,14 +65,14 @@ class theCurl{
 			if($curlSql_db){
 				$returnCurlArray = array(
 					status => 200,
-					msg => '返回数据内容成功',
+					msg => '数据内容插入成功',
 					result => ''
 				);	
 			}
 			else{
 				$returnCurlArray = array(
 					status => 400,
-					msg => '返回数据内容失败',
+					msg => '数据内容插入失败',
 					result => ''
 				);
 				
@@ -97,7 +97,8 @@ class theCurl{
 		//htmlentities($str, ENT_COMPAT , "UTF-8")  需指定UTF-8否则乱码
 		if($theType == "string"){
 			$theRetureHtml = htmlentities($value, ENT_COMPAT,"UTF-8");
-			return $theRetureHtml;			
+			
+			//return $theRetureHtml;			
 		}
 		//当类型为array（数组）时，先将数组转为字符串再进行转义
 		if($theType == "array"){
@@ -108,7 +109,19 @@ class theCurl{
 			$theRetureHtml = htmlentities($theArrayString,ENT_COMPAT,"UTF-8");
 			//$theRetureHtml = htmlentities($theArrayString);
 			//echo $theRetureHtml;
-			return $theRetureHtml;		
+			//return $theRetureHtml;		
 		}
+		
+		//进行addcslashes()转义
+		//$aTheRetureHtml = addcslashes($theRetureHtml);
+		//return $aTheRetureHtml;
+		
+		//进行mysql_real_escape_string()转义
+		$aMTheRetureHtml = mysql_real_escape_string($theRetureHtml);
+		return $aMTheRetureHtml;
+		
+		//进行addcslashes()转义
+		//$aTheRetureHtml = addcslashes($aMTheRetureHtml);
+		//return $aTheRetureHtml;
 	}
 }

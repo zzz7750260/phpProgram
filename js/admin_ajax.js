@@ -866,7 +866,31 @@ function adminArticle(){
 		
 		//单篇文章内容采集
 		curlArticle:function(){
-			
+			//采集文章预览
+			$('#get-curl-article').click(function(){
+				//向后台提交采集预览请求
+				$.ajax({
+					url:'../server/ajax/thecurl.php',
+					data:{turl:"getCurlData"},
+					type:'get',
+					dataType:'json',
+					success:function(data){
+						console.log("==============后端返回的数据采集预览===========");
+						console.log(data);
+						//html组装
+						var curlHtmlTitle = data.result.curlTitle;
+						var curlHtmlContainer = data.result.curlContainer;
+		
+						//对curlHtmlTitle进行转义
+						var theUtil = new util();						
+						var curlHtmlTitleZ = theUtil.commUtil.HTMLDecode(curlHtmlTitle);
+						var curlHtmlContainerZ = theUtil.commUtil.HTMLDecode(curlHtmlContainer);
+						//alert(curlHtmlTitleZ);
+						$(curlHtmlTitleZ).appendTo(".curl-article-yl-title");
+						$(curlHtmlContainerZ).appendTo(".curl-article-yl-container");
+					}
+				})			
+			})
 			
 		}
 		
@@ -875,6 +899,7 @@ function adminArticle(){
 	theArticle.articleList();
 	theArticle.checkArticle();
 	theArticle.articleHtml();
+	theArticle.curlArticle();
 		
 }
 
@@ -934,9 +959,43 @@ function util(){
 	
 	//综合通用
 	this.commUtil = {
+		//字符串转成数组
 		strChangeArr:function(theStr){
 			var arr = theStr.split(",")	
 			return arr;
+		},
+		
+		//html转义以及反转义
+		//反转义
+		HTMLEncode:function(str){
+			var theHtml ="";
+			if(str.length == 0){
+				return ""		
+			}
+			else{
+				theHtml = str.replace(/&/g,"&amp;");
+				theHtml = theHtml.replace(/</g,"&lt;");
+				theHtml = theHtml.replace(/>/g,"&gt;");
+				theHtml = theHtml.replace(/ /g,"&nbsp;");
+				theHtml = theHtml.replace(/\'/g,"&#39;");
+				theHtml = theHtml.replace(/\"/g,"&quot;");
+				return theHtml; 
+			}
+		},
+		HTMLDecode:function(str){
+			var theDHtml = ""; 
+			if(str.length == 0){
+				return "";		
+			}  
+			else{
+				theDHtml = str.replace(/&amp;/g,"&");
+				theDHtml = theDHtml.replace(/&lt;/g,"<");
+				theDHtml = theDHtml.replace(/&gt;/g,">");
+				theDHtml = theDHtml.replace(/&nbsp;/g," ");
+				theDHtml = theDHtml.replace(/&#39;/g,"\'");
+				theDHtml = theDHtml.replace(/&quot;/g,"\"");
+				return theDHtml; 									
+			}
 		}
 		
 	}
