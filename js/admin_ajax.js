@@ -869,11 +869,29 @@ function adminArticle(){
 			//采集文章预览
 			$('#get-curl-article').click(function(){
 				//向后台提交采集预览请求
+				//获取提交的数据
+				var theCurlArray = {};
+				$(".curl-article-containerk").find(".value-v").each(function(item){
+					var theCurlArrayKey = $(this).attr('name');
+					var theCurlArrayVal = $(this).val();
+					
+					//console.log("key:"+theCurlArrayKey);
+					//console.log("val:"+theCurlArrayVal);
+					theCurlArray[theCurlArrayKey] = theCurlArrayVal;
+				})				
+				
+				
+				//重组数据
+				theCurlArray['turl'] = "getCurlData";			
+				console.log(theCurlArray);				
+				
 				$.ajax({
 					url:'../server/ajax/thecurl.php',
-					data:{turl:"getCurlData"},
-					type:'get',
+					//data:{turl:"getCurlData"},
+					data:theCurlArray,
+					type:'post',
 					dataType:'json',
+					//contentType: "application/json; charset=utf-8",
 					success:function(data){
 						console.log("==============后端返回的数据采集预览===========");
 						console.log(data);
@@ -889,7 +907,8 @@ function adminArticle(){
 						$(curlHtmlTitleZ).appendTo(".curl-article-yl-title");
 						$(curlHtmlContainerZ).appendTo(".curl-article-yl-container");
 					}
-				})			
+				})		
+				
 			})
 			
 		}

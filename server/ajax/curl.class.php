@@ -3,24 +3,30 @@ class theCurl{
 	function getCurlData(){
 		//echo "show curl";
 		//初始化curl
-		//$theUrl = "http://www.pearvideo.com/";
-		$theUrl = "www.woygo.com/muyingchangshi/2017/0613/15953.html";
-		$curlObject = curl_init();
-		curl_setopt($curlObject, CURLOPT_URL, $theUrl);
-		curl_setopt($curlObject, CURLOPT_RETURNTRANSFER,1);
-		$output = curl_exec($curlObject);
-		curl_close($curlObject);
-		//var_dump($output);
-		
+		//$theUrl = "http://www.pearvideo.com/";				
+		//$theUrl = "www.woygo.com/muyingchangshi/2017/0613/15953.html";
+		$theUrl = $_POST['curl-url'];	
+				
+		$output = $this->http_curl($theUrl);
 		//对编码格式进行转码
 		$contentOutput = iconv("gb2312","utf-8",$output);
 		//var_dump($contentOutput);
 		
 		//echo "=====================================</br>";
 		
+		
 		//正则表达式设置
 		//$preg = "/<h2 .*>.*<\/h2>/is";
-		$preg = '/<h1.*>\r*\n*(.)*\r*\n*<\/h1>/';
+		
+		//$preg = '/<h1.*>\r*\n*(.)*\r*\n*<\/h1>/';
+		
+		
+		//获取题目的正则
+		$reg = $_POST['curl-title'];
+		
+		//因为后端对于post过来的数据都会addslashes()转义，因而需要stripslashes()反转义处理
+		$preg = stripslashes($reg);
+		//echo $preg; 
 		preg_match($preg,$contentOutput,$arr);
 		//echo "a:".$a."<br/>";
 		
@@ -29,7 +35,12 @@ class theCurl{
 		//print_r(htmlspecialchars($arr[0]));
 
 		//$conPreg = '/<div class="con-txt">\r\n*.*/';
-		$conPreg = '/<p.*>\s*.*\s*<\/p>/';
+		//$conPreg = '/<p.*>\s*.*\s*<\/p>/';
+		
+		//获取内容的正则
+		$onPreg = $_POST['curl-container'];		
+		$conPreg = stripslashes($onPreg);
+		
 		preg_match_all($conPreg, $contentOutput, $arrCon);
 		//print_r($arrCon);
 		//print_r(htmlspecialchars($arrCon[0]));
@@ -123,5 +134,16 @@ class theCurl{
 		//进行addcslashes()转义
 		//$aTheRetureHtml = addcslashes($aMTheRetureHtml);
 		//return $aTheRetureHtml;
+	}
+	
+	//curl请求的封装
+	function http_curl($theUrl){
+		$curlObject = curl_init();
+		curl_setopt($curlObject, CURLOPT_URL, $theUrl);
+		curl_setopt($curlObject, CURLOPT_RETURNTRANSFER,1);
+		$output = curl_exec($curlObject);
+		curl_close($curlObject);
+		//var_dump($output);		
+		return $output;
 	}
 }
