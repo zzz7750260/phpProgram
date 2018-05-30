@@ -534,6 +534,10 @@ function adminArticle(){
 	var that = this;
 	console.log("============这个为that================");
 	console.log(that);
+
+	//引入通用模块
+	var theUtil = new util(); 
+	
 	var theArticle = {
 		//GlobalVar:function(){
 		//	var pictureName;			
@@ -664,8 +668,8 @@ function adminArticle(){
 			//在页面加载进去时进行查询所有的操作
 			
 			//获取用户信息
-			var theComm = new util();
-			var getInfo = theComm.commUser.getUserInfo();
+			//var theComm = new util();
+			var getInfo = theUtil.commUser.getUserInfo();
 			console.log("=========网络查询类获取用户信息（外）============");
 			console.log(getInfo);
 			
@@ -764,25 +768,19 @@ function adminArticle(){
 		//根据分类页面静态化请求
 		articleHtml:function(){
 			//向后端请求取得分类列表
-			$.ajax({
-				url:"../server/ajax/thecategory.php",
-				type:"get",
-				data:{turl:"listCategory"},
-				dataType:"json",
-				success:function(data){
-					console.log("===============后端返回的文章静态化分类列表数据==========");
-					console.log(data);
+			
+			var data = theUtil.commAricle.getArticleCategoryJson();	
 					
-					//html渲染
-					data.forEach(function(item){
-						var itemHtml = '<option value='+item.cid+'>'+item.categoryname+'</option>';
-						$(itemHtml).appendTo("#ob-select-category-s");
-						$(itemHtml).appendTo("#ob-select-category-lb");
-					})
-					
-				}
-				
+			//html渲染
+			data.forEach(function(item){
+				var itemHtml = '<option value='+item.cid+'>'+item.categoryname+'</option>';
+				$(itemHtml).appendTo("#ob-select-category-s");
+				$(itemHtml).appendTo("#ob-select-category-lb");
 			})
+					
+				
+				
+			
 			
 			//选择选择框，根据选中的值来进行查询
 			//获取选中值
@@ -842,9 +840,10 @@ function adminArticle(){
 								data:{turl:"frontArticleListOb",getCategoryId:lbAllSelect,getLimit:2,getOb:"ob"},
 								dataType:'json',
 								success:function(data){
-									console.log(data);
+									console.log(data);								
 								}
 							})
+							
 						}
 					})					
 				}
@@ -866,6 +865,26 @@ function adminArticle(){
 		
 		//单篇文章内容采集
 		curlArticle:function(){
+			//组装HTML：添加分类选择
+			var curlCategoryArray = theUtil.commAricle.getArticleCategoryJson();
+			
+			curlCategoryArray.forEach(function(item){
+				var curlHtml = '<option value="'+item['cid']+'">'+item['categoryname']+'</option>';
+				$(curlHtml).appendTo("#curl-select");			
+			})
+			
+			//测试获取值
+			var theSelectCurl = $("#curl-select").find("option:selected").val();
+			console.log("测试获取值"+theSelectCurl);
+			
+			//当select改变的时候获取值
+			$("#curl-select").change(function(){
+				var theSelectCurl = $(this).find("option:selected").val();
+				console.log("改测试获取值"+theSelectCurl);			
+			})
+			
+
+			
 			//采集文章预览
 			$('#get-curl-article').click(function(){
 				//向后台提交采集预览请求
@@ -874,13 +893,15 @@ function adminArticle(){
 				$(".curl-article-containerk").find(".value-v").each(function(item){
 					var theCurlArrayKey = $(this).attr('name');
 					var theCurlArrayVal = $(this).val();
-					
+					if(theCurlArrayKey == "curl-select"){
+						theCurlArrayVal = $(this).find("option:selected").val();
+						
+					}
 					//console.log("key:"+theCurlArrayKey);
 					//console.log("val:"+theCurlArrayVal);
 					theCurlArray[theCurlArrayKey] = theCurlArrayVal;
-				})				
-				
-				
+				})	
+												
 				//重组数据
 				theCurlArray['turl'] = "getCurlData";			
 				console.log(theCurlArray);				
@@ -911,8 +932,103 @@ function adminArticle(){
 				
 			})
 			
-		}
-		
+			//采集内容添加
+			$('#get-curl-article-add').click(function(){
+				//获取提交的数据
+				var theCurlArray = {};
+				$(".curl-article-containerk").find(".value-v").each(function(item){
+					var theCurlArrayKey = $(this).attr('name');
+					var theCurlArrayVal = $(this).val();
+					if(theCurlArrayKey == "curl-select"){
+						theCurlArrayVal = $(this).find("option:selected").val();
+						
+					}
+					//console.log("key:"+theCurlArrayKey);
+					//console.log("val:"+theCurlArrayVal);
+					theCurlArray[theCurlArrayKey] = theCurlArrayVal;
+				})	
+				
+				//重组数据
+				theCurlArray['turl'] = "getCurlData";	
+				theCurlArray['getAdd'] = "add";
+				
+				console.log(theCurlArray);	
+
+				//向后端提交采集存储请求
+				$.ajax({
+					url:'../server/ajax/thecurl.php',
+					data:theCurlArray,
+					type:'POST',
+					dataType:'json',
+					success:function(data){
+						console.log("==============返回采集添加数据的返回值============");
+						console.log(data)						
+					}
+				})
+				
+			})
+			
+			//批量采集
+			$('#get-curl-article-more').on('click',function(){
+				var curlMoreShow = moreCurlAjaxPush('show');
+				console.log(curlMoreShow);
+			})	
+			
+			//批量采集上传
+			$('#get-curl-article-more-add').on('click',function(){
+				var curlMoreShow = moreCurlAjaxPush('add');
+				console.log(curlMoreShow);			
+			})
+
+
+			//批量采集的公共提交
+			function moreCurlAjaxPush(theType){
+				var theArticleArray = {};
+				//遍历获取值
+				$(".curl-article-containerk").find(".value-v").each(function(key,item){
+					//key值
+					//console.log(key);
+					//当前元素值
+					//console.log(item);
+					var mCurlKey = $(this).attr("name");
+					var mCurlValue = $(this).val();
+					
+					//当key为select选择框时
+					if(mCurlKey == "curl-suffix" || mCurlKey == "curl-select"){
+						mCurlValue = $(this).find("option:selected").val();						
+					}
+					theArticleArray[mCurlKey] = mCurlValue;
+				})
+				console.log(theArticleArray);
+				
+				
+				//组装数据
+				
+				if(theType == "show"){
+					theArticleArray['turl'] = "getCurlDataMore";
+					theArticleArray['tTpye'] = "show";
+				}
+				if(theType == "add"){
+					theArticleArray['turl'] = "getCurlDataMore";
+					theArticleArray['tTpye'] = "add";										
+				}				
+				
+				//向后端提交对应的数据
+				$.ajax({
+					url:'../server/ajax/thecurl.php',
+					data:theArticleArray,
+					type:'post',
+					dataType:'json',
+					async:false,//设置数据为同步获取对应的data
+					success:function(data){
+						console.log(data);
+						that.data = data;
+					}
+				})
+				return that.data;
+			} 
+		},
+								
 	}
 	theArticle.addArticle();
 	theArticle.articleList();
@@ -1042,5 +1158,24 @@ function util(){
 			return that.userInfo;
 		}
 				
+	},
+	//获取文章类型的数据返回
+	this.commAricle = {
+		//获取分类列表
+		getArticleCategoryJson:function(){
+			$.ajax({
+				url:"../server/ajax/thecategory.php",
+				type:"get",
+				data:{turl:"listCategory"},
+				dataType:"json",
+				async:false,//需要同步数据处理将得到的值传递给that.categoryJson
+				success:function(data){
+					console.log("===============后端返回的文章静态化分类列表数据==========");
+					console.log(data);
+					that.categoryJson = data;
+				}
+			})
+			return that.categoryJson;
+		}
 	}
 }

@@ -7,9 +7,11 @@ class theCurl{
 		//$theUrl = "www.woygo.com/muyingchangshi/2017/0613/15953.html";
 		$theUrl = $_POST['curl-url'];	
 				
-		$output = $this->http_curl($theUrl);
+		//$output = $this->http_curl($theUrl);  //这个是没转码之前的设置
+		
+		$contentOutput = $this->http_curl($theUrl);
 		//对编码格式进行转码
-		$contentOutput = iconv("gb2312","utf-8",$output);
+		//$contentOutput = iconv("gb2312","utf-8",$output);
 		//var_dump($contentOutput);
 		
 		//echo "=====================================</br>";
@@ -51,8 +53,15 @@ class theCurl{
 		$htmlTitle = $this->changeHtml($arr[0]);
 		$htmlContainer = $this->changeHtml($arrCon[0]);
 		
+		//获取选择的分类
+		$htmlCategory = $_POST['curl-select'];
+		
+		//获取文章的来源
+		$htmlSource = $_POST['curl-source'];
+		
+		
 		//获取是否存入数据库
-		$theAdd = $_GET['getAdd'];
+		$theAdd = $_POST['getAdd'];
 		if(!$theAdd){
 			//组装返回数据
 			$returnCurlArray = array(
@@ -61,6 +70,8 @@ class theCurl{
 				result => array(
 					curlTitle => $htmlTitle,
 					curlContainer =>$htmlContainer,
+					curlCategory =>$htmlCategory,
+					curlSource =>$htmlSource,
 				)
 			);
 			
@@ -71,7 +82,7 @@ class theCurl{
 			//echo $htmlTitle;
 			//echo $htmlContainer;
 			
-			$curlSql = "insert into curl_article (curl_title, curl_container) values ('$htmlTitle','$htmlContainer')";
+			$curlSql = "insert into curl_article (curl_title, curl_container,curl_category,curl_source) values ('$htmlTitle','$htmlContainer','$htmlCategory','$htmlSource')";
 			$curlSql_db = mysql_query($curlSql);
 			if($curlSql_db){
 				$returnCurlArray = array(
@@ -93,11 +104,108 @@ class theCurl{
 		}
 	}
 	
-	function curlReturn($turl){
-		if($turl == "getCurlData"){
-			$this->getCurlData();
-		}		
+	//批量采集
+	function getCurlDataMore(){
+		//获取网址
+		$mCurlUrl = $_POST['curl-url'];
+		//获取采集范围
+		$mCurlB = $_POST['curl-begin'];
+		$mCurlE = $_POST['curl-end'];		
+		//获取网址后缀
+		$mCurlS = $_POST['curl-suffix'];
+		//获取标题的正则
+		$mCurlTitle = $_POST['curl-title'];		
+		//获取内容的正则
+		$mCurlContainer = $_POST['curl-container'];		
+		//获取存储的分类
+		$mCurlCategory = $_POST['curl-select'];		
+		//获取内容的来源
+		$mCurlSource = $_POST['curl-source'];
+		//获取显示的类型
+		$mCurlType = $_POST['tTpye'];
+		
+		
+		//获取是否添加
+		$mCurlAdd = $_POST['curl-more-add'];
+				
+		//设置存放title的数组
+		$theTitleArr = array();
+		
+		//设置成功插入的条数
+		$successNum = 0;
+
+		//设置失败插入的条数
+		$falseNum = 0;
+		
+		
+		//循环组成对应的网址
+		for($i = $mCurlB; $i<$mCurlE;$i++){
+			//组装成对应的网址
+			$theMUrl = $mCurlUrl . $i . '.' . $mCurlS;
+			//echo $theMUrl;
+			//提交网址并得到返回值
+			$theOutPut = $this->http_curl($theMUrl);
+			//echo $theOutPut;
+			//根据返回结果对内容进行筛选
+			$mCurlTitleShow = $this->theRegexHtml($mCurlTitle,$theOutPut);
+			$mCurlContainerShow = $this->theRegexHtml($mCurlContainer,$theOutPut);
+								
+			$theTitleArr[] =  $mCurlTitleShow;
+						
+			//echo $mCurlTitleShow;
+			//print_r($theOutPut);
+			//echo "=============================<br/>";
+			
+			//当选择的类型为插入数据库时
+			if($mCurlType == "add"){
+				$mCurlSql = "insert into curl_article (curl_title, curl_container, curl_category, curl_source, curl_html) values ('$mCurlTitleShow', '$mCurlContainerShow', '$mCurlCategory', '$mCurlSource', '$theMUrl')";
+				
+				$mCurlSql_db = mysql_query($mCurlSql);
+				
+				if($mCurlSql_db){
+					$successNum = $successNum + 1;					
+				}
+				else{
+					$falseNum = $falseNum + 1;					
+				}
+				
+			}
+						
+		}	
+		//当类型为显示时，返回的结果为
+		if($mCurlType =="show"){
+			//重新组装数组
+			$returnCurlMoreShow = array(
+				status => 200,
+				msg => "批量采集返回展示成功",
+				result => $theTitleArr
+			);
+			
+			//将数组转换为json
+			$returnCurlMoreShowJson = json_encode($returnCurlMoreShow);
+			
+			print_r($returnCurlMoreShowJson);
+		}
+		
+		if($mCurlType =="add"){
+			$returnCurlMoreShow = array(
+				status => 300,
+				msg => "批量采集插入数据",
+				result => array(
+					theSuccess => $successNum,
+					theFalse => $falseNum, 
+				)
+			);
+			
+			//将数组转换为json
+			$returnCurlMoreShowJson = json_encode($returnCurlMoreShow);
+			print_r($returnCurlMoreShowJson);
+		}
+		
+		//print_r($theTitleArr);
+			
 	}
+	
 
 	//将html进行转义
 	function changeHtml($value){
@@ -143,7 +251,38 @@ class theCurl{
 		curl_setopt($curlObject, CURLOPT_RETURNTRANSFER,1);
 		$output = curl_exec($curlObject);
 		curl_close($curlObject);
-		//var_dump($output);		
+		//var_dump($output);	
+
+		//检测编码,如果格式不为utf-8，就自动转换为utf-8否则乱码
+		$theCode = mb_detect_encoding($output,array("ASCII",'UTF-8',"GB2312","GBK",'BIG5'));
+		//echo "当前的编码格式为：".$theCode;
+		if($theCode != "UTF-8" || $theCode != "utf-8"){
+			$output = iconv($theCode,"utf-8",$output);
+		}			
 		return $output;
 	}
+	
+	//利用正则对内容进行筛选
+	function theRegexHtml($theRegex,$theContainer){
+		//需要针对传进来的正则stripslashes()反转义处理
+		$sTheRegex = stripslashes($theRegex);
+		//利用正则对内容进行筛选
+		preg_match_all($sTheRegex,$theContainer,$theArr);
+		
+		//对获取到的数据进行根式化
+		$theHtmlContainr = $this->changeHtml($theArr[0]);
+		return $theHtmlContainr;
+	
+	}
+	
+	//返回执行方法
+	function curlReturn($turl){
+		if($turl == "getCurlData"){
+			$this->getCurlData();
+		}
+		if($turl == "getCurlDataMore"){
+			$this->getCurlDataMore();			
+		}
+	}	
+	
 }
