@@ -82,21 +82,35 @@ class theCurl{
 			//echo $htmlTitle;
 			//echo $htmlContainer;
 			
-			$curlSql = "insert into curl_article (curl_title, curl_container,curl_category,curl_source) values ('$htmlTitle','$htmlContainer','$htmlCategory','$htmlSource')";
-			$curlSql_db = mysql_query($curlSql);
-			if($curlSql_db){
+			//检测该文章是否被采集过
+			$isExistNum = $this->isExistArticle($htmlTitle,$theUrl);
+			//echo $isExistNum;
+			if($isExistNum > 0){
+				//返回对应的数组
 				$returnCurlArray = array(
-					status => 200,
-					msg => '数据内容插入成功',
-					result => ''
-				);	
+					status => 300,
+					msg => '该文章已经被采集过',
+					result => ''				
+				);
 			}
 			else{
-				$returnCurlArray = array(
-					status => 400,
-					msg => '数据内容插入失败',
-					result => ''
-				);
+				$curlSql = "insert into curl_article (curl_title, curl_container,curl_category,curl_source,curl_html) values ('$htmlTitle','$htmlContainer','$htmlCategory','$htmlSource','$theUrl')";
+				$curlSql_db = mysql_query($curlSql);
+				if($curlSql_db){
+					$returnCurlArray = array(
+						status => 200,
+						msg => '数据内容插入成功',
+						result => ''
+					);	
+				}
+				else{
+					$returnCurlArray = array(
+						status => 400,
+						msg => '数据内容插入失败',
+						result => ''
+					);
+					
+				}	
 				
 			}
 			$returnCurlJson = json_encode($returnCurlArray);
@@ -137,6 +151,9 @@ class theCurl{
 		//设置失败插入的条数
 		$falseNum = 0;
 		
+		//设置已经采集过文章的条数
+		$repeatNum = 0;
+		
 		
 		//循环组成对应的网址
 		for($i = $mCurlB; $i<$mCurlE;$i++){
@@ -158,17 +175,24 @@ class theCurl{
 			
 			//当选择的类型为插入数据库时
 			if($mCurlType == "add"){
-				$mCurlSql = "insert into curl_article (curl_title, curl_container, curl_category, curl_source, curl_html) values ('$mCurlTitleShow', '$mCurlContainerShow', '$mCurlCategory', '$mCurlSource', '$theMUrl')";
-				
-				$mCurlSql_db = mysql_query($mCurlSql);
-				
-				if($mCurlSql_db){
-					$successNum = $successNum + 1;					
+				//检测该文章是否被采集过
+				$isExistNumMore = $this->isExistArticle($mCurlTitleShow,$theMUrl);
+				if($isExistNumMore>0){
+					$repeatNum = $repeatNum + 1;					
 				}
 				else{
-					$falseNum = $falseNum + 1;					
+					$mCurlSql = "insert into curl_article (curl_title, curl_container, curl_category, curl_source, curl_html) values ('$mCurlTitleShow', '$mCurlContainerShow', '$mCurlCategory', '$mCurlSource', '$theMUrl')";
+					
+					$mCurlSql_db = mysql_query($mCurlSql);
+					
+					if($mCurlSql_db){
+						$successNum = $successNum + 1;					
+					}
+					else{
+						$falseNum = $falseNum + 1;					
+					}									
 				}
-				
+
 			}
 						
 		}	
@@ -193,7 +217,8 @@ class theCurl{
 				msg => "批量采集插入数据",
 				result => array(
 					theSuccess => $successNum,
-					theFalse => $falseNum, 
+					theFalse => $falseNum,
+					repeatNum => $repeatNum,
 				)
 			);
 			
@@ -273,6 +298,15 @@ class theCurl{
 		$theHtmlContainr = $this->changeHtml($theArr[0]);
 		return $theHtmlContainr;
 	
+	}
+	
+	//检测该文章是否已经被采集过
+	
+	function isExistArticle($articleTitle,$articleHtml){
+		$isExistSql = "select * from curl_article where curl_title = '$articleTitle' or curl_html = '$articleHtml'";
+		$isExistSql_db = mysql_query($isExistSql);
+		$isExistSql_db_num = mysql_num_rows($isExistSql_db);
+		return $isExistSql_db_num;	
 	}
 	
 	//返回执行方法

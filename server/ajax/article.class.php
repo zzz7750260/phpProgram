@@ -21,12 +21,18 @@ class theArticleClass{
 		$categorySelect = $_POST['category_select'];
 		$plDataEnd = $_POST['pl-data-end'];
 		$plDataStart = $_POST['pl-data-start'];
+		$videoPlatform = $_POST['video-platform'];
+		$videoSource = $_POST['video-source'];
 		$theArticle = $_POST['the-article'];
 		$articleStatus = $_POST['article-status'];
 		
+		//需要对传递过来的链接进行转码
+		$videoSourceT = urlencode($videoSource);
+		
+		
 		//$theCommit = $_POST[''];
 		
-		$addSql = "insert into article (title, short_title, category_id, article_key, article_short, article_author, article_source, commit_start, commit_end, article_img, article_container, article_status, commit_status) values ('$theTitle', '$articleShortTitle', '$categorySelect', '$articleKeyword', '$articleShort', '$articleAuthor', '$articleSource', '$plDataStart', '$plDataEnd', '$articlePic', '$theArticle', '$articleStatus', '$articlePl')";
+		$addSql = "insert into article (title, short_title, category_id, article_key, article_short, article_author, article_source, commit_start, commit_end, article_img, video_platform, video_source, article_container, article_status, commit_status) values ('$theTitle', '$articleShortTitle', '$categorySelect', '$articleKeyword', '$articleShort', '$articleAuthor', '$articleSource', '$plDataStart', '$plDataEnd', '$articlePic', '$videoPlatform', '$videoSource', '$theArticle', '$articleStatus', '$articlePl')";
 		
 		$addSql_db = mysql_query($addSql);			
 		if($addSql_db){
@@ -185,7 +191,7 @@ class theArticleClass{
 			$articleArray = $articleSql_db_array;	
 		}
 
-		print_r($articleArray);
+		//print_r($articleArray);
 		$value = $articleArray;
 		/*
 		//定义路径

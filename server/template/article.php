@@ -40,8 +40,8 @@
 					<hr/>
 				</div>
 				<div class="theArticle-img">
-					<div class="col-md-6 col-md-offset-3">
-						<img class="" src="../../upload/cover/<?php echo $value['article_img'];?>">
+					<div class="col-md-6 col-md-offset-3 theArticle-imgk">
+						<img class="" data-getid ="<?php echo $value['aid'];?>" src="../../upload/cover/<?php echo $value['article_img'];?>">
 					</div>
 					<div class="clear"></div>
 				</div>

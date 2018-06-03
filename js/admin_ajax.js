@@ -625,6 +625,8 @@ function adminArticle(){
 						}
 						
 					}
+					
+					
 					//console.log(theKey +":"+ theValue);
 					thePostArray[theKey] = theValue;
 				})

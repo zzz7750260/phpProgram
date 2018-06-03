@@ -167,10 +167,51 @@ function userControl(){
 				})				
 			})						
 			
+		},
+		
+		//点击图片加载视频
+		imgVideoLoad:function(){
+			$(".theArticle-imgk").click(function(){
+				var articleVideoId = $(this).find('img').data("getid");
+				alert(articleVideoId);
+				
+				//向后台发送视频链接请求
+				$.ajax({
+					url:"../../server/ajax/thearticle.php",
+					data:{turl:"checkArticle",article_Id:articleVideoId},
+					type:'get',
+					dataType:'json',
+					success:function(data){
+						console.log("============从后端返回的文章详细请求信息===========");
+						console.log(data);
+						alert(data.result.video_platform)
+						if(data.status == 200){
+							$(".theArticle-imgk").find("img").css("display","none");
+							//根据返回的视频平台类型组装数据
+							switch(data.result.video_platform){
+								case 'bilibili':
+								var videoHtml = '<iframe src="'+data.result.video_source+'" scrolling="no" border="0" frameborder="no" framespacing="0" allowfullscreen="true" style="width:100%;max-height: 300px;height:280px"> </iframe>';
+								$(videoHtml).appendTo(".theArticle-imgk");								
+								break;		
+								case 'youku':
+								var videoHtml = '<embed src="'+data.result.video_source+'" allowFullScreen="true" quality="high" width="480" height="400" align="middle" allowScriptAccess="always" type="application/x-shockwave-flash"></embed>'
+								$(videoHtml).appendTo(".theArticle-imgk");							
+								break;
+							}
+							
+						}
+						
+
+					}				
+				})
+			})
+			
+						
 		}
 	}
 	theClick.searchClick();
 	theClick.commentPush();
+	theClick.imgVideoLoad();
 	
 }
 
@@ -190,15 +231,20 @@ function autoLoad(){
 					dataType:'json',
 					success:function(data){
 						console.log(data);
-						//遍历data组装html
-						data.result.forEach(function(item){
-							//data-commentid 存储评论的对应id
-							//data-articleid 存储评论的对应的文章的id
-							var listHtml = '<li class="article-comment-list-k-li" data-commentid="'+item['cmid']+'" data-articleid="'+item['cmtid']+'"><div class="">'+item['cm_comment']+'</div><input type="button" value="回复" class="article-comment-list-k-li-put"><br/><ul>'+childComment(item['childComment'])+'</ul><hr/></li>';
-							$(listHtml).appendTo(".article-comment-list-k");
+						//存在评论的正常返回是200
+						if(data.status ==200){
+							//遍历data组装html
+							data.result.forEach(function(item){
+								//data-commentid 存储评论的对应id
+								//data-articleid 存储评论的对应的文章的id
+								var listHtml = '<li class="article-comment-list-k-li" data-commentid="'+item['cmid']+'" data-articleid="'+item['cmtid']+'"><div class="">'+item['cm_comment']+'</div><input type="button" value="回复" class="article-comment-list-k-li-put"><br/><ul>'+childComment(item['childComment'])+'</ul><hr/></li>';
+								$(listHtml).appendTo(".article-comment-list-k");
+								
+								//console.log(childComment(item['childComment']));
+							})									
 							
-							//console.log(childComment(item['childComment']));
-						})				
+						}
+				
 					}
 				})				
 			}	
