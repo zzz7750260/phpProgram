@@ -19,6 +19,8 @@ class theLogin{
 		return $num;	
 	}
 	
+	
+	
 	function loginYz(){
 		$sql = "select * from member where username = '$theUserName' and password = '$thePassWord'";
 		$sql_db = mysql_query($sql);
