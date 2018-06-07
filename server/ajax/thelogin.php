@@ -10,6 +10,10 @@ session_start();
 
 $theUrl = $_GET['turl'];
 
+if(!$theUrl){
+	$theUrl	= $_POST['turl'];	
+}
+
 $getLogin = new theLogin();
 
 $getLogin->theReturn($theUrl);

@@ -1,6 +1,7 @@
 $(document).ready(function(){
 	loginYZ();
 	autoLoad();
+	registerControl();
 	userControl();	
 })
 
@@ -59,6 +60,119 @@ function loginYZ(){
 	$(".tpassword").focus(function(){
 		$(".passwordis").text("");		
 	})	
+
+}
+
+//注册相关的操作
+function registerControl(){
+	var registerUsernameYz,resgisterPasswordYz,resgisterPasswordYzYz,resgisterEmailYz;
+
+	//用户名监测
+	//聚焦时开始监测
+	$('.rUsername').blur(function(){
+		var rUsernameVal = $(this).val();
+		console.log(rUsernameVal)
+		if(!rUsernameVal){
+			$('.usernameis').text("用户名不能为空").css("color","#ff0000");		
+		}
+		else{
+			//当存在时，发送后台检测该用户名是否存在
+			$.ajax({
+				url:'./server/ajax/thelogin.php',
+				data:{turl:"loginusername",username:rUsernameVal},
+				type:"get",
+				dataType:"text",
+				success:function(data){
+					console.log("=============后端返回用户存在个数============");
+					console.log(data);
+					if(data > 0){
+						$('.usernameis').text("该用户名已经存在").css("color","#ff0000");							
+					}
+					else{
+						registerUsernameYz = true;					
+					}
+				}
+			})			
+		}
+	})
+	
+	//失焦时消除提示
+	$('.rUsername').blur(function(){
+		$('.usernameis').text("");
+	})
+	
+	//判断密码	
+	$(".rPassword").blur(function(){
+		var thePassword = $(".rPassword").val();
+		console.log(thePassword);
+		if(!thePassword){
+			$(".passwordis").text("密码不能为空").css("color","#ff0000");			
+		}
+		else{
+			//js正则 密码必须包含字母和数字并且需要在6位数以上高
+			var theReg = /^(?=.*[0-9].*)(?=.*[a-zA-Z].*).{6,}$/;
+			//正则判断
+			var theRegJudge = theReg.test(thePassword);
+			if(!theRegJudge){
+				$(".passwordis").text("密码必须包含字母").css("color","#ff0000");		
+			}
+			else{
+				resgisterPasswordYz = true;
+				
+			}
+		}
+	})
+	
+	$(".rPassword").focus(function(){
+		$(".passwordis").text("");	
+	})
+	
+	//判断重复密码
+	$(".rPasswordYz").blur(function(){
+		var thePasswordYz = $(".rPasswordYz").val(); 
+		var thePassword = $(".rPassword").val();
+		if(!thePasswordYz){
+			$(".passwordisYz").text("该值不能为空格").css("color","#ff0000");			
+		}
+		else{
+			if(thePasswordYz !=thePassword){
+				$(".passwordisYz").text("两次密码不相同").css("color","#ff0000");		
+			}
+			else{
+				resgisterPasswordYzYz = true;			
+			}
+		}
+	})
+	
+	$(".rPasswordYz").focus(function(){
+		$(".passwordisYz").text("");	
+	})
+	
+	//邮件验证
+	$(".rEmail").blur(function(){
+		var rEmailValue = $(".rEmail").val();
+		if(!rEmailValue){
+			$(".eMailisYz").text("email不能为空").css("color","#ff0000");					
+		}
+		else{
+			//邮箱验证的正则表达式
+			var emailReg = /^[a-zA-Z0-9_-]+@([a-zA-Z0-9]+\.)+(com|cn|net|org)$/;
+			var emailRegYz = emailReg.test(rEmailValue);
+			if(!emailRegYz){
+				$(".eMailisYz").text("email格式不正确").css("color","#ff0000");				
+			}
+			else{
+				resgisterEmailYz = true;				
+			}
+		}
+		
+	})
+	
+	$(".rEmail").focus(function(){
+		$(".eMailisYz").text("");	
+	})
+	
+	//公共方法，检测registerUsernameYz,resgisterPasswordYz,resgisterPasswordYzYz,resgisterEmailYz;验证值是否都为true
 	
 }
 

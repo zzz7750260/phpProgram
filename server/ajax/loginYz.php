@@ -36,6 +36,9 @@ else{
 	$theRandNum = $theUtil->setSessionToken(8);
 	echo $theRandNum;
 	
+	//将session_token存入$_SESSION中
+	$_SESSION['session_token'] = $theRandNum;
+	
 	//将随机码存入数据库以及以及存入cookie中
 	$loginSessionSql = "update member set session_token = '$theRandNum' where username = '$theUserName' and password = '$thePassWord'";
 	
@@ -43,10 +46,29 @@ else{
 	
 	echo "状态为：".$loginSessionSql_db;
 	
+	//根据用户的权限登录到不同的页面
+	$sqlArray = array(); 
+	while($sql_db_array = mysql_fetch_assoc($sql_db)){
+		$sqlArray = $sql_db_array;
+	}
+	if($sqlArray['role'] == 'admin'){
+		echo '<script>setTimeout(function(){window.location.href="'.$theURL .'admin/"},6000)</script>';
+	}
+	else{
+		echo '<script>setTimeout(function(){window.location.href="'.$theURL .'admin/user-index.html"},6000)</script>';		
+	}
+		
+	//设置请求头
+	//header('session-token:'.$theRandNum.'');
+
+	//获取请求头
+	//print_r(getallheaders());
+	
+	
 	//用js设置cookie
 	//过期时间
-	$endTime = time()+7200;
-	echo '<script> document.cookie = "session_token ='.$theRandNum.'; expires= '.$endTime.'.toGMTString();";</script>';
+	//$endTime = time()+7200;
+	//echo '<script> document.cookie = "session_token ='.$theRandNum.'; expires= '.$endTime.'.toGMTString();";</script>';
 	
 	//同时将session_token的值存到cookiet中,因为之前已经设置了header，所以直接用setcookie会引起错误
 	//setcookie("sessionToken",$theRandNum,time()+7200);

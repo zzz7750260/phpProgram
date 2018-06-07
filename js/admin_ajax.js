@@ -7,11 +7,37 @@ $(document).ready(function(){
 })
 
 
-
+//在进入后台后的直接操作
 //获取后台栏目菜单的ajax
 function adminMenuAjax(){
 	var theData;
 	var theAdmin = {
+		//验证用户是否登录后再进行操作
+		theYzLogin:function(){
+			//向后台发出请求
+			$.ajax({
+				url:"../server/ajax/thelogin.php",
+				data:{turl:"loginYz"},
+				type:"get",
+				dataType:"json",
+				success:function(data){
+					console.log("=============后端获取的验证信息==============");
+					console.log(data);
+					//根据返回的信息对链接进行跳转
+					//如果返回的status不是200，都为非法登录，均跳转到错误页面
+					if(data.status != 200){
+						window.location.href = "./404.html";				
+					}
+					else{
+						//在加载验证后，将加载层消除
+						$("#preloader").css("display","none");
+					}
+
+					
+				}
+			})		
+		},		
+		
 		//获取用户信息	
 		theUserInfo:function(){
 			$.ajax({
@@ -64,8 +90,9 @@ function adminMenuAjax(){
 			})								
 		}
 	}
-	theAdmin.theUserInfo()
-	theAdmin.theMenu()
+	theAdmin.theUserInfo();
+	theAdmin.theMenu();
+	theAdmin.theYzLogin();
 }
 
 /////////////////////

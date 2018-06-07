@@ -18,7 +18,8 @@ function getMenu(){
 	}
 	//print_r($menuArray);
 	//遍历数组找出父类分类,并进行html组装
-	$menuHtml .= '<nav class="navbar navbar-default" role="navigation"><div class="container-fluid"><div class="navbar-header"><a class="navbar-brand" href="#">课间十分钟</a></div><div><ul class="nav navbar-nav">'; 
+	$menuHtml .= '<nav class="navbar navbar-default" role="navigation"><div class="container-fluid"><div class="navbar-header"><button type="button" class="navbar-toggle" data-toggle="collapse"
+data-target="#example-navbar-collapse"><span class="sr-only">切换导航</span><span class="icon-bar"></span><span class="icon-bar"></span><span class="icon-bar"></span></button><a class="navbar-brand" href="#">课间十分钟</a></div><div class="collapse navbar-collapse" id="example-navbar-collapse"><ul class="nav navbar-nav">'; 
 	foreach($menuArray as $key => $value){
 		if($value['cpid'] == 0){
 			$childH = getChildMenu($menuArray,$value['cid']);
@@ -55,5 +56,4 @@ function getChildMenu($fArr,$fid){
 	//echo $cHtml;
 	return $cHtml;
 }
-
 

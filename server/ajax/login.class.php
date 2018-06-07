@@ -1,4 +1,5 @@
 <?php 
+session_start();
 class theLogin{	
 	//获取的参数(构造函数)
 	//function __construct(){				
@@ -22,13 +23,16 @@ class theLogin{
 	
 	
 	function loginYz(){
+		$theUserName = $_SESSION['username'];
+		$thePassWord = $_SESSION['password'];
+		
 		$sql = "select * from member where username = '$theUserName' and password = '$thePassWord'";
 		$sql_db = mysql_query($sql);
 
 		$num = mysql_num_rows($sql_db);
 		
-		echo $num;
-		return $num;
+		//echo $num;
+		//return $num;
 		/*
 		$hostUrl = $_SERVER['HTTP_HOST'];
 
@@ -46,6 +50,46 @@ class theLogin{
 			echo '<script>setTimeout(function(){window.location.href="'.$theURL .'/admin/"},6000)</script>';
 		}
 		*/		
+		
+		//设置返回信息
+		$loginYzReturnArray = array(); 
+		
+		//获取是否存在传递过来的用户名或者session_token，说明是从登录的地方过来的
+		if(!$_SESSION['username'] || !$_SESSION['session_token']){
+			$loginYzReturnArray = array(
+				status => 400,
+				msg => '用户不合法',
+				result => ''
+			);							
+		}
+		else{
+			//当存在session_token时，为了防止session_token被盗取，需要根据session_token获取一次用户信息，如果和登录的用户名相同时，为正确					
+			$theToken = $_SESSION['session_token'];
+			$yzSqlArray = array();
+			$yzSql = "select * from member where session_token = '$theToken'";
+			$yzSql_db = mysql_query($yzSql);
+			while($yzSql_db_array = mysql_fetch_assoc($yzSql_db)){
+				$yzSqlArray = $yzSql_db_array;		
+			}	
+			//如果获取到的用户名和session的用户名相同时，说明为同一个用户登录
+			if($_SESSION['username'] == $yzSqlArray['username']){
+				$loginYzReturnArray = array(
+					status => 200,
+					msg => '用户为合法用户',
+					result => $yzSqlArray
+				);				
+			}
+			else{
+				$loginYzReturnArray = array(
+					status => 400,
+					msg => '用户不合法',
+					result => ''
+				);								
+			}			
+		}
+		//返回json的数组
+		$loginYzReturnJson = json_encode($loginYzReturnArray);
+		print_r($loginYzReturnJson);
 	}
 	
 	//获取用户的信息
@@ -103,9 +147,14 @@ class theLogin{
 			$menujson = json_encode($this-> getMenu($therole,$thepid));
 			print_r($menujson);
 		}
+		
 		if($theUrl == 'theUser'){
 			$this->getUserInfo();		
 		}
+		
+		if($theUrl == 'loginYz'){
+			$this->loginYz();
+		}		
 	}
 }
 
