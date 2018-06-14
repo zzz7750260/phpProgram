@@ -30,53 +30,70 @@
 <body>
 <article class="cl pd-20">
 	<form action="" method="post" class="form form-horizontal" id="form-member-add">
-		<div class="row cl">
+		<div class="row cl user-value">
 			<label class="form-label col-xs-4 col-sm-3"><span class="c-red">*</span>用户名：</label>
 			<div class="formControls col-xs-8 col-sm-9">
-				<input type="text" class="input-text" value="" placeholder="" id="username" name="username">
+				<input type="text" class="input-text value-v" value="" placeholder="" id="username" name="username">
 			</div>
 		</div>
-		<div class="row cl">
+		
+		<div class="row cl user-value">
+			<label class="form-label col-xs-4 col-sm-3"><span class="c-red">*</span>密 码：</label>
+			<div class="formControls col-xs-8 col-sm-9">
+				<input type="password" class="input-text value-v" value="" placeholder="" id="password" name="password">
+			</div>
+		</div>
+		
+		<div class="row cl user-value">
 			<label class="form-label col-xs-4 col-sm-3"><span class="c-red">*</span>性别：</label>
-			<div class="formControls col-xs-8 col-sm-9 skin-minimal">
+			<div class="formControls col-xs-8 col-sm-9 skin-minimal value-v" name="sex">
 				<div class="radio-box">
-					<input name="sex" type="radio" id="sex-1" checked>
+					<input name="sex" type="radio" id="sex-1" checked value="male" >
 					<label for="sex-1">男</label>
 				</div>
 				<div class="radio-box">
-					<input type="radio" id="sex-2" name="sex">
+					<input type="radio" id="sex-2" name="sex" value="female" >
 					<label for="sex-2">女</label>
 				</div>
 				<div class="radio-box">
-					<input type="radio" id="sex-3" name="sex">
+					<input type="radio" id="sex-3" name="sex" value="secret" >
 					<label for="sex-3">保密</label>
 				</div>
 			</div>
 		</div>
-		<div class="row cl">
+		
+		<div class="row cl user-value">
 			<label class="form-label col-xs-4 col-sm-3"><span class="c-red">*</span>手机：</label>
 			<div class="formControls col-xs-8 col-sm-9">
-				<input type="text" class="input-text" value="" placeholder="" id="mobile" name="mobile">
+				<input type="text" class="input-text value-v" value="" placeholder="" id="mobile" name="tel">
 			</div>
 		</div>
-		<div class="row cl">
+		
+		<div class="row cl user-value">
 			<label class="form-label col-xs-4 col-sm-3"><span class="c-red">*</span>邮箱：</label>
 			<div class="formControls col-xs-8 col-sm-9">
-				<input type="text" class="input-text" placeholder="@" name="email" id="email">
+				<input type="text" class="input-text value-v" placeholder="@" name="email" id="email">
 			</div>
 		</div>
-		<div class="row cl">
+		
+		<div class="row cl user-value">
 			<label class="form-label col-xs-4 col-sm-3">附件：</label>
-			<div class="formControls col-xs-8 col-sm-9"> <span class="btn-upload form-group">
-				<input class="input-text upload-url" type="text" name="uploadfile" id="uploadfile" readonly nullmsg="请添加附件！" style="width:200px">
-				<a href="javascript:void();" class="btn btn-primary radius upload-btn"><i class="Hui-iconfont">&#xe642;</i> 浏览文件</a>
-				<input type="file" multiple name="file-2" class="input-file">
-				</span> </div>
+			<div class="formControls col-xs-8 col-sm-9"> 
+				<!--
+				<span class="btn-upload form-group">
+					<input class="input-text upload-url value-v" type="file" name="head" id="uploadfile" readonly nullmsg="请添加附件！" style="width:200px">
+					<a href="javascript:void();" class="btn btn-primary radius upload-btn"><i class="Hui-iconfont">&#xe642;</i> 浏览文件</a>
+					<input type="file" multiple name="file-2" class="input-file">
+				</span> 
+				-->
+				<input type="file" name="head" class="value-v user-head">
+			</div>
 		</div>
-		<div class="row cl">
+		
+		<div class="row cl user-value">
 			<label class="form-label col-xs-4 col-sm-3">所在城市：</label>
 			<div class="formControls col-xs-8 col-sm-9"> <span class="select-box">
-				<select class="select" size="1" name="city">
+				<select class="select value-v" size="1" name="city" >
 					<option value="" selected>请选择城市</option>
 					<option value="1">北京</option>
 					<option value="2">上海</option>
@@ -84,16 +101,18 @@
 				</select>
 				</span> </div>
 		</div>
-		<div class="row cl">
+		<div class="row cl user-value">
 			<label class="form-label col-xs-4 col-sm-3">备注：</label>
 			<div class="formControls col-xs-8 col-sm-9">
-				<textarea name="beizhu" cols="" rows="" class="textarea"  placeholder="说点什么...最少输入10个字符" onKeyUp="textarealength(this,100)"></textarea>
+				<textarea name="introduction" cols="" rows="" class="textarea value-v"  placeholder="说点什么...最少输入10个字符" onKeyUp="textarealength(this,100)"> </textarea>
 				<p class="textarea-numberbar"><em class="textarea-length">0</em>/100</p>
 			</div>
 		</div>
 		<div class="row cl">
 			<div class="col-xs-8 col-sm-9 col-xs-offset-4 col-sm-offset-3">
-				<input class="btn btn-primary radius" type="submit" value="&nbsp;&nbsp;提交&nbsp;&nbsp;">
+				
+				<input class="btn btn-primary radius user-put" type="button" value="&nbsp;&nbsp;提交&nbsp;&nbsp;">
+				
 			</div>
 		</div>
 	</form>
@@ -110,7 +129,7 @@
 <script type="text/javascript" src="lib/My97DatePicker/4.8/WdatePicker.js"></script>
 <script type="text/javascript" src="lib/jquery.validation/1.14.0/jquery.validate.js"></script> 
 <script type="text/javascript" src="lib/jquery.validation/1.14.0/validate-methods.js"></script> 
-<script type="text/javascript" src="lib/jquery.validation/1.14.0/messages_zh.js"></script> 
+<script type="text/javascript" src="../js/admin_ajax.js"></script> 
 <script type="text/javascript">
 $(function(){
 	$('.skin-minimal input').iCheck({
@@ -153,6 +172,10 @@ $(function(){
 		}
 	});
 });
+
+function textarealength(item,num){
+
+}
 </script> 
 <!--/请在上方写此页面业务相关的脚本-->
 </body>

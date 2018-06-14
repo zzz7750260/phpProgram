@@ -73,7 +73,8 @@ function registerControl(){
 		var rUsernameVal = $(this).val();
 		console.log(rUsernameVal)
 		if(!rUsernameVal){
-			$('.usernameis').text("用户名不能为空").css("color","#ff0000");		
+			$('.usernameis').text("用户名不能为空").css("color","#ff0000");	
+			registerUsernameYz = false;
 		}
 		else{
 			//当存在时，发送后台检测该用户名是否存在
@@ -86,7 +87,8 @@ function registerControl(){
 					console.log("=============后端返回用户存在个数============");
 					console.log(data);
 					if(data > 0){
-						$('.usernameis').text("该用户名已经存在").css("color","#ff0000");							
+						$('.usernameis').text("该用户名已经存在").css("color","#ff0000");
+						registerUsernameYz = false;
 					}
 					else{
 						registerUsernameYz = true;					
@@ -94,11 +96,14 @@ function registerControl(){
 				}
 			})			
 		}
+		//判断验证
+		judgeRegister();
 	})
 	
 	//失焦时消除提示
-	$('.rUsername').blur(function(){
+	$('.rUsername').focus(function(){
 		$('.usernameis').text("");
+		
 	})
 	
 	//判断密码	
@@ -106,7 +111,8 @@ function registerControl(){
 		var thePassword = $(".rPassword").val();
 		console.log(thePassword);
 		if(!thePassword){
-			$(".passwordis").text("密码不能为空").css("color","#ff0000");			
+			$(".passwordis").text("密码不能为空").css("color","#ff0000");	
+			resgisterPasswordYz = false;
 		}
 		else{
 			//js正则 密码必须包含字母和数字并且需要在6位数以上高
@@ -114,13 +120,16 @@ function registerControl(){
 			//正则判断
 			var theRegJudge = theReg.test(thePassword);
 			if(!theRegJudge){
-				$(".passwordis").text("密码必须包含字母").css("color","#ff0000");		
+				$(".passwordis").text("密码必须包含字母").css("color","#ff0000");	
+				resgisterPasswordYz = false;
 			}
 			else{
 				resgisterPasswordYz = true;
 				
 			}
 		}
+		//判断验证
+		judgeRegister();		
 	})
 	
 	$(".rPassword").focus(function(){
@@ -133,15 +142,20 @@ function registerControl(){
 		var thePassword = $(".rPassword").val();
 		if(!thePasswordYz){
 			$(".passwordisYz").text("该值不能为空格").css("color","#ff0000");			
+			resgisterPasswordYzYz = false;
 		}
 		else{
 			if(thePasswordYz !=thePassword){
 				$(".passwordisYz").text("两次密码不相同").css("color","#ff0000");		
+				resgisterPasswordYzYz = false;
 			}
 			else{
 				resgisterPasswordYzYz = true;			
 			}
 		}
+		//判断验证
+		judgeRegister();		
+		
 	})
 	
 	$(".rPasswordYz").focus(function(){
@@ -152,20 +166,23 @@ function registerControl(){
 	$(".rEmail").blur(function(){
 		var rEmailValue = $(".rEmail").val();
 		if(!rEmailValue){
-			$(".eMailisYz").text("email不能为空").css("color","#ff0000");					
+			$(".eMailisYz").text("email不能为空").css("color","#ff0000");		
+			resgisterEmailYz = false;
 		}
 		else{
 			//邮箱验证的正则表达式
 			var emailReg = /^[a-zA-Z0-9_-]+@([a-zA-Z0-9]+\.)+(com|cn|net|org)$/;
 			var emailRegYz = emailReg.test(rEmailValue);
 			if(!emailRegYz){
-				$(".eMailisYz").text("email格式不正确").css("color","#ff0000");				
+				$(".eMailisYz").text("email格式不正确").css("color","#ff0000");	
+				  resgisterEmailYz = false;				
 			}
 			else{
 				resgisterEmailYz = true;				
 			}
 		}
-		
+		//判断验证
+		judgeRegister();
 	})
 	
 	$(".rEmail").focus(function(){
@@ -173,7 +190,47 @@ function registerControl(){
 	})
 	
 	//公共方法，检测registerUsernameYz,resgisterPasswordYz,resgisterPasswordYzYz,resgisterEmailYz;验证值是否都为true
+	function judgeRegister(){
+		if(registerUsernameYz && resgisterPasswordYz && resgisterPasswordYzYz && resgisterEmailYz){
+			$(".tRegister").prop("disabled","");
+		}		
+		else{
+			$(".tRegister").prop("disabled","disabled");
+		}
+	}
 	
+	//在验证成功后,点击向后台提交注册信息
+	$(".tRegister").click(function(){
+		//alert("点击");
+		//获取注册表中的信息
+		
+		//声明表单数组
+		var theRegisterArray = {};				
+		$(".register-k").each(function(key,item){
+			//console.log(key);
+			//console.log(item);
+			var theArrayKey = $(this).find(".value-v").attr("name");
+			var theArrayValue = $(this).find(".value-v").val();
+			
+			//填充数组
+			theRegisterArray[theArrayKey] = theArrayValue;		
+		})
+		
+		//组装对应的数组
+		theRegisterArray['turl'] = "registerAdd";	
+		console.log(theRegisterArray);
+		
+		$.ajax({
+			url:"./server/ajax/themember.php",
+			data:theRegisterArray,
+			type:'post',
+			dataType:'json',
+			success:function(data){
+				console.log("后端返回的注册提示");
+				console.log(data);
+			}
+		})
+	})
 }
 
 function userControl(){

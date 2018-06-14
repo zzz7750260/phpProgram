@@ -4,12 +4,14 @@ $(document).ready(function(){
 	adminCategory();
 	adminArticle();
 	systemControl();
+	memberControl();
 })
 
 
 //在进入后台后的直接操作
 //获取后台栏目菜单的ajax
 function adminMenuAjax(){
+	that = this;
 	var theData;
 	var theAdmin = {
 		//验证用户是否登录后再进行操作
@@ -20,6 +22,7 @@ function adminMenuAjax(){
 				data:{turl:"loginYz"},
 				type:"get",
 				dataType:"json",
+				
 				success:function(data){
 					console.log("=============后端获取的验证信息==============");
 					console.log(data);
@@ -47,7 +50,8 @@ function adminMenuAjax(){
 				dataType:"json",
 				async:false,
 				success:function(data){
-					alert(data);
+					//alert(data);
+					console.log("============用户返回信息=============");
 					console.log(data)
 					theData = data;
 					var theDataArray = theData;
@@ -89,6 +93,7 @@ function adminMenuAjax(){
 				}
 			})								
 		}
+		
 	}
 	theAdmin.theUserInfo();
 	theAdmin.theMenu();
@@ -1103,6 +1108,111 @@ function systemControl(){
 	theSystem.setIndex();
 }
 
+//会员管理系统
+function memberControl(){
+	that = this;
+	var theUtil = new util();
+	var theMember = {
+		//获取用户列表
+		getMemberList:function(){
+			$.ajax({
+				url:"../server/ajax/themember.php",
+				data:{turl:'memberList'},
+				type:'get',
+				async:false,//需要同步数据处理将得到的值传递给全局
+				dataType:'json',
+				success:function(data){
+					console.log("===========后端返回的用户列表数据=============");
+					console.log(data);
+					//that.memberListVal = data;
+					
+					//循环列表
+					//组装html：返回用户列表				
+					
+					data.result.forEach(function(item){					
+						var memberListHtml = '<tr class="text-c"><td><input type="checkbox" value="1" name=""></td><td>1</td><td><u style="cursor:pointer" class="text-primary" onclick="member_show(\'张三\',\'member-add.html?memberName='+item['username']+'\',\'10001\',\'360\',\'400\')">'+item['username']+'</u></td><td>男</td><td>13000000000</td><td>'+item['email']+'</td><td class="text-l">北京市 海淀区</td><td>'+item['join_time']+'</td><td class="td-status"><span class="label label-success radius">已启用</span></td><td class="td-manage"><a style="text-decoration:none" onClick="member_stop(this,\'10001\')" href="javascript:;" title="停用"><i class="Hui-iconfont">&#xe631;</i></a> <a title="编辑" href="javascript:;" onclick="member_edit(\'编辑\',\'member-add.html\',\'4\',\'\',\'510\')" class="ml-5" style="text-decoration:none"><i class="Hui-iconfont">&#xe6df;</i></a> <a style="text-decoration:none" class="ml-5"onClick="change_password(\'修改密码\',\'change-password.html\',\'10001\',\'600\',\'270\')" href="javascript:;" title="修改密码"><i class="Hui-iconfont">&#xe63f;</i></a> <a title="删除" href="javascript:;" onclick="member_del(this,\''+item['iid']+'\')" class="ml-5" style="text-decoration:none"><i class="Hui-iconfont">&#xe6e2;</i></a></td></tr>';
+					
+						$(memberListHtml).appendTo(".member-list");
+						
+					})
+									
+				}
+			})	
+			//return that.memberListVal;
+		},
+		memberAdd:function(){
+			//获取链接传递过来的参数
+			var theRegUrl = theUtil.theReg.getUrlParamsReg('memberName');
+			alert("链接参数为:"+theRegUrl);
+			//如果参数为不存在的时候，为增加用户,如果存在时为编辑用户			
+			if(!theRegUrl){
+				//
+				
+			}
+			else{
+				//
+				
+			}
+			
+			$(".user-put").on("click",function(){
+				theUserInfoTableValue()
+			})
+			//公共类，获取头像上传信息
+			$(".user-head").change(function(){
+				var theFile = this.files[0];
+				console.log(theFile);
+				//将theFile和生成的base64路径传给全局变量
+				that.theFile = theFile;
+				var reader = new FileReader();
+				reader.readAsDataURL(theFile);
+				reader.onload = function(e){
+					var imgSrc = this.result;
+					console.log(imgSrc);
+					that.baseImg = imgSrc;
+				}
+			})
+			
+			//公共类，获取表格中的信息
+			function theUserInfoTableValue(){
+				var userArray = {};
+				$(".user-value").each(function(key,item){
+					var theKey = $(this).find(".value-v").attr("name");
+					var theValue = $(this).find(".value-v").val();					
+					if(theKey =="sex"){
+						theValue = $("input[name='sex']:checked").val();					
+					}
+					if(theKey =="head"){
+						theValue = that.theFile.name;			
+					}
+					userArray[theKey] = theValue;
+													
+				})
+				
+				//组装数组
+				userArray['baseImg'] = that.baseImg;
+				userArray['turl'] = "registerAdd";
+				console.log(userArray)	
+
+				//向后端发送相关数据
+				$.ajax({
+					url:'../server/ajax/themember.php',
+					data:userArray,
+					type:'post',
+					dataType:'json',
+					success:function(data){
+						console.log("============后端提交会员注册返回==========");
+						console.log(data);
+						
+					}
+				})
+			}
+		}	
+		
+	}
+	theMember.getMemberList();
+	theMember.memberAdd()
+}
+
 //正则表达式分类
 function util(){
 	var that = this;
@@ -1185,9 +1295,25 @@ function util(){
 			console.log("=========网络查询类获取用户信息（内）============");
 			console.log(that.userInfo)
 			return that.userInfo;
-		}
-				
-	},
+		},
+		
+		//根据验证信息来返回用户信息
+		getUserInfoDetail:function(){
+			$.ajax({
+				url:"../server/ajax/thelogin.php",
+				data:{turl:"loginYz"},
+				type:"get",
+				dataType:"json",
+				async:false,
+				success:function(data){
+					console.log("=============后端获取的验证信息==============");
+					console.log(data);
+					that.userInfoDetail = data;
+				}
+			})
+			return that.userInfoDetail;
+		}								
+	}
 	//获取文章类型的数据返回
 	this.commAricle = {
 		//获取分类列表
@@ -1206,5 +1332,10 @@ function util(){
 			})
 			return that.categoryJson;
 		}
+	}
+	
+	//获取用户类型返回
+	this.memberUtil = {
+
 	}
 }

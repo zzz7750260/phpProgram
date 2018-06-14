@@ -47,7 +47,7 @@
 			</div>
 			<hr class="hr15">
 			
-            <input value="注册" lay-submit lay-filter="login" style="width:100%;" type="submit" disabled="disabled" class="tlogin">
+            <input value="注册" lay-submit lay-filter="login" style="width:100%;" type="submit" disabled="disabled" class="tRegister">
             <hr class="hr20" >
        
     </div>

@@ -1,5 +1,6 @@
 <?php 
 session_start();
+include('../system.util.php');
 class theLogin{	
 	//获取的参数(构造函数)
 	//function __construct(){				
@@ -154,7 +155,8 @@ class theLogin{
 		
 		if($theUrl == 'loginYz'){
 			$this->loginYz();
-		}		
+		}
+
 	}
 }
 
