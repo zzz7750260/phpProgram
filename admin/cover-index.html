@@ -32,152 +32,48 @@
 <article class="page-container">
 	<form class="form form-horizontal" id="form-article-add">
 		<div class="row cl">
-			<label class="form-label col-xs-4 col-sm-2"><span class="c-red">*</span>文章标题：</label>
+			<label class="form-label col-xs-4 col-sm-2"><span class="c-red">*</span>封面标题：</label>
 			<div class="formControls col-xs-8 col-sm-9">
-				<input type="text" class="input-text value-v" value="" placeholder="" id="article-title" name="article-title">
-			</div>
-		</div>
-		<div class="row cl">
-			<label class="form-label col-xs-4 col-sm-2">简略标题：</label>
-			<div class="formControls col-xs-8 col-sm-9">
-				<input type="text" class="input-text value-v" value="" placeholder="" id="article-short-title" name="article-short-title">
-			</div>
-		</div>
-		<div class="row cl">
-			<label class="form-label col-xs-4 col-sm-2"><span class="c-red">*</span>分类栏目：</label>
-			<div class="formControls col-xs-8 col-sm-9"> <span class="select-box">
-				<select name="category_select" class="select value-v" id="category_select">
-					<option value="0">全部栏目</option>
-					<option value="1">新闻资讯</option>
-					<option value="11">├行业动态</option>
-					<option value="12">├行业资讯</option>
-					<option value="13">├行业新闻</option>
-				</select>
-				</span> </div>
-		</div>
-		
-		<div class="row cl">
-			<label class="form-label col-xs-4 col-sm-2">关键词：</label>
-			<div class="formControls col-xs-8 col-sm-9">
-				<input type="text" class="input-text value-v" value="" placeholder="" id="article-keyword" name="article-keyword">
-			</div>
-		</div>
-		
-		<div class="row cl">
-			<label class="form-label col-xs-4 col-sm-2">文章摘要：</label>
-			<div class="formControls col-xs-8 col-sm-9">
-				<textarea name="article-short" cols="" rows="" class="article-short textarea value-v"  placeholder="说点什么...最少输入10个字符" datatype="*10-100" dragonfly="true" nullmsg="备注不能为空！" onKeyUp="textarealength(this,200)"></textarea>
-				<p class="textarea-numberbar"><em class="textarea-length">0</em>/200</p>
-			</div>
-		</div>
-		
-		
-		<div class="row cl">
-			<label class="form-label col-xs-4 col-sm-2">封面选择：</label>
-			<div class="formControls col-xs-8 col-sm-9"> <span class="select-box">
-				<select name="article-cover" class="select value-v" id="article-cover">
-					
-				</select>
-				</span> </div>
-		</div>		
-		
-		<div class="row cl">
-			<label class="form-label col-xs-4 col-sm-2">文章作者：</label>
-			<div class="formControls col-xs-8 col-sm-9">
-				<input type="text" class="input-text value-v" value="admin" placeholder="" id="article-author" name="article-author">
-			</div>
-		</div>
-		<div class="row cl">
-			<label class="form-label col-xs-4 col-sm-2">文章来源：</label>
-			<div class="formControls col-xs-8 col-sm-9">
-				<input type="text" class="input-text value-v" value="admin" placeholder="" id="article-source" name="article-source">
-			</div>
-		</div>
-		<div class="row cl">
-			<label class="form-label col-xs-4 col-sm-2">允许评论：</label>
-			<div class="formControls col-xs-8 col-sm-9 skin-minimal">
-				<div class="check-box">
-					<input type="checkbox" id="checkbox-pinglun" class="value-v" name="article-pl">
-										
-					<label for="checkbox-pinglun">&nbsp;</label>
-				</div>
-			</div>
-		</div>
-		<div class="row cl">
-			<label class="form-label col-xs-4 col-sm-2">评论开始日期：</label>
-			<div class="formControls col-xs-8 col-sm-9">
-				<input type="text" name="pl-data-start" onfocus="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',maxDate:'#F{$dp.$D(\'datemax\')||\'%y-%M-%d\'}'})" id="datemin" class="input-text Wdate value-v">
-			</div>
-		</div>
-		<div class="row cl">
-			<label class="form-label col-xs-4 col-sm-2">评论结束日期：</label>
-			<div class="formControls col-xs-8 col-sm-9">
-				<input type="text" name="pl-data-end" onfocus="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',minDate:'#F{$dp.$D(\'datemin\')}'})" id="datemax" class="input-text Wdate value-v">
+				<input type="text" class="input-text value-v" value="" placeholder="" id="cover-title" name="cover-title">
 			</div>
 		</div>
 
-		<!--
 		<div class="row cl">
 			<label class="form-label col-xs-4 col-sm-2">缩略图：</label>
 			<div class="formControls col-xs-8 col-sm-9">
 				<div class="uploader-thum-container">
-					<div id="article-fileList" class="uploader-list value-v" name="article-pic"></div>
-					<div id="filePicker">预览图片</div>
-					<div id="show-picture" class="show-picture" name="show-picture">
-						<img src="">
-					</div>
-					<button id="btn-star" class="btn btn-default btn-uploadstar radius ml-10">开始上传</button>
-					<div></div>
-				</div>
-			</div>
-		</div>
-		-->
-		<div class="row cl">
-			<label class="form-label col-xs-4 col-sm-2">缩略图：</label>
-			<div class="formControls col-xs-8 col-sm-9">
-				<div class="uploader-thum-container">
-					<input type="file" id="article-fileList" class="uploader-list value-v" name="article-pic">
+					<input type="file" id="cover-pic" class="uploader-list value-v" name="cover-pic">
 				</div>
 			</div>
 			<div class="col-md-2 col-sm-4">
 				<img class="img-responsive show-picture" style="width:100%;">
 			</div>
-			<div>
-			<input type ="button" class="article-pic-push" id = "article-pic-push" value = "封面提交">
-			</div>
+			<!--<div>
+				<input type ="button" class="article-pic-push" id = "article-pic-push" value = "封面提交">
+			</div>-->
 				
 		</div>
-			
-		<div class="row cl">
-			<label class="form-label col-xs-4 col-sm-2"><span class="c-red">*</span>视频类型：</label>
-			<div class="formControls col-xs-8 col-sm-9"> <span class="select-box">
-				<select name="video-platform" class="select value-v" id="video-platform">
-					<option value="none">全部栏目</option>				
-					<option value="youku">├优酷</option>
-					<option value="bilibili">├哔哩哔哩</option>
-					<option value="souhu">├搜狐视频</option>
-				</select>
-				</span> </div>
-		</div>
 		
 		<div class="row cl">
-			<label class="form-label col-xs-4 col-sm-2">视频链接：</label>
+			<label class="form-label col-xs-4 col-sm-2">文章摘要：</label>
 			<div class="formControls col-xs-8 col-sm-9">
-				<input type="text" class="input-text value-v" value="" placeholder="" id="video-source" name="video-source">
+				<textarea name="cover-short" cols="" rows="" class="cover-short textarea value-v"  placeholder="说点什么...最少输入10个字符" datatype="*10-100" dragonfly="true" nullmsg="备注不能为空！" onKeyUp="textarealength(this,200)"></textarea>
+				<p class="textarea-numberbar"><em class="textarea-length">0</em>/200</p>
 			</div>
 		</div>
-		
 		
 		<div class="row cl">
-			<label class="form-label col-xs-4 col-sm-2">文章内容：</label>
-			<div class="formControls  col-xs-8 col-sm-9"> 
-				<script id="editor" type="text/plain" style="width:100%;height:400px;"></script> 
+			<label class="form-label col-xs-4 col-sm-2">文章作者：</label>
+			<div class="formControls col-xs-8 col-sm-9">
+				<input type="text" class="input-text value-v" value="admin" placeholder="" id="cover-author" name="cover-author">
 			</div>
 		</div>
+
+
 		<div class="row cl">
 			<div class="col-xs-8 col-sm-9 col-xs-offset-4 col-sm-offset-2">
-				<button  class="btn btn-primary radius" type="button" id="article-save"><i class="Hui-iconfont">&#xe632;</i> 保存并提交审核</button>
-				<button  class="btn btn-secondary radius" type="button" id="btn-save"><i class="Hui-iconfont">&#xe632;</i> 保存草稿</button>
+				<button  class="btn btn-primary radius" type="button" id="cover-save"><i class="Hui-iconfont">&#xe632;</i> 保存并提交审核</button>
+				
 				<button onClick="removeIframe();" class="btn btn-default radius" type="button">&nbsp;&nbsp;取消&nbsp;&nbsp;</button>
 			</div>
 		</div>

@@ -17,6 +17,7 @@ class theArticleClass{
 		$articlePic = $_POST['article-pic'];
 		$articlePl = $_POST['article-pl'];
 		$articleShort = $_POST['article-short'];
+		$articleCover = $_POST['article-cover'];
 		$articleSource = $_POST['article-source'];
 		$categorySelect = $_POST['category_select'];
 		$plDataEnd = $_POST['pl-data-end'];
@@ -32,7 +33,7 @@ class theArticleClass{
 		
 		//$theCommit = $_POST[''];
 		
-		$addSql = "insert into article (title, short_title, category_id, article_key, article_short, article_author, article_source, commit_start, commit_end, article_img, video_platform, video_source, article_container, article_status, commit_status) values ('$theTitle', '$articleShortTitle', '$categorySelect', '$articleKeyword', '$articleShort', '$articleAuthor', '$articleSource', '$plDataStart', '$plDataEnd', '$articlePic', '$videoPlatform', '$videoSource', '$theArticle', '$articleStatus', '$articlePl')";
+		$addSql = "insert into article (title, short_title, category_id, article_key, article_short, article_cover, article_author, article_source, commit_start, commit_end, article_img, video_platform, video_source, article_container, article_status, commit_status) values ('$theTitle', '$articleShortTitle', '$categorySelect', '$articleKeyword', '$articleShort', '$articleCover', '$articleAuthor', '$articleSource', '$plDataStart', '$plDataEnd', '$articlePic', '$videoPlatform', '$videoSource', '$theArticle', '$articleStatus', '$articlePl')";
 		
 		$addSql_db = mysql_query($addSql);			
 		if($addSql_db){

@@ -111,6 +111,38 @@ class theLogin{
 		print_r($userJson);
 	}
 	
+	//根据用户名获取用户信息
+	function userNameGetInfo(){
+		//echo "aaa";
+		$theUserName = $_GET['theUserName'];
+		$userNameInfoSql = "select * from member where username = '$theUserName'";
+		$userNameInfoSql_db = mysql_query($userNameInfoSql);
+		if($userNameInfoSql_db){
+			$userNameInfoArray = array();
+			while($userNameInfoSql_db_array = mysql_fetch_assoc($userNameInfoSql_db)){
+				$userNameInfoArray = $userNameInfoSql_db_array;		
+			}
+			//组装返回数组
+			$returnMemberArray = array(
+				status => 200,
+				msg => "返回用户信息成功",
+				result => $userNameInfoArray
+			); 
+		
+		}
+		else{
+			//组装返回数组
+			$returnMemberArray = array(
+				status => 400,
+				msg => "该用户信息不存在",
+				result => ''
+			);					
+		}
+		//将数组转成json返回给前端
+		$returnMemberJson = json_encode($returnMemberArray);
+		print_r($returnMemberJson);
+	}
+	
 	//根据传进来的权限放回对应的菜单数据
 	function getMenu($therole,$thepid){		
 		//$menuList = array();
@@ -156,7 +188,9 @@ class theLogin{
 		if($theUrl == 'loginYz'){
 			$this->loginYz();
 		}
-
+		if($theUrl == 'userNameGetInfo'){
+			$this->userNameGetInfo();		
+		}
 	}
 }
 

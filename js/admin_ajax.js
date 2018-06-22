@@ -5,17 +5,43 @@ $(document).ready(function(){
 	adminArticle();
 	systemControl();
 	memberControl();
+	coverControl();
 })
 
+//公共模块获取用户信息,初始化全局变量
+var theAllUtil = new util();
+var theAllUserInfo = theAllUtil.memberUtil.theMemberYz();
 
 //在进入后台后的直接操作
 //获取后台栏目菜单的ajax
 function adminMenuAjax(){
+	//引入通用模块
+	var theUtil = new util();
 	that = this;
 	var theData;
 	var theAdmin = {
-		//验证用户是否登录后再进行操作
 		theYzLogin:function(){
+			var userInfoData = theUtil.memberUtil.theMemberYz();
+			console.log("获取用户验证信息");
+			console.log(userInfoData);
+			//根据返回的信息对链接进行跳转
+			//如果返回的status不是200，都为非法登录，均跳转到错误页面
+			if(userInfoData.status != 200){
+				window.location.href = "./404.html";				
+			}
+			else{
+				//在加载验证后，将加载层消除
+				$("#preloader").css("display","none");
+			}
+			
+		},
+		
+		//验证用户是否登录后再进行操作
+		/*
+		theYzLogin:function(){
+			var userInfoData = theUtil.memberUtil.theMemberYz();
+			console.log("获取用户验证信息");
+			console.log(userInfoData);
 			//向后台发出请求
 			$.ajax({
 				url:"../server/ajax/thelogin.php",
@@ -39,7 +65,8 @@ function adminMenuAjax(){
 					
 				}
 			})		
-		},		
+		},	
+		*/
 		
 		//获取用户信息	
 		theUserInfo:function(){
@@ -575,6 +602,23 @@ function adminArticle(){
 		//	var pictureName;			
 		//},
 		addArticle:function(){
+			//通过公共模块获取用户信息
+			var getMemberInfo = theUtil.memberUtil.theMemberYz();
+			
+			//通过公共模块获取封面信息,并对HTML进行组装
+			var theCoverInfo = theUtil.memberUtil.getCoverInfo();
+			console.log("===============外部的封面列表============");
+			console.log(theCoverInfo);
+			theCoverInfo.result.forEach(function(item){
+				var coverHtml = '<option value="'+item['title']+'">'+item['title']+'</option>';
+				$(coverHtml).appendTo("#article-cover");
+			})
+			
+			console.log("得到用户信息："+ getMemberInfo.result.username)
+			//将获取到的用户信息的用户名填到对应的用户框中
+			$("input[name='article-author']").val(getMemberInfo.result.username);
+			
+			
 			//图片上传预览,将图片转成base64
 			$("#article-fileList").change(function(){
 				var theFile = this.files[0];
@@ -1072,6 +1116,140 @@ function adminArticle(){
 		
 }
 
+//封面管理
+function coverControl(){
+	that = this;
+	that.pictureInfo;//设置全局变量图片信息
+	console.log("=============全局用户信息===============");
+	console.log(theAllUserInfo);
+	var theCover = {
+		coverAdd:function(){
+			//组装html
+			$("input[name='cover-author']").val(theAllUserInfo.result.username);
+			
+			//获取是否有参数，如果有为编辑封面，没有为增加封面
+			var theCoverId = theAllUtil.theReg.getUrlParamsReg("coverId");
+			console.log("封面参数为："+ theCoverId)
+			
+			if(theCoverId){
+				//向后端发出请求获取封面详情
+				$.ajax({
+					url:"../server/ajax/thecover.php",
+					data:{turl:"getTheCoverInfo",CoverIdNum:theCoverId},
+					type:"get",
+					dataType:"json",
+					async:false,
+					success:function(data){
+						console.log("==============后端返回的封面详情==============");
+						console.log(data);
+						var coverInfo = data.result;
+						//根据返回的数据组建HTML
+						$("input[name='cover-title']").val(coverInfo.title);
+						$(".cover-short").val(coverInfo.cover_introduction);
+						that.pictureInfoname = coverInfo.cover_img;
+						that.coverIdNum = coverInfo.pid;
+					}
+					
+				})
+				
+				//点击上传相关信息
+				$("#cover-save").on("click",function(){
+					pushCoverInfo("edit");
+				});
+			}
+			else{
+				//点击上传相关信息
+				$("#cover-save").on("click",function(){
+					pushCoverInfo("add");
+				});				
+				
+			}
+			//获取上传图片的相关信息
+			$("#cover-pic").change(function(){
+				var theFile = this.files[0];
+				console.log(theFile);
+				var reader = new FileReader();
+				that.pictureInfo = theFile;	//将图片信息存到全局
+				reader.readAsDataURL(theFile);
+				reader.onload = function(e){
+					$(".show-picture").attr("src",this.result);
+					that.picBase = this.result //将base存到全局
+				}
+			})
+			
+			
+			//公共类：向后端提交信息
+			function pushCoverInfo(type){
+				var coverInfoArray = {};
+				
+				$(".row").each(function(key,item){
+					var cover_name = $(this).find(".value-v").attr("name");
+					var cover_value = $(this).find(".value-v").val();					
+					if(cover_name == "cover-pic"){
+						if(!that.pictureInfo){
+							cover_value = that.pictureInfoname;
+						}
+						else{
+							cover_value = that.pictureInfo.name;	
+						}
+						
+					}
+					coverInfoArray[cover_name] = cover_value;
+				})		
+							
+				console.log("===============获取的封面信息=============");
+				console.log(coverInfoArray);
+				
+
+				//组装数组
+				coverInfoArray['baseImg'] = that.picBase;
+				console.log()
+				coverInfoArray['turl'] = "addCover";
+				if(type == "add"){					
+					coverInfoArray['set-type'] = "add";
+				}
+				if(type == "edit"){
+					coverInfoArray['set-type'] = "edit";	
+					coverInfoArray['editId'] = that.coverIdNum
+				}
+											
+				//coverInfoArray['editId'] = that.
+				
+				//向后端提交相关数据
+				$.ajax({
+					url:"../server/ajax/thecover.php",
+					data:coverInfoArray,
+					type:"post",
+					dataType:"json",
+					success:function(data){
+						console.log("============提交封面信息的返回值==========");
+						console.log(data);
+					}
+				})
+				
+			}
+		},
+		getCoverList:function(){
+			//通过公共模块获取封面列表信息
+			var theCoverListInfo = theAllUtil.memberUtil.getCoverInfo();
+			console.log("=================外部封面返回值==================");
+			console.log(theCoverListInfo);
+			var theCoverListInfoArray = theCoverListInfo.result;
+			
+			//循环组装html加入到封面列表中
+			theCoverListInfo.result.forEach(function(item){
+				var coverLiHtml = '<li class="col-md-2"><div><div class="cover-header"><h4>'+item['title']+'</h4></div><div class="cover-body"><div class="cover-body-img"><img width ="100%" class="img-responsive" src="./static/h-ui.admin/img/cover/'+item['cover_img']+'"></div><div class="cover-body-text">'+item['cover_introduction']+'</div><div class="cover-body-edit"><a title="编辑" href="javascript:;" onclick="member_add(\'编辑封面\',\'cover-index.html?coverId='+item['pid']+'\',\'\',\'510\')" class="ml-5" style="text-decoration:none"><i class="Hui-iconfont">&#xe6df;</i></a> <a title="删除" href="javascript:;" onclick="member_del(this,\''+item['pid']+'\')" class="ml-5" style="text-decoration:none"><i class="Hui-iconfont">&#xe6e2;</i></a></div></div></li>';
+				$(coverLiHtml).appendTo(".cover-ul");
+			})
+			
+		}
+		
+	}
+	theCover.coverAdd();
+	theCover.getCoverList();
+}
+
+
 //用户系统管理
 function systemControl(){
 	var theSystem = {
@@ -1111,6 +1289,7 @@ function systemControl(){
 //会员管理系统
 function memberControl(){
 	that = this;
+	that.theFile;
 	var theUtil = new util();
 	var theMember = {
 		//获取用户列表
@@ -1130,7 +1309,7 @@ function memberControl(){
 					//组装html：返回用户列表				
 					
 					data.result.forEach(function(item){					
-						var memberListHtml = '<tr class="text-c"><td><input type="checkbox" value="1" name=""></td><td>1</td><td><u style="cursor:pointer" class="text-primary" onclick="member_show(\'张三\',\'member-add.html?memberName='+item['username']+'\',\'10001\',\'360\',\'400\')">'+item['username']+'</u></td><td>男</td><td>13000000000</td><td>'+item['email']+'</td><td class="text-l">北京市 海淀区</td><td>'+item['join_time']+'</td><td class="td-status"><span class="label label-success radius">已启用</span></td><td class="td-manage"><a style="text-decoration:none" onClick="member_stop(this,\'10001\')" href="javascript:;" title="停用"><i class="Hui-iconfont">&#xe631;</i></a> <a title="编辑" href="javascript:;" onclick="member_edit(\'编辑\',\'member-add.html\',\'4\',\'\',\'510\')" class="ml-5" style="text-decoration:none"><i class="Hui-iconfont">&#xe6df;</i></a> <a style="text-decoration:none" class="ml-5"onClick="change_password(\'修改密码\',\'change-password.html\',\'10001\',\'600\',\'270\')" href="javascript:;" title="修改密码"><i class="Hui-iconfont">&#xe63f;</i></a> <a title="删除" href="javascript:;" onclick="member_del(this,\''+item['iid']+'\')" class="ml-5" style="text-decoration:none"><i class="Hui-iconfont">&#xe6e2;</i></a></td></tr>';
+						var memberListHtml = '<tr class="text-c"><td><input type="checkbox" value="1" name=""></td><td>1</td><td><u style="cursor:pointer" class="text-primary" onclick="member_show(\'张三\',\'member-add.html?memberName='+item['username']+'\',\'10001\',\'360\',\'400\')">'+item['username']+'</u></td><td>'+item['sex']+'</td><td>'+item['tel']+'</td><td>'+item['email']+'</td><td class="text-l">'+item['city']+'</td><td>'+item['join_time']+'</td><td class="td-status"><span class="label label-success radius">已启用</span></td><td class="td-manage"><a style="text-decoration:none" onClick="member_stop(this,\'10001\')" href="javascript:;" title="停用"><i class="Hui-iconfont">&#xe631;</i></a> <a title="编辑" href="javascript:;" onclick="member_edit(\'编辑\',\'member-add.html\',\'4\',\'\',\'510\')" class="ml-5" style="text-decoration:none"><i class="Hui-iconfont">&#xe6df;</i></a> <a style="text-decoration:none" class="ml-5"onClick="change_password(\'修改密码\',\'change-password.html\',\'10001\',\'600\',\'270\')" href="javascript:;" title="修改密码"><i class="Hui-iconfont">&#xe63f;</i></a> <a title="删除" href="javascript:;" onclick="member_del(this,\''+item['iid']+'\')" class="ml-5" style="text-decoration:none"><i class="Hui-iconfont">&#xe6e2;</i></a></td></tr>';
 					
 						$(memberListHtml).appendTo(".member-list");
 						
@@ -1147,16 +1326,35 @@ function memberControl(){
 			//如果参数为不存在的时候，为增加用户,如果存在时为编辑用户			
 			if(!theRegUrl){
 				//
-				
+				$(".user-put").on("click",function(){
+					theUserInfoTableValue('add');
+				})
 			}
 			else{
-				//
+				//当参数存在时，根据参数获取用户的相关信息，并组装对应的html
+				//根据公用模块获取用户数据
+				var theMemberInfo = theUtil.memberUtil.getMemberInfo(theRegUrl);
+				//将图片名称存为全局变量
+				that.header = theMemberInfo.result.user_head;
+				console.log("内头像："+that.header);
+				console.log("=============根据编辑用户名后端返回的用户信息===============");
+				console.log(theMemberInfo);	
+				var theMemberInfoVal = theMemberInfo.result;
+				//组装对应的html
+				$("input[name='username']").val(theMemberInfoVal.username);
+				$("input[name='password']").val(theMemberInfoVal.password);
+				$("input:radio[value='"+theMemberInfoVal.sex+"']").attr("checked","true");
+				$("input[name='tel']").val(theMemberInfoVal.tel);
+				$("input[name='email']").val(theMemberInfoVal.email);
+				//$(".select").find("option[value="++"]").attr("selected",true);
+				$(".introduction").val(theMemberInfoVal.user_introduction);
 				
+				$(".user-put").on("click",function(){
+					theUserInfoTableValue('edit');
+				})
 			}
 			
-			$(".user-put").on("click",function(){
-				theUserInfoTableValue()
-			})
+
 			//公共类，获取头像上传信息
 			$(".user-head").change(function(){
 				var theFile = this.files[0];
@@ -1173,7 +1371,9 @@ function memberControl(){
 			})
 			
 			//公共类，获取表格中的信息
-			function theUserInfoTableValue(){
+			//select 为选择新增或者编辑的方式
+			function theUserInfoTableValue(select){
+				console.log("外头像："+that.header);
 				var userArray = {};
 				$(".user-value").each(function(key,item){
 					var theKey = $(this).find(".value-v").attr("name");
@@ -1182,7 +1382,13 @@ function memberControl(){
 						theValue = $("input[name='sex']:checked").val();					
 					}
 					if(theKey =="head"){
-						theValue = that.theFile.name;			
+						if(!that.theFile){
+							theValue = that.header;
+						}
+						else{
+							theValue = that.theFile.name;
+						}
+						
 					}
 					userArray[theKey] = theValue;
 													
@@ -1191,6 +1397,16 @@ function memberControl(){
 				//组装数组
 				userArray['baseImg'] = that.baseImg;
 				userArray['turl'] = "registerAdd";
+				
+				if(select =="add"){
+					userArray['select'] = "add";
+				}
+				
+				if(select =="edit"){
+					userArray['select'] = "edit";
+					userArray['oldUserName'] = theRegUrl;
+				}				
+
 				console.log(userArray)	
 
 				//向后端发送相关数据
@@ -1214,7 +1430,7 @@ function memberControl(){
 }
 
 //正则表达式分类
-function util(){
+function util(){	
 	var that = this;
 	this.theReg = {
 		//获取链接参数的正则表达式
@@ -1336,6 +1552,60 @@ function util(){
 	
 	//获取用户类型返回
 	this.memberUtil = {
-
+		//获取用户返回的信息
+		theMemberYz:function(){
+			$.ajax({
+				url:"../server/ajax/thelogin.php",
+				data:{turl:"loginYz"},
+				type:'get',
+				dataType:'json',
+				async:false,
+				success:function(data){
+					console.log("===============后端用户验证后返回的数据类型==============");
+					console.log(data);
+					that.memberInfo = data;
+				}
+			})
+			return that.memberInfo;
+		},
+		//根据用户名获取用户信息(超级管理员操作)
+		getMemberInfo:function(userName){
+			$.ajax({
+				url:"../server/ajax/thelogin.php",
+				data:{turl:"userNameGetInfo",theUserName:userName},
+				type:'get',
+				dataType:'json',
+				async:false,
+				success:function(data){
+					console.log("============后端返回的用户数据===============");
+					console.log(data);
+					that.memberInfo = data;
+				}
+			})
+			return that.memberInfo;
+		},
+		
+		//根据用户名获取封面信息
+		getCoverInfo:function(){
+			//获取全局的用户名
+			console.log("============全局用户的信息（封面）============");
+			console.log(theAllUserInfo)
+			
+			//向后端发出请求数据
+			$.ajax({
+				url:"../server/ajax/thecover.php",
+				data:{turl:"coverList",username:theAllUserInfo.result.username},
+				type:"get",
+				dataType:"json",
+				async:false,
+				success:function(data){
+					console.log("===================后端返回的封面信息==============");
+					console.log(data);
+					that.CoverInfo = data;
+				}
+			})
+			
+			return that.CoverInfo;
+		}
 	}
 }

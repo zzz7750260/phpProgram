@@ -69,4 +69,21 @@
 			return $returnImgArray;
 		}		
 	}
+	
+	//给前端返回json函数的封装
+	//$statusNum:返回的状态码
+	//$theMsg:返回的信息介绍
+	//$theResult:返回的结果,默认为空
+	function ajaxJson($statusNum,$theMsg,$theResult=''){
+		$returnArray = array(
+			status => $statusNum,
+			msg => $theMsg,
+			result => $theResult
+		);
+		
+		//转换为json
+		$returnJson = json_encode($returnArray);
+		return $returnJson;
+	}
+	
 }

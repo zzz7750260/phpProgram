@@ -48,15 +48,15 @@
 			<label class="form-label col-xs-4 col-sm-3"><span class="c-red">*</span>性别：</label>
 			<div class="formControls col-xs-8 col-sm-9 skin-minimal value-v" name="sex">
 				<div class="radio-box">
-					<input name="sex" type="radio" id="sex-1" checked value="male" >
+					<input name="sex" type="radio" id="sex-1" value="男" >
 					<label for="sex-1">男</label>
 				</div>
 				<div class="radio-box">
-					<input type="radio" id="sex-2" name="sex" value="female" >
+					<input type="radio" id="sex-2" name="sex" checked value="女" >
 					<label for="sex-2">女</label>
 				</div>
 				<div class="radio-box">
-					<input type="radio" id="sex-3" name="sex" value="secret" >
+					<input type="radio" id="sex-3" name="sex" value="秘密" >
 					<label for="sex-3">保密</label>
 				</div>
 			</div>
@@ -95,16 +95,17 @@
 			<div class="formControls col-xs-8 col-sm-9"> <span class="select-box">
 				<select class="select value-v" size="1" name="city" >
 					<option value="" selected>请选择城市</option>
-					<option value="1">北京</option>
-					<option value="2">上海</option>
-					<option value="3">广州</option>
+					<option value="北京">北京</option>
+					<option value="上海">上海</option>
+					<option value="广州">广州</option>
+					<option value="深圳">深圳</option>
 				</select>
 				</span> </div>
 		</div>
 		<div class="row cl user-value">
 			<label class="form-label col-xs-4 col-sm-3">备注：</label>
 			<div class="formControls col-xs-8 col-sm-9">
-				<textarea name="introduction" cols="" rows="" class="textarea value-v"  placeholder="说点什么...最少输入10个字符" onKeyUp="textarealength(this,100)"> </textarea>
+				<textarea name="introduction" cols="" rows="" class="textarea introduction value-v"  placeholder="说点什么...最少输入10个字符" onKeyUp="textarealength(this,100)"> </textarea>
 				<p class="textarea-numberbar"><em class="textarea-length">0</em>/100</p>
 			</div>
 		</div>

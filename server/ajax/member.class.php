@@ -10,7 +10,10 @@ class theMember{
 		$theEmail = $_POST['email'];
 		$theTel = $_POST['tel'];
 		$theHead = $_POST['head'];
+		$theCity = $_POST['city'];
 		$theIntroduction = $_POST['introduction'];
+		$theSelect = $_POST['select'];//选择新增或者编辑的方式
+		$theOldUserName = $_POST['oldUserName'];
 		
 		$theBaseImg = $_POST['baseImg'];
 		
@@ -42,8 +45,14 @@ class theMember{
 
 		//生成加入时间
 		$joinTime = date("Y-m-d H:i:s");
-						
-		$registerAddSql = "insert into member (iid, username, password, sex, email, tel, join_time, user_head, user_introduction, session_token) values ('$registerId', '$theUsername', '$thePassword','$theSex', '$theEmail', '$theTel', '$joinTime', '$theHead', '$theIntroduction', '$theSessionNum')";
+		
+		if($theSelect == 'add'){
+			$registerAddSql = "insert into member (iid, username, password, sex, email, tel, join_time, user_head, city,  user_introduction, session_token) values ('$registerId', '$theUsername', '$thePassword','$theSex', '$theEmail', '$theTel', '$joinTime', '$theHead', '$theCity', '$theIntroduction', '$theSessionNum')";
+		}
+		if($theSelect == 'edit'){
+			$registerAddSql = "update member set username = '$theUsername', password = '$thePassword', sex = '$theSex', email = '$theEmail', tel = '$theTel', user_head = '$theHead', city = '$theCity', user_introduction = '$theIntroduction' where username = '$theOldUserName'";
+		}			
+	
 		
 		$registerAddSql_db = mysql_query($registerAddSql);
 		

@@ -51,6 +51,7 @@ else{
 	while($sql_db_array = mysql_fetch_assoc($sql_db)){
 		$sqlArray = $sql_db_array;
 	}
+	
 	if($sqlArray['role'] == 'admin'){
 		echo '<script>setTimeout(function(){window.location.href="'.$theURL .'admin/"},6000)</script>';
 	}
