@@ -1238,7 +1238,7 @@ function coverControl(){
 			
 			//循环组装html加入到封面列表中
 			theCoverListInfo.result.forEach(function(item){
-				var coverLiHtml = '<li class="col-md-2"><div><div class="cover-header"><h4>'+item['title']+'</h4></div><div class="cover-body"><div class="cover-body-img"><img width ="100%" class="img-responsive" src="./static/h-ui.admin/img/cover/'+item['cover_img']+'"></div><div class="cover-body-text">'+item['cover_introduction']+'</div><div class="cover-body-edit"><a title="编辑" href="javascript:;" onclick="member_add(\'编辑封面\',\'cover-index.html?coverId='+item['pid']+'\',\'\',\'510\')" class="ml-5" style="text-decoration:none"><i class="Hui-iconfont">&#xe6df;</i></a> <a title="删除" href="javascript:;" onclick="member_del(this,\''+item['pid']+'\')" class="ml-5" style="text-decoration:none"><i class="Hui-iconfont">&#xe6e2;</i></a></div></div></li>';
+				var coverLiHtml = '<li class="col-md-2"><div><div class="cover-header"><h4>'+item['title']+'</h4></div><div class="cover-body"><div class="cover-body-img"><img width ="100%" class="img-responsive" src="../upload/user_cover/'+item['cover_img']+'"></div><div class="cover-body-text">'+item['cover_introduction']+'</div><div class="cover-body-edit"><a title="编辑" href="javascript:;" onclick="member_add(\'编辑封面\',\'cover-index.html?coverId='+item['pid']+'\',\'\',\'510\')" class="ml-5" style="text-decoration:none"><i class="Hui-iconfont">&#xe6df;</i></a> <a title="删除" href="javascript:;" onclick="member_del(this,\''+item['pid']+'\')" class="ml-5" style="text-decoration:none"><i class="Hui-iconfont">&#xe6e2;</i></a></div></div></li>';
 				$(coverLiHtml).appendTo(".cover-ul");
 			})
 			
@@ -1348,6 +1348,8 @@ function memberControl(){
 				$("input[name='email']").val(theMemberInfoVal.email);
 				//$(".select").find("option[value="++"]").attr("selected",true);
 				$(".introduction").val(theMemberInfoVal.user_introduction);
+				$(".city-select").find("option[value='"+theMemberInfoVal.city+"']").attr("selected","selected");
+				
 				
 				$(".user-put").on("click",function(){
 					theUserInfoTableValue('edit');

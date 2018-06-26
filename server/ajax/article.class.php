@@ -346,6 +346,35 @@ class theArticleClass{
 		//}
 	}
 	
+	//前端查询文章列表数组返回（用于拖动异步加载）
+	function ajaxLoadArticle(){
+		$thePage = $_GET['thePage'];
+		$theLimitNum = $_GET['theLimitNum'];
+		$theAuthor = $_GET['theAuthor'];
+		$theCover = $_GET['theCover'];
+		
+		$pageStart = ($thePage-1)*$theLimitNum;
+		
+		
+		if($theAuthor){
+			$aritcleListSql = "select * from article where 1=1 and if('$theAuthor' = '', 0 = 0, article_author = '$theAuthor') order by aid DESC limit $pageStart,$theLimitNum";
+		}
+		
+		if($theCover){
+			$articleListSql = "select * from article where 1 = 1 and if('$theCover' = '', 0 = 0 , article_cover = '$theCover') order by aid DESC limit $pageStart,$theLimitNum";		
+		}
+		
+		$aritcleListSql_db = mysql_query($aritcleListSql);
+		$aritcleListArray = array();
+		while($aritcleListSql_db_array = mysql_fetch_assoc($aritcleListSql_db)){
+			$aritcleListArray[] = $aritcleListSql_db_array;
+		}
+		//引入公共模块，将数据转为json返回给前端
+		$theUtil = new util();
+		$aritcleListJson = $theUtil->ajaxJson('200','文章返回成功',$aritcleListArray);
+		print_r($aritcleListJson);
+	}
+	
 	//前端文章列表静态化
 	function frontArticleListOb(){
 		//获取分类
@@ -430,6 +459,7 @@ class theArticleClass{
 		$thePageNumOb = $_GET['getPageNum'];
 		
 	}
+	
 
 			
 	//调用功能类
@@ -457,6 +487,9 @@ class theArticleClass{
 		}
 		if($turl == 'getBaseImgSave'){
 			$this->getBaseImgSave();
+		}
+		if($turl == 'ajaxLoadArticle'){
+			$this->ajaxLoadArticle();
 		}
 	}
 }

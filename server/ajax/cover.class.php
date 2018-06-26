@@ -6,6 +6,7 @@ class theCover{
 	function addCover(){
 		$theUtil = new util();
 		$theTitle = $_POST['cover-title'];
+		$theTitleYw = $_POST['cover-yw'];
 		$theImg = $_POST['cover-pic'];
 		$theShort = $_POST['cover-short'];
 		$theAuthor = $_POST['cover-author'];
@@ -22,7 +23,7 @@ class theCover{
 		
 		//根据$theType来识别是添加还是为编辑
 		if($theType == 'add'){
-			$coverSql = "insert into page (title, author, cover_img, cover_introduction, cover_time) values ('$theTitle', '$theAuthor', '$theImg', '$theShort', '$theTime')";					
+			$coverSql = "insert into page (title, title_yw, author, cover_img, cover_introduction, cover_time) values ('$theTitle', '$theTitleYw', '$theAuthor', '$theImg', '$theShort', '$theTime')";					
 		}
 		if($theType == 'edit'){
 			$coverSql = "update page set title = '$theTitle', author = '$theAuthor', cover_img = '$theImg' , cover_introduction = '$theShort' where pid = '$theCoverEditId'";
@@ -38,7 +39,7 @@ class theCover{
 				//echo $theRoot;
 				
 				//详细地址
-				$thePath = $theRoot."/program/admin/static/h-ui.admin/img/cover/";
+				$thePath = $theRoot."/program/upload/user_cover/";
 				
 				
 				$returnPicArray = $theUtil->fileUpload($thePath,$theImg,$theBaseImg);				
@@ -136,6 +137,44 @@ class theCover{
 		print_r($returnCoverJson);
 	}
 	
+	//用户页面静态化
+	function userPageOb(){
+		ob_start();
+		$theOb = $_GET['getOb']; //静态化标签
+		
+		//查找出所有用户
+		$findUserSql = "select * from member where 1 = 1";
+		$findUserSql_db = mysql_query($findUserSql);
+		$findUserArray = array();
+		while($findUserSql_db_array = mysql_fetch_assoc($findUserSql_db)){
+			$findUserArray[] =$findUserSql_db_array;	
+		}
+		
+		//遍历数组
+		foreach($findUserArray as $key =>$value){
+			//引入模板
+			$theUsername = $value['username'];
+			include("../template/user-index.php");
+			//静态化
+			if($theOb == "ob"){
+				//获取根目录
+				$theRoot = $_SERVER['DOCUMENT_ROOT'];
+				//存储路径
+				$thePath = $theRoot.'/program/article/user-page/'.$theUsername.'.html';
+				
+				//将缓存内容存储到对应的文件夹中
+				file_put_contents($thePath,ob_get_contents());
+				
+				//清除上一次缓存(不关闭缓存区)
+				ob_clean();
+				
+			}
+						
+		}
+				
+	}
+	
+	
 	function theReturn($turl){
 		if($turl == "addCover"){
 			$this->addCover();			
@@ -148,6 +187,9 @@ class theCover{
 		}
 		if($turl == "getTheCoverInfo"){
 			$this->getTheCoverInfo();
+		}
+		if($turl == "userPageOb"){
+			$this->userPageOb();
 		}
 	}	
 }

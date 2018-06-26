@@ -383,7 +383,56 @@ function userControl(){
 	theClick.searchClick();
 	theClick.commentPush();
 	theClick.imgVideoLoad();
-	
+	//滚动加载
+	var theScroll = {
+		srollLoadArticle:function(){
+			that.pageNum = 1;
+			//获取用户页面名称或者封面名称
+			
+			
+			//鼠标滚动事件
+			$(window).scroll(function(){
+				var theWindowHeight = $(window).height();
+				var theFooterOffset = $(".theFooter").offset().top;
+				//console.log("窗口高度为："+theWindowHeight);
+				//console.log("底部偏差为："+theFooterOffset);
+				var scrollNum = $(window).scrollTop();
+				//console.log("鼠标偏移为："+scrollNum);
+				//if((scrollNum+theWindowHeight)>theFooterOffset && theWindowHeight<theFooterOffset){
+				if((scrollNum+theWindowHeight)>theFooterOffset ){	
+					that.pageNum = that.pageNum + 1
+					console.log(that.pageNum);
+					//向后端发出文章加载请求
+					$.ajax({
+						url:"../../server/ajax/thearticle.php",
+						data:{turl:"ajaxLoadArticle",thePage:that.pageNum,theLimitNum:5},
+						type:"get",
+						async:false,
+						dataType:"json",
+						success:function(data){
+							console.log("=============滚动请求传递过来的后端数据===============");
+							console.log(data);
+							//根据数据组装HTML并添加到前端中
+							data.result.forEach(function(item){
+								var articleJsonHtml ='<li><div class="user-article-k"><div class="user-article-img"><img src="../../upload/cover/'+item.article_img+'"></div><div class="user-article-container"><h3>'+item.title+'</h3></div></div></li>';
+								$(articleJsonHtml).appendTo('.user-article-ul');
+							})
+							
+							
+							//that.pageNum = that.pageNum + 1;
+							
+						}				
+					})					
+							
+				}
+			})
+			
+			
+
+		}
+		
+	}
+	theScroll.srollLoadArticle();
 }
 
 //打开时自动加载的
@@ -400,6 +449,7 @@ function autoLoad(){
 					type:"get",
 					data:{turl:"listComment",getArticleId:articleId,getCommentPage:0,getCommentLimit:2},
 					dataType:'json',
+					
 					success:function(data){
 						console.log(data);
 						//存在评论的正常返回是200

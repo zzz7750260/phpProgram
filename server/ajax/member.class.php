@@ -33,8 +33,8 @@ class theMember{
 		$registerId = $registerTime . $str;
 		//echo $registerId;		
 		
-		//生成session_token
 		
+		//生成session_token			
 		$theSessionNum = $theUtil->setSessionToken(8);
 		
 		//将信息存储到session中
@@ -50,7 +50,7 @@ class theMember{
 			$registerAddSql = "insert into member (iid, username, password, sex, email, tel, join_time, user_head, city,  user_introduction, session_token) values ('$registerId', '$theUsername', '$thePassword','$theSex', '$theEmail', '$theTel', '$joinTime', '$theHead', '$theCity', '$theIntroduction', '$theSessionNum')";
 		}
 		if($theSelect == 'edit'){
-			$registerAddSql = "update member set username = '$theUsername', password = '$thePassword', sex = '$theSex', email = '$theEmail', tel = '$theTel', user_head = '$theHead', city = '$theCity', user_introduction = '$theIntroduction' where username = '$theOldUserName'";
+			$registerAddSql = "update member set username = '$theUsername', password = '$thePassword', sex = '$theSex', email = '$theEmail', tel = '$theTel', user_head = '$theHead', city = '$theCity', user_introduction = '$theIntroduction' ,session_token = '$theSessionNum' where username = '$theOldUserName'";
 		}			
 	
 		
@@ -62,7 +62,7 @@ class theMember{
 			$rootPath = $_SERVER['DOCUMENT_ROOT'];
 			//echo $rootPath;
 			
-			$thePath = $rootPath .'/program/admin/static/h-ui.admin/img/head/';
+			$thePath = $rootPath .'/program/upload/head/';
 			
 			//图片上传base64引入
 			$imgArray = $theUtil->fileUpload($thePath,$theHead,$theBaseImg);
