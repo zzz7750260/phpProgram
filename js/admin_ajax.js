@@ -1106,14 +1106,167 @@ function adminArticle(){
 				return that.data;
 			} 
 		},
-								
+		
+		//图片内容采集
+		curlPicture:function(){
+			//点击获取是多页面还是单页面
+			$("input[name='pic-select-type']").click(function(){
+				var theCheckTpye = $(this).prop("checked");
+				alert(theCheckTpye);
+				if(theCheckTpye == true){
+					$(".curl-pic-main").css("display","none");
+					$(".curl-pic-begin").css("display","none");
+					$(".curl-pic-end").css("display","none");
+					$(".pic-more-save").css("display","none");
+					
+					$(".curl-pic-url").css("display","block");
+					$(".pic-one-save").css("display","inline-block");
+					
+				}
+				else{
+					$(".curl-pic-main").css("display","block");
+					$(".curl-pic-begin").css("display","block");
+					$(".curl-pic-end").css("display","block");
+					$(".pic-more-save").css("display","inline-block");
+					
+					$(".curl-pic-url").css("display","none");
+					$(".pic-one-save").css("display","none");
+					
+				}
+			})
+			
+			
+			//点击选择是单页栏目上传还是为多页栏目上传
+			$('#theCheckListSelect').click(function(){
+				//获取选择的状态
+				var listCheckSelect = $(this).prop("checked");
+				console.log(listCheckSelect);
+				if(listCheckSelect == true){					
+					$(".curl-pic-list-main").css("display","block");
+					$(".curl-pic-list-begin").css("display","block");
+					$(".curl-pic-list-end").css("display","block");
+					$(".pic-list-more-save").css("display","inline-block");
+					
+					$(".curl-pic-list-url").css("display","none");
+					$(".pic-list-save").css("display","none");
+				}
+				
+				if(listCheckSelect == false){									
+					$(".curl-pic-list-url").css("display","block");
+					$(".pic-list-save").css("display","inline-block");		
+					
+					$(".curl-pic-list-main").css("display","none");
+					$(".curl-pic-list-begin").css("display","none");
+					$(".curl-pic-list-end").css("display","none");
+					$(".pic-list-more-save").css("display","none");										
+				}
+				
+			})
+			
+			
+			
+			//单页面图片采集点击预览
+			$('#get-curl-pic').on('click',function(){
+				pushCurlData('check');			
+			})
+			
+			//单页面图片采集点击保存
+			$('#get-curl-pic-add').on('click',function(){
+				pushCurlData('save');			
+			})			
+			
+			//多页面图片采集点击保存
+			$('#get-curl-pic-more-add').on('click',function(){
+				pushCurlData('moreSave');			
+			})
+			
+			//图片栏目采集预览
+			$('#get-curl-pic-list-check').on('click',function(){
+				pushCurlData('picListCheck');			
+			})			
+
+			//图片栏目上传
+			$('#get-curl-pic-list-add').on('click',function(){
+				pushCurlData('picListAdd');			
+			})		
+
+			//多页栏目上传
+			$('#get-curl-pic-list-more-add').on('click',function(){
+				pushCurlData('picListMoreAdd');				
+			})		
+			
+			//公共部分
+			function pushCurlData(type){
+				//获取照片采集图片表格的信息
+				var curlPicArr = {};
+				$(".row").each(function(item){
+					//获取当前是否为显示，如果为显示，就获取其值
+					var isBlock = $(this).css("display");
+					if(isBlock == 'block'){
+						//var isBlock = $(this).attr("style");  能获取到css的对象集
+						var curlPicVal = $(this).find(".value-v").val();
+						var curlPicKey = $(this).find(".value-v").attr("name");					
+						//console.log(curlPicKey+"的当前转态为："+isBlock);
+						//console.log(isBlock.display);
+						curlPicArr[curlPicKey] = curlPicVal;		
+					}
+			
+				})
+				console.log(curlPicArr);
+				//组装数组
+				if(type == "check"){					
+					curlPicArr['theType'] = "check";
+					curlPicArr['turl'] = "getCurlOnePic";
+				}
+				
+				if(type == "save") {
+					curlPicArr['theType'] = "save";
+					curlPicArr['turl'] = "getCurlOnePic";					
+				}
+				
+				if(type == "moreSave"){
+					curlPicArr['theType'] = "save";
+					curlPicArr['turl'] = "getCurlPic";							
+				}
+				
+				if(type == "picListCheck"){
+					curlPicArr['turl'] = "getCurlList";
+					curlPicArr['theListType'] = "check";
+				}
+				
+				if(type == "picListAdd"){
+					curlPicArr['turl'] = "getCurlList";
+					curlPicArr['theListType'] = "save";
+					curlPicArr['theType'] = "save";//文章的存储标识
+				}
+
+				if(type == "picListMoreAdd"){
+					curlPicArr['turl'] = "getCurlListMore";
+					curlPicArr['theListType'] = "save";
+					curlPicArr['theType'] = "save";//文章的存储标识					
+				}
+				
+				//向后端提交数据
+				$.ajax({
+					url:"../server/ajax/thecurl.php",
+					data:curlPicArr,
+					type:"post",
+					dataType:'json',
+					success:function(data){
+						console.log("===============后端传递过来的预览数据========");
+						console.log(data);
+					}
+				})
+			}
+			
+		}								
 	}
 	theArticle.addArticle();
 	theArticle.articleList();
 	theArticle.checkArticle();
 	theArticle.articleHtml();
 	theArticle.curlArticle();
-		
+	theArticle.curlPicture();	
 }
 
 //封面管理

@@ -1,5 +1,6 @@
 <?php
 include('../system.util.php');
+ob_start();
 class theCover{
 	//public $theUtil = new util();
 	
@@ -139,7 +140,7 @@ class theCover{
 	
 	//用户页面静态化
 	function userPageOb(){
-		ob_start();
+		
 		$theOb = $_GET['getOb']; //静态化标签
 		
 		//查找出所有用户
@@ -174,6 +175,105 @@ class theCover{
 				
 	}
 	
+	//封面页面静态化
+	function coverPageOb(){
+		//获取是否静态化的标识
+		$coverOb = $_GET['coverOb'];
+		//获取所有的封面列表
+		$theCoverListSql = "select * from page where 1 = 1";
+		$theCoverListSql_db = mysql_query($theCoverListSql);
+		$theCoverListArray = array();
+		while($theCoverListSql_db_array = mysql_fetch_assoc($theCoverListSql_db)){
+			$theCoverListArray[] = 	$theCoverListSql_db_array;
+		}
+		//遍历封面数组
+		foreach($theCoverListArray as $key => $value){
+			//引入封面模板
+			$theCover = $value['title'];
+			include('../template/cover-index.php');		
+			//封面页面静态化
+			if($coverOb == 'ob'){
+				//设置存储的根目录
+				$rootPath = $_SERVER['DOCUMENT_ROOT'];
+				$theCoverPath = $rootPath . '/program/article/cover-page/' . $value['pid'] . '.html';
+				//静态化封面页面
+				file_put_contents($theCoverPath,ob_get_contents());
+				//清除上一次缓存（防止接下来保存的页面会有上个页面的记录）
+				ob_clean();
+			}
+		}
+	}	
+	
+	//封面列表静态化
+	//$thePageNum：每页信息的数量
+	function coverListOb(){
+		$thePageNum = $_GET['thePageNum'];
+		//获取所有的封面
+		$coverListSql = "select * from page where 1 = 1 order by pid DESC";
+		$coverListSql_db = mysql_query($coverListSql);
+		//获取总条数
+		$coverListSql_db_num = mysql_num_rows($coverListSql_db);
+		
+		//获取页数(舍去小数点)
+		$pageNum = floor($coverListSql_db_num / $thePageNum);
+		$pageNumYs = $coverListSql_db_num % $thePageNum;
+		
+		echo '余数'. $pageNumYs;
+		//如果存在余数，页数加一
+		if($pageNumYs>0){
+			$pageNum = $pageNum +1;
+		}
+		echo '页数'. $pageNum;
+	
+		$coverListArray = array();
+		while($coverListSql_db_array = mysql_fetch_assoc($coverListSql_db)){
+			$coverListArray[] = $coverListSql_db_array;		
+		}
+		//定义在模板内的函数，因为需要重复引用模板会造成重复定义，因而需要定义在模板外
+		//根据封面的名称获取对应的文章
+		function getArticleArrayHtml($coverName){
+			//echo $coverName;
+			$getCoverSql = "select a.*,b.* from article as a join category as b on a.category_id = b.cid where a.article_cover = '$coverName' order by aid DESC limit 0,4";
+			$getCoverSql_db = mysql_query($getCoverSql);
+			$getCoverArray = array();
+			while($getCoverSql_db_array = mysql_fetch_assoc($getCoverSql_db)){
+				$getCoverArray[] = $getCoverSql_db_array;
+			}
+			
+			//组装对应的html
+			foreach($getCoverArray as $key => $value){
+				$coverArrayHtml .= '<li class="col-md-3"><a href="../'.$value['categoryyw'].'/'.$value['aid'].'.html"><div class="cover-array-img"><img class="img-responsive" src="../../upload/cover/'.$value['article_img'].'"><div class="cover-array-img-title"><h5>'.$value['title'].'</h5></div></div></a></li>';						
+			}
+			return $coverArrayHtml;
+		};
+		
+		//获取分页信息
+		for($i = 0; $i < $pageNum; $i++){
+			//获取每个分页组
+			//页数从1开始，因而需要加1
+			$p = $i+1;
+			$thePageArray = array();
+			for($j = $i*$thePageNum; $j<$i*$thePageNum+$thePageNum; $j++){
+				$thePageArray[] = $coverListArray[$j];
+			}	
+			//引入列表模板
+			include('../template/cover-list.php');
+			
+			//是否静态化
+			$theOb = $_GET['theOb'];
+			if($theOb == 'ob'){
+				//获取根目录
+				$rootPath = $_SERVER['DOCUMENT_ROOT'];
+				//组合存储路径
+				$thePath = $rootPath . '/program/article/cover-page/cover-list-' . $p . '.html';
+				//利用file_put_contents 和 ob_get_contents将缓存内容存储到文件中
+				file_put_contents($thePath,ob_get_contents());
+				//清除缓存避免重复
+				ob_clean();
+			}		
+		}
+		
+	}
 	
 	function theReturn($turl){
 		if($turl == "addCover"){
@@ -190,6 +290,12 @@ class theCover{
 		}
 		if($turl == "userPageOb"){
 			$this->userPageOb();
+		}
+		if($turl == "coverPageOb"){
+			$this->coverPageOb();			
+		}
+		if($turl == "coverListOb"){
+			$this->coverListOb();
 		}
 	}	
 }

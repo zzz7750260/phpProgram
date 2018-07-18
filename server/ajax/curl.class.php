@@ -231,6 +231,253 @@ class theCurl{
 			
 	}
 	
+	
+	//单页面图片页面预览与采集
+	//$getUrl为页面请求链接
+	//$saveFile为存储的地址
+	function getCurlOnePic($getUrl){
+		//获取是预览还是存储
+		$theType = $_POST['theType'];	
+		
+		//获取主链接
+		$rootUrl = $_POST['rootUrl'];
+		//echo $rootUrl . ">>>>>>>>>>>>>>>>><br/>";
+		
+		//获取正则表达式,因为php默认为提交的数据进行addslashes()转义，因而需要stripslashes()进行反转义
+		$theRegexPic = stripslashes($_POST['theRegexPic']);
+		//echo $theRegexPic . ">>>>>>>>>>>>>>>>><br/>";
+				
+		//获取是否有单独存在的链接(如果存在就使用单独的链接，否则使用传递过来的链接)
+			
+		if($getUrl){			
+			$theUrl = $getUrl;	
+		}
+		else{
+			$onePageUrl = $_POST['onePageUrl'];
+			$theUrl = $onePageUrl;	
+		}
+		
+		//$theUrl = "http://www.beautylegmm.com/Avy/beautyleg-928.html?page=1";
+		//$theUrl = "http://www.beautylegmm.com/Kaylar/beautyleg-1409.html?page=".$i;
+		//设置主路径，用于拼图片的路径
+		//$rootUrl = "http://www.beautylegmm.com";
+		
+		$thePicHtml = $this->http_curl($theUrl);
+		//print_r($thePicHtml);
+		//设置采集图片正则(采用贪婪模式将图片全部匹配)
+		//$theRegexPic = '/<img\s*src="(.*)".*alt=".*"\/><\/a>/';	
+		//$theRegexPic = '/<img src="(.*)" border="0" alt="\[Beautyleg\].*" width="[0-9]*" height="[0-9]*" \/>/U';
+		//$theRegexPic = '/<img src="(.*)"/isU';
+		preg_match_all($theRegexPic,$thePicHtml,$picArr);
+				
+				
+		if($theType == "check"){
+			//先前端返回对应的数组
+			$returnPicArray = array(
+				status => 200,
+				msg => '图片采集返回成功',
+				result => $picArr[1],
+			);
+			$returnPicJson = json_encode($returnPicArray);
+			print_r($returnPicJson);
+		}
+				
+		if($theType == "save"){
+			//获取存储的文件夹名称
+			$theFile = $_POST['theFile'];
+			
+			if(!$theFile){
+				$theFile == "common";
+			}		
+			
+			//获取存储图片的根路径
+			$saveRootPath = $_SERVER['DOCUMENT_ROOT'];
+			$theSavePath = $saveRootPath.'/legpic/';	
+			
+			$theSavePathFile = $theSavePath . $theFile;
+			//传建对应的文件夹
+			//传建对应的文件夹
+			if(!file_exists($theSavePathFile)){
+				mkdir($theSavePathFile,0777,true);
+				echo "</br>==========".$theSavePathFile."传建成功=============</br>";			
+			}
+			else{
+				echo "</br>==========".$theSavePathFile."已经存在=============</br>";			
+			}
+			//sleep(3);
+					
+			//$theUrl = "http://www.beautylegmm.com/Avy/beautyleg-928.html?page=1";
+			//$theUrl = "http://www.beautylegmm.com/Kaylar/beautyleg-1409.html?page=".$i;
+			//设置主路径，用于拼图片的路径
+			//$rootUrl = "http://www.beautylegmm.com";
+			
+			//$thePicHtml = $this->http_curl($theUrl);
+			//print_r($thePicHtml);
+			//设置采集图片正则(采用贪婪模式将图片全部匹配)
+			//$theRegexPic = '/<img\s*src="(.*)".*alt=".*"\/><\/a>/';	
+			//$theRegexPic = '/<img src="(.*)" border="0" alt="\[Beautyleg\].*" width="[0-9]*" height="[0-9]*" \/>/U';
+			//$theRegexPic = '/<img src="(.*)"/isU;
+			//preg_match_all($theRegexPic,$thePicHtml,$picArr);
+			//print_r($picArr);
+			
+			//获取存储图片的根路径
+			//$saveRootPath = $_SERVER['DOCUMENT_ROOT'];
+			//$theSavePath = $saveRootPath.'/legpic/';		
+			$saveFile = $theSavePathFile . '/';
+			
+			
+			//遍厉数组，将图片存储到到文件夹中
+			foreach($picArr[1] as $key => $value){
+				//对获取到的路径并进行组装
+				$picPath = $rootUrl . $value;
+				
+				
+				//获取当前时间
+				$picTime = date("YmdHisa") . $key;
+				//echo $picPath;
+				//echo $picTime."-------";
+				//设置存储文件的路径
+				$theSavePicPath = $saveFile . $picTime .'.jpg';
+				
+				//采用file_get_contents获取到对应的图片
+				$thePicture = file_get_contents($picPath);
+				
+				//file_put_contents将图片存储到对应的文件夹中
+				if(file_put_contents($theSavePicPath,$thePicture)){
+					echo $picPath ."存储成功<br>";
+				};
+				//sleep(5);
+			}
+			
+		}	
+		
+	}
+	
+	//图片采集（用于设置采集图片的页面方式）
+	function getCurlPic($theUrlList){
+	
+		//获取分页的开始与结束
+		$thePageBegin = $_POST['thePageBegin'];
+		$thePageEnd = $_POST['thePageEnd'];
+
+		//当不存在传递过来的链接时，说明为在页面中获取的
+		if(!$theUrlList){
+			//获取分页主体
+			$thePageMain = $_POST['thePageMain'];			
+		}
+		if($theUrlList){
+			$thePageMain = $theUrlList .'?page=';
+			
+		}
+		
+		//获取存储的文件夹名称
+		$theFile = $_POST['theFile'];
+		
+		//获取存储图片的根路径
+		$saveRootPath = $_SERVER['DOCUMENT_ROOT'];
+		$theSavePath = $saveRootPath.'/legpic/';	
+		
+		//组装对应存储的文件夹
+		$theSavePathFile = $theSavePath . $theFile ;
+		
+		//传建对应的文件夹
+		if(!file_exists($theSavePathFile)){
+			mkdir($theSavePathFile,0777,true);
+			echo "</br>==========".$theSavePathFile."传建成功=============</br>";			
+		}
+		else{
+			echo "</br>==========".$theSavePathFile."已经存在=============</br>";			
+		}
+								
+			
+		//设置图片路径进行检测		
+
+		//循环分页，采集每个分页下的图片
+		for($i=$thePageBegin;$i<=$thePageEnd;$i++){
+			echo "第" . $i . "页</br>";
+			
+			//拼装请求地址
+			$getUrl = $thePageMain . $i;
+			
+			echo ">>>>>>>>>>>".$getUrl.">>>>>>>>>>>>>>";
+			//$theUrl = "http://www.beautylegmm.com/Avy/beautyleg-928.html?page=1";
+			//$theUrl = "http://www.beautylegmm.com/Kaylar/beautyleg-1409.html?page=".$i;
+			
+			$this->getCurlOnePic($getUrl);
+			//sleep(5);	
+			
+		}
+			
+	}
+	
+	//栏目采集
+	function getCurlList($theUrlList){
+		//不存在传递过来的$theUrlList时，为单栏目页面获取的	
+		if(!$theUrlList){
+			//获取采集栏目地址
+			$theUrl = $_POST['listPageUrl'];			
+		}	
+		else{
+			$theUrl = $theUrlList;	
+		}		
+		
+		//获取正则表达式,对传递过来的正则进行转码
+		$theRegexList = stripslashes($_POST['theRegexPicList']);
+		
+		//获取是查看或者存储的标识
+		$theListType = $_POST['theListType'];
+		
+		//$theUrl = "http://www.beautylegmm.com/Xin/";
+		
+		$theListHtml = $this->http_curl($theUrl);
+		//print_r($theListHtml);
+		
+		//正则表达式获取
+		//$theRegexList = '/<a\s*href="(.*)"\s*title="\[Beautyleg\].*"><img.*>\s*<\/a>/';
+		preg_match_all($theRegexList,$theListHtml,$theArr);
+		//print_r($theArr);
+		//得到多篇相关文章的路径
+		//print_r($theArr[1]);		
+		//设置图片存储路径
+		
+		//当$theListType为check的时候，返回对应的连接数组
+		if($theListType == 'check'){
+			//组装返回数组
+			$listPicArray = array(
+				status => 200,
+				msg => '图片列表返回成功',
+				result => $theArr[1],
+			);
+			//将数组转换为json返回给前端
+			$listPicJson = json_encode($listPicArray);
+			print_r($listPicJson);
+		}
+		if($theListType == 'save'){
+			//遍历数组，并对数组中的连接进行图片采集
+			foreach($theArr[1] as $key => $value){
+				$this->getCurlPic($value);			
+			}			
+		}		
+	}
+	
+	//多栏目采集
+	function getCurlListMore(){
+		//获取采集栏目网址主体
+		$listPageUrlMain = $_POST['listPageUrlMain'];
+		//获取采集栏目网址开始
+		$listPageUrlBegin = $_POST['listPageUrlBegin'];
+		////获取采集栏目网址结束
+		$listPageUrlEnd = $_POST['listPageUrlEnd'];
+		
+		//循环组装提交的网址
+		//http://www.beautylegmm.com/Avy/2.html
+		for($i = $listPageUrlBegin; $i<= $listPageUrlEnd; $i++){
+			$theHtml = $listPageUrlMain . '/' . $i .'.html'; 
+			//提交栏目的请求调用
+			$this->getCurlList($theHtml);
+		}
+	}
+	
 
 	//将html进行转义
 	function changeHtml($value){
@@ -271,13 +518,14 @@ class theCurl{
 	
 	//curl请求的封装
 	function http_curl($theUrl){
+		set_time_limit(0);
 		$curlObject = curl_init();
 		curl_setopt($curlObject, CURLOPT_URL, $theUrl);
 		curl_setopt($curlObject, CURLOPT_RETURNTRANSFER,1);
 		$output = curl_exec($curlObject);
 		curl_close($curlObject);
 		//var_dump($output);	
-
+		
 		//检测编码,如果格式不为utf-8，就自动转换为utf-8否则乱码
 		$theCode = mb_detect_encoding($output,array("ASCII",'UTF-8',"GB2312","GBK",'BIG5'));
 		//echo "当前的编码格式为：".$theCode;
@@ -316,6 +564,20 @@ class theCurl{
 		}
 		if($turl == "getCurlDataMore"){
 			$this->getCurlDataMore();			
+		}
+		if($turl == "getCurlPic"){
+			$this->getCurlPic('');
+		}
+		if($turl == "getCurlList"){
+			$this->getCurlList('');
+		}
+		
+		if($turl == "getCurlOnePic"){
+			$this->getCurlOnePic('');
+		}
+		
+		if($turl == 'getCurlListMore'){
+			$this->getCurlListMore();
 		}
 	}	
 	

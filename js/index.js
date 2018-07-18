@@ -387,8 +387,13 @@ function userControl(){
 	var theScroll = {
 		srollLoadArticle:function(){
 			that.pageNum = 1;
-			//获取用户页面名称或者封面名称
+			//获取页面的类型（判断是用户页面还是封面页面）
+			var theType = $("body").data('type');
+			//alert("页面的类型为：" + theType);
 			
+			//获取用户页面名称或者封面id
+			var theValue = $("body").data('value');
+			//alert("获取页面的值为：" + theValue);
 			
 			//鼠标滚动事件
 			$(window).scroll(function(){
@@ -405,7 +410,7 @@ function userControl(){
 					//向后端发出文章加载请求
 					$.ajax({
 						url:"../../server/ajax/thearticle.php",
-						data:{turl:"ajaxLoadArticle",thePage:that.pageNum,theLimitNum:5},
+						data:{turl:"ajaxLoadArticle",thePage:that.pageNum,theLimitNum:5,thePageType:theType,thePageValue:theValue},
 						type:"get",
 						async:false,
 						dataType:"json",

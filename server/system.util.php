@@ -15,6 +15,23 @@
 			//return false;
 		}	
 	}
+	
+	//传建文件夹（新）
+	//$localPath：为存储的路径
+	//$name：为需要传建的文件夹名称
+	function createFile($localPath,$name){
+		$thePath = 	$localPath . $name;
+		//是否存在并传建文件夹
+		if(!file_exists($thePath)){
+			//如果不存在就传建
+			mkdir($thePath,0777,true);
+			echo $name."传建成功";
+		}
+		else{
+			echo $name."传建失败";		
+		}
+	}
+	
 
 	//设置生成随机的session_token
 	//$num为随机数的位数

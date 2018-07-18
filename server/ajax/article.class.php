@@ -1,6 +1,7 @@
 <?php 
 ob_start();
 include('../system.util.php');
+include('../system.article.php');
 class theArticleClass{
 	
 	//获取当前的路径	
@@ -191,7 +192,6 @@ class theArticleClass{
 		while($articleSql_db_array = mysql_fetch_assoc($articleSql_db)){
 			$articleArray = $articleSql_db_array;	
 		}
-
 		//print_r($articleArray);
 		$value = $articleArray;
 		/*
@@ -350,21 +350,29 @@ class theArticleClass{
 	function ajaxLoadArticle(){
 		$thePage = $_GET['thePage'];
 		$theLimitNum = $_GET['theLimitNum'];
-		$theAuthor = $_GET['theAuthor'];
-		$theCover = $_GET['theCover'];
+		//$theAuthor = $_GET['theAuthor'];
+		//$theCover = $_GET['theCover'];
+		$thePageType = $_GET['thePageType'];  //获取传递过来的页面类型 
+		$thePageValue = $_GET['thePageValue']; //获取传递过来的页面值
 		
 		$pageStart = ($thePage-1)*$theLimitNum;
 		
+		//echo $thePageType;
 		
-		if($theAuthor){
-			$aritcleListSql = "select * from article where 1=1 and if('$theAuthor' = '', 0 = 0, article_author = '$theAuthor') order by aid DESC limit $pageStart,$theLimitNum";
+		if($thePageType == 'user'){
+			$articleListSql = "select * from article where 1=1 and if('$thePageValue' = '', 0 = 0, article_author = '$thePageValue') order by aid DESC limit $pageStart,$theLimitNum";
 		}
 		
-		if($theCover){
-			$articleListSql = "select * from article where 1 = 1 and if('$theCover' = '', 0 = 0 , article_cover = '$theCover') order by aid DESC limit $pageStart,$theLimitNum";		
+		else if($thePageType == 'cover'){
+			$articleListSql = "select a.*,b.* from article as a join page as b on a.article_cover = b.title where 1 = 1 and if('$thePageValue' = '', 0 = 0 , b.pid = '$thePageValue') order by aid DESC limit $pageStart,$theLimitNum";		
+		}
+		else{
+			$articleListSql = "select * from article where 1=1 order by aid limit $pageStart,$theLimitNum";
+			
 		}
 		
-		$aritcleListSql_db = mysql_query($aritcleListSql);
+	
+		$aritcleListSql_db = mysql_query($articleListSql);
 		$aritcleListArray = array();
 		while($aritcleListSql_db_array = mysql_fetch_assoc($aritcleListSql_db)){
 			$aritcleListArray[] = $aritcleListSql_db_array;
@@ -460,7 +468,91 @@ class theArticleClass{
 		
 	}
 	
+	//前端栏目汇总列表静态化
+	function categoryArrayPageOb(){
+		//获取需要静态化的分类组合
+		$theCategoryId = $_GET['theCategoryId'];
+		//echo $theCategoryId;
+		//根据得到的分类id获取对应的子集
+		$theArticleUtil = new articleUtil();
+		//获取每页的文章数量
+		$pageNum = $_GET['pageNum'];
+		
+		
+		$theCategoryChildId = $theArticleUtil->findCategoryChilrenArray($theCategoryId,'article');
+		print_r($theCategoryChildId);
+		//将数组转成字符串
+		$theCategoryChildIdString = implode(',',$theCategoryChildId);
+		
+		//设置查询
+		$findAllAritcleArraySql = "select a.*,b.* from article as a join category as b on a.category_id = b.cid where a.category_id in ($theCategoryChildIdString) order by a.aid DESC";
+		$findAllAritcleArraySql_db = mysql_query($findAllAritcleArraySql);
+		
+		//获取文章数量
+		$findAllAritcleNum = mysql_num_rows($findAllAritcleArraySql_db);
+		echo "数量：".$findAllAritcleNum;
+		
+		$findAllAritcleArray = array();
+		while($findAllAritcleArraySql_db_array = mysql_fetch_assoc($findAllAritcleArraySql_db)){
+			$findAllAritcleArray[] = $findAllAritcleArraySql_db_array;
+		}
+		
+		//分页(需要取整)
+		$getPageNum = floor($findAllAritcleNum / $pageNum);
+		//取余，如果有余数时页数需要加一
+		$ysPageNum = $findAllAritcleNum % $pageNum;
+		
+		echo "页数：".$getPageNum;
+		echo "余数：".$ysPageNum;
+		
+		if($ysPageNum>0){
+			$getPageNum = $getPageNum + 1;			
+		}
+		
+		//循环获取对应的数组
+		for($i = 0; $i<=$getPageNum ; $i++){
+			//新建一个数组
+			$categoryNumArray = array();
+			//循环获取总数组中对应部分的数组
+			for($j = $i*$pageNum; $j<$i*$pageNum+$pageNum; $j++){
+				$categoryNumArray[] = $findAllAritcleArray[$j];				
+			}						
+			//引入模板
+			//因为页数是从第1页开始的，所以需要$i+1;
+			$p = $i + 1;
+			include("../template/category-list-template.php");				
+			
+			//静态化选择
+			$theOb = $_GET['theOb'];
+			if($theOb == 'Ob'){
+				//设置存储路径
+				$rootPath = $_SERVER['DOCUMENT_ROOT'];
+				echo "路径：".$rootPath;				
+				$thePath = $rootPath . "/program/article/";
+				//传建文件夹
+				$theUtil = new util();
+				$theUtil->createFile($thePath,$categoryInfoArray['categoryyw']);
+				
+				//使用file_put_contents传建存储文件，ob_get_contents获取缓存内容
+				
+				//存储的文件名称
+				$savePath = $thePath . $categoryInfoArray['categoryyw'] . '/' . $categoryInfoArray['categoryyw'] .'-list-' .$p. '.html';
+				
+				file_put_contents($savePath,ob_get_contents());
+				
+				//清除缓存区，以免造成缓存重复
+				ob_clean();  
+				
+			}
+			
+			//unset($categoryNumArray);
+			
 
+		}	
+		//print_r($findAllAritcleArray);
+				
+	}
+	
 			
 	//调用功能类
 	function theReturn($turl){
@@ -490,6 +582,9 @@ class theArticleClass{
 		}
 		if($turl == 'ajaxLoadArticle'){
 			$this->ajaxLoadArticle();
+		}
+		if($turl == 'categoryArrayPageOb'){
+			$this->categoryArrayPageOb();
 		}
 	}
 }
