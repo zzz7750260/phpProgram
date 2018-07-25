@@ -100,7 +100,7 @@
 							//print_r($hotArticleArray);
 							//遍历数组，将数组组装成html
 							foreach($hotArticleArray as $key => $value){
-								$theHtml .= '<div class="col-sm-6 col-md-3"><div class="thumbnail"><img src="./upload/cover/'.$value['article_img'].'" alt="通用的占位符缩略图"><h5>'.$value['title'].'</h5><div><span>分类:<a href="http://'.$_SERVER['HTTP_HOST'].'/program/article/'.$value['categoryyw'].'/'.$value['categoryyw'].'-1.html">'.$value['categoryname'].'</a></span><span>来源:<a href="http://'.$_SERVER['HTTP_HOST'].'/program/article/cover-page/'.$value['pid'].'.html">'.$value['article_cover'].'</a></span></div></div></div>';
+								$theHtml .= '<div class="col-sm-6 col-md-3"><div class="thumbnail"><img src="../../upload/cover/'.$value['article_img'].'" alt="通用的占位符缩略图"><h5>'.$value['title'].'</h5><div><span>分类:<a href="http://'.$_SERVER['HTTP_HOST'].'/program/article/'.$value['categoryyw'].'/'.$value['categoryyw'].'-1.html">'.$value['categoryname'].'</a></span><span>来源:<a href="http://'.$_SERVER['HTTP_HOST'].'/program/article/cover-page/'.$value['pid'].'.html">'.$value['article_cover'].'</a></span></div></div></div>';
 							}
 							echo $theHtml;
 						?>
@@ -112,43 +112,65 @@
 		
 		<section>
 			<div class="container cinema-article">
-				<div class="cinema-article-title">
-					<div class="cinema-article-title-left col-md-2">
-						<h3>电影解说</h3>
-					</div>
-					<div class="cinema-article-title-right col-md-10">
+				<div class="cinema-article-container row">
+					<div class="cinema-article-container-video col-md-9">
+						<div class="cinema-article-container col-md-12">						
+							<div class="cinema-article-title row">
+								<div class="cinema-article-title-left col-md-2">
+									<h3>电影解说</h3>
+								</div>
+								<div class="cinema-article-title-right col-md-10">
+									
+									<?php 
+										//获取对应的分组目录,这里只需要下一层子集
+										$cinemaCategoryArray = $theArticleUtil->getCategoryArray(1);
+										
+										//print_r($cinemaCategoryArray);
+										//遍历数组获取对应的菜单渲染
+										foreach($cinemaCategoryArray as $key => $value){
+											$arrayHtml .= '<span style="margin:5px"><a href="http://'.$_SERVER['HTTP_HOST'].'/program/article/'.$value['categoryyw'].'/'.$value['categoryyw'].'-1.html">'.$value['categoryname'].'</a></span>';
+										}
+										echo $arrayHtml;
+									?>
+									
+								</div>
+							</div>						
 						
-						<?php 
-							//获取对应的分组目录,这里只需要下一层子集
-							$cinemaCategoryArray = $theArticleUtil->getCategoryArray(1);
-							
-							//print_r($cinemaCategoryArray);
-							//遍历数组获取对应的菜单渲染
-							foreach($cinemaCategoryArray as $key => $value){
-								$arrayHtml .= '<span style="margin:5px">'.$value['categoryname'].'</span>';
-							}
-							echo $arrayHtml;
-						?>
-						
+							<div class="row">
+								<?php 
+									//新建，避免重复上面数据
+									$cinemaHtml = '';
+									$cinemaArticleArray = $theArticleUtil->getCategoryArticle(1,8);
+									//print_r($hotArticleArray);
+									//遍历数组，将数组组装成html
+									foreach($cinemaArticleArray as $key => $value){
+										$cinemaHtml .= '<div class="col-sm-6 col-md-3"><div class="thumbnail"><img src="../../upload/cover/'.$value['article_img'].'" alt="通用的占位符缩略图"><h5>'.$value['title'].'</h5><div><span>分类:<a href="http://'.$_SERVER['HTTP_HOST'].'/program/article/'.$value['categoryyw'].'/'.$value['categoryyw'].'-1.html">'.$value['categoryname'].'</a></span><span>来源:<a href="http://'.$_SERVER['HTTP_HOST'].'/program/article/cover-page/'.$value['pid'].'.html">'.$value['article_cover'].'</a></span></div></div></div>';
+									}
+									echo $cinemaHtml;
+								?>
+							</div>				
+						</div>										
 					</div>
+					
+					<div class="cinema-article-container-list col-md-3">
+						<div class="cinema-article-container-list-title">
+							<h4>猜你喜欢</h4>
+						</div>
+						<div class="cinema-article-container-list-container">
+							<ul class="list-group">
+								<?php 
+									$cinemaArticleListArray = $theArticleUtil->getCategoryArticle(1,10,'rand');
+									//print_r($cinemaArticleListArray);
+									//遍历数组，前端渲染
+									foreach($cinemaArticleListArray as $key => $value){
+										$cinemaArticleListHtml = '<li class="list-group-item"><a href="http://'.$_SERVER['HTTP_HOST'].'/program/article/'.$value['categoryyw'].'/'.$value['aid'].'.html">'.$value['title'].'</a></li>';
+										echo $cinemaArticleListHtml;
+									}
+								?>
+							</ul>
+						</div>						
+					</div>					
 				</div>
-				<div class="cinema-article-container">
-				<div class="cinema-article-container col-md-12">
-					<div class="row">
-						<?php 
-							//新建，避免重复上面数据
-							$cinemaHtml = '';
-							$hotArticleArray = $theArticleUtil->getCategoryArticle(1,8);
-							//print_r($hotArticleArray);
-							//遍历数组，将数组组装成html
-							foreach($hotArticleArray as $key => $value){
-								$cinemaHtml .= '<div class="col-sm-6 col-md-3"><div class="thumbnail"><img src="./upload/cover/'.$value['article_img'].'" alt="通用的占位符缩略图"><h5>'.$value['title'].'</h5><div><span>分类:<a href="http://'.$_SERVER['HTTP_HOST'].'/program/article/'.$value['categoryyw'].'/'.$value['categoryyw'].'-1.html">'.$value['categoryname'].'</a></span><span>来源:<a href="http://'.$_SERVER['HTTP_HOST'].'/program/article/cover-page/'.$value['pid'].'.html">'.$value['article_cover'].'</a></span></div></div></div>';
-							}
-							echo $cinemaHtml;
-						?>
-					</div>				
-				</div>
-			</div>
 		</section>
 		
 		<section>
@@ -175,6 +197,11 @@
 
 			</div>
 		</section>
+		
+		<!--引入footer模板-->
+		<?php 
+			include('c-footer.php');
+		?>
 		
 		
     <!-- jQuery (Bootstrap 的所有 JavaScript 插件都依赖 jQuery，所以必须放在前边) -->

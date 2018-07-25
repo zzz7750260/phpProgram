@@ -23,7 +23,7 @@ class articleUtil{
 		return $listArray;
 	}
 
-		//公共类：根据父分类名称获取子分类
+	//公共类：根据父分类名称获取子分类
 	//$catFatherId:为父类id；
 	//$theParameter:为查询的类型
 	function getCategoryArray($catFatherId,$theParameter = 'all'){
@@ -49,7 +49,7 @@ class articleUtil{
 	//公共类：根据对应的分类获取相关的文章
 	//$fCategory：分类的选择
 	//
-	function getCategoryArticle($fCategory,$num = 6){
+	function getCategoryArticle($fCategory,$num = 6,$isRand="list"){
 		//获取对应的分类集
 		$getTheCaregoryArray = $this->findCategoryChilrenArray($fCategory,'article');
 		print_r($getTheCaregoryArray);
@@ -61,7 +61,13 @@ class articleUtil{
 		$getTheCaregoryString = implode(',' , $getTheCaregoryArray);
 		echo $getTheCaregoryString;
 		
-		$theCategorySql = "select a.*,b.*,c.* from article as a join category as b on a.category_id = b.cid join page as c on a.article_cover = c.title where a.category_id in ($getTheCaregoryString) order by aid DESC limit 0 , $num";
+		if($isRand == "list"){
+			$theCategorySql = "select a.*,b.*,c.* from article as a join category as b on a.category_id = b.cid join page as c on a.article_cover = c.ptitle where a.category_id in ($getTheCaregoryString) order by aid DESC limit 0 , $num";
+		}
+		if($isRand == "rand"){
+			$theCategorySql = "select a.*,b.*,c.* from article as a join category as b on a.category_id = b.cid join page as c on a.article_cover = c.ptitle where a.aid >= ((select max(a.aid) from article)-(select min(a.aid) from article)) * rand() + (select min(a.aid) from article) limit 0, $num";
+			
+		}
 		$theCategorySql_db = mysql_query($theCategorySql);
 		$theCategoryArticle = array();
 		while($theCategorySql_db_array = mysql_fetch_assoc($theCategorySql_db)){
@@ -120,6 +126,8 @@ class articleUtil{
 		}
 		return $findCoverArray;
 	}
+	
+	//公共类：查询分类的信息
 }
 //$articleUtil = new articleUtil;
 //$articleUtil->getRandArticleList(5,2);

@@ -6,6 +6,8 @@ $(document).ready(function(){
 	systemControl();
 	memberControl();
 	coverControl();
+	friendLinkControl();
+	emailControl();
 })
 
 //公共模块获取用户信息,初始化全局变量
@@ -927,6 +929,20 @@ function adminArticle(){
 				}
 			})
 			
+			//父类列表静态化请求
+			$("#get-father-category-ob").click(function(){
+				//向后端发出静态化请求
+				$.ajax({
+					url:"../server/ajax/thearticle.php",
+					data:{turl:"fatherCategoryArrayPageOb",pageNum:5,theOb:'Ob'},
+					type:"get",
+					//dataType:"json",
+					success:function(data){
+						console.log(data);
+					}			
+				})				
+			})
+			
 			//首页静态化
 			$('#get-index-ob').click(function(){
 				$.ajax({
@@ -1584,6 +1600,210 @@ function memberControl(){
 	theMember.memberAdd()
 }
 
+//友情链接管理控制
+function friendLinkControl(){
+	that = this;
+	var friendLinkManage = {
+		friendAdd:function(){
+			//获取链接是否带参数
+			var theFriendLinkId = theAllUtil.theReg.getUrlParamsReg("friendLinkId");
+			alert("友情链接参数为："+theFriendLinkId);
+			//当存在参数时，说明为编辑页面
+			if(theFriendLinkId){
+				//向后端发出获取该友情链接的请求
+				$.ajax({
+					url:"../server/ajax/thefriendlink.php",
+					data:{turl:"getFriendLinkInfo",friendId:theFriendLinkId},
+					type:'get',
+					dataType:'json',
+					success:function(data){
+						console.log("==========后端传递过来的友情链接详情===========");
+						console.log(data);
+						
+						//对前端进行渲染
+						$("#friend-title").val(data.result.ftitle);
+						$("#friend-link").val(data.result.flink);
+						$("#friend-introduction").val(data.result.fintroduction);
+						//当选择的为图片的时候
+						if(data.result.ftype == 1){
+							$('#friend-link-checkbox').prop('checked',true);
+							$(".theFriendInfoInput").css("display","block");
+							that.friendImgName = data.result.fimage;
+							$("#friendlink-file").val(that.friendImgName);
+						} 
+					}
+				})
+			}			
+			
+			//设置是否需要添加图片
+			$("#friend-link-checkbox").click(function(){
+				var theType = $(this).prop('checked');
+				alert(theType);		
+				//将是否添加图片的类型也添加给全局
+				that.theType = theType;
+				if(theType == true){
+					//为选择时，添加图片框为显示
+					$(".theFriendInfoInput").css("display","block");
+				}
+				else{
+					$(".theFriendInfoInput").css("display","none");
+				}
+			})	
+
+			//获取图片base64
+			$(".friend-link-input").change(function(){
+				var theFile = this.files[0];
+				console.log(theFile);
+				//将获取到名字赋予全局，用于数据的提交
+				that.friendImgName = theFile.name;
+				var reader = new FileReader();
+				reader.readAsDataURL(theFile);//进行转换
+				reader.onload = function(e){
+					var friendImgBase = this.result;
+					console.log(friendImgBase);
+					//将获取到的base64数据传递给全局
+					that.friendImgBase = friendImgBase;
+				}			
+			})
+			
+			//获取相关数据，并进行提交
+			$('#friend-link-save').click(function(){
+				alert(that.theType);
+				//传建空对象
+				var friendArray = {};
+				$(".theFriendInfo").each(function(){	
+					//获取表单是否显示
+					var friendTyle = $(this).css("display");				
+					var friendLinkKey = $(this).find(".value-v").attr("name");
+					var friendLinkValue = $(this).find(".value-v").val();
+					console.log(friendLinkKey + "的状态为："+ friendTyle);
+					if(friendTyle =="block"){
+						friendArray[friendLinkKey] = friendLinkValue;
+					}
+					console.log(friendArray);
+				})
+				
+				
+				//组建数组
+				friendArray['turl'] = "addFriendLink";
+				if(!that.theType || that.theType == false){
+					friendArray['friend-type'] = 0;	
+				}
+				else{
+					friendArray['friend-type'] = 1;
+					friendArray['friend-img'] = that.friendImgName;
+					friendArray['friend-base'] = that.friendImgBase;
+				}
+				
+				alert(theFriendLinkId);
+				
+				//当存在参数时，类型为编辑，不存在时为添加
+				if(theFriendLinkId){
+					friendArray['friend-select'] = 'edit'
+					friendArray['friend-id'] = theFriendLinkId;
+					
+				}
+				else{
+					friendArray['friend-select'] = 'add'					
+				}
+				
+				//向后端发出请求
+				$.ajax({
+					url:'../server/ajax/thefriendlink.php',
+					data:friendArray,
+					type:'post',
+					dataType:'json',
+					success:function(data){
+						console.log("==========后台传递的添加友情链接的数据==========");
+						console.log(data);
+						
+						
+					}
+				})		
+			
+			})
+						
+		},
+		
+		//友情链接列表
+		friendList:function(){
+			//向后端提交友情链接列表请求
+			$.ajax({
+				url:'../server/ajax/thefriendlink.php',
+				data:{turl:"friendLinkList",},
+				type:"get",
+				dataType:"json",
+				success:function(data){
+					console.log("============后端传递过来的友情链接的数据=============");
+					console.log(data);
+					//前端html渲染，friendlink-list.html
+					data.result.forEach(function(item){
+						//组装图片类型
+						if(item['ftype'] == 0){
+							item['ftype'] = '链接';						
+						}
+						else if(item['ftype'] == 1){
+							item['ftype'] = '图片';							
+						}
+						
+						var friendHtml = '<tr class="text-c"><td><input type="checkbox" value="1" name=""></td><td>'+item['fid']+'</td><td><u style="cursor:pointer" class="text-primary" onclick="member_show(\'张三\',\'friendlink-index.html?friendLinkId='+item['fid']+'\',\'10001\',\'360\',\'400\')">'+item['ftitle']+'</u></td><td>'+item['flink']+'</td><td>'+item['fintroduction']+'</td><td>'+item['fdate']+'</td><td>'+item['ftype']+'</td><td>'+item['fimage']+'</td><td class="td-manage"><a style="text-decoration:none" onClick="member_stop(this,\'10001\')" href="javascript:;" title="停用"><i class="Hui-iconfont">&#xe631;</i></a> <a title="编辑" href="javascript:;" onclick="member_edit(\'编辑\',\'member-add.html\',\'4\',\'\',\'510\')" class="ml-5" style="text-decoration:none"><i class="Hui-iconfont">&#xe6df;</i></a><a title="删除" href="javascript:;" onclick="member_del(this,'+item['fid']+')" class="ml-5" style="text-decoration:none"><i class="Hui-iconfont">&#xe6e2;</i></a></td></tr>';
+						
+						$(friendHtml).appendTo('.friendlink-list');
+					})					
+									
+				}
+			})
+		}
+		
+	}
+	friendLinkManage.friendAdd();	
+	friendLinkManage.friendList();
+}
+
+//邮箱控制管理
+function emailControl(){
+	var theEmail = {
+		emailAdd:function(){
+			//获取用户信息
+			console.log("============邮箱中的用户信息============");
+			console.log(theAllUserInfo);
+			
+			$('.email-put').click(function(){
+				//获取email的相关信息
+				var emailArray = {};
+				$('.email-value').each(function(key,item){
+					var isBlock = $(this).css("display");
+					console.log(isBlock)
+					if(isBlock == "block"){
+						var theKey = $(this).find(".value-v").attr("name");
+						var theValue = $(this).find(".value-v").val();
+						emailArray[theKey] = theValue;
+					}
+				})				
+				
+				//组装数据
+				emailArray['turl'] = "addSendMail";
+				emailArray['the-user'] = theAllUserInfo.result.username;
+				
+				console.log(emailArray);
+				//向后端发出邮箱验证提交
+				$.ajax({
+					url:'../server/ajax/theemail.php',
+					data:emailArray,
+					type:"post",
+					dataType:'json',
+					success:function(data){
+						console.log("============邮箱发送返回的数据============");
+						console.log(data);
+					}
+					
+				})
+			})
+		}	
+	}
+	theEmail.emailAdd();
+}
+
 //正则表达式分类
 function util(){	
 	var that = this;
@@ -1703,6 +1923,8 @@ function util(){
 			})
 			return that.categoryJson;
 		}
+		
+		
 	}
 	
 	//获取用户类型返回

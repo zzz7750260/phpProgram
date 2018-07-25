@@ -420,6 +420,7 @@ class theArticleClass{
 			//循环查询列表,并静态化输出列表页面
 			for($i=0;$i<$pageNumZ;$i++){
 				//起始位置为页面乘以每页面的数量
+				
 				$qsNum = $i * $theLimitOb;
 				$listSql = "select a.*,b.* from article as a left join category as b on a.category_id = b.cid where 1 = 1 and IF('$theCategoryObId' = 0, 0 = 0, category_id = '$theCategoryObId') limit $qsNum,$theLimitOb";		
 				$listSql_db = mysql_query($listSql);
@@ -444,11 +445,14 @@ class theArticleClass{
 				 //检测源码类型，解决乱码问题
 				 //$encode = mb_detect_encoding($info, array("ASCII",'UTF-8',"GB2312","GBK",'BIG5'));
 				 //echo $encode;
-				file_put_contents(APP_PATH3.'/article/'.$theArticleArray[0]['categoryyw'].'/'.$theArticleArray[0]['categoryyw'].'-'.$i.'.html', $info);
+				 
+				 //因为页面一般都是从第一页开始的，所以生成的页面要加一
+				$w = $i + 1;
+				file_put_contents(APP_PATH3.'/article/'.$theArticleArray[0]['categoryyw'].'/'.$theArticleArray[0]['categoryyw'].'-'.$w.'.html', $info);
 				 
 				//输出完后，将缓存清除
 				ob_clean();
-				 $this->s = $i;
+				 $this->s = $w;
 				//echo "<br/><hr/>";					
 			}
 			
@@ -469,9 +473,26 @@ class theArticleClass{
 	}
 	
 	//前端栏目汇总列表静态化
-	function categoryArrayPageOb(){
-		//获取需要静态化的分类组合
-		$theCategoryId = $_GET['theCategoryId'];
+	function fatherCategoryArrayPageOb(){
+		//获取所有的父类id
+		$theUtil = new articleUtil();
+		$theFatherCategoryArray = $theUtil->getCategoryArray(0);
+		//遍历数组获取获取各父类的id
+		foreach($theFatherCategoryArray as $key =>$value){
+			$this->categoryArrayPageOb($value['cid']);	
+		}
+		
+	}
+	
+	//总分类页静态化
+	function categoryArrayPageOb($fid){
+		if(!$fid){
+			//获取需要静态化的分类组合
+			$theCategoryId = $_GET['theCategoryId'];			
+		}
+		else{
+			$theCategoryId = $fid;
+		}
 		//echo $theCategoryId;
 		//根据得到的分类id获取对应的子集
 		$theArticleUtil = new articleUtil();
@@ -585,6 +606,9 @@ class theArticleClass{
 		}
 		if($turl == 'categoryArrayPageOb'){
 			$this->categoryArrayPageOb();
+		}
+		if($turl == 'fatherCategoryArrayPageOb'){
+			$this->fatherCategoryArrayPageOb();
 		}
 	}
 }
