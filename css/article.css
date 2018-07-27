@@ -1,3 +1,12 @@
 .theArticle-title{
-text-align:center;
+	text-align:center;
 }
+
+.theArticle-detail{
+
+}
+
+.theArticle-detail span{
+	margin:0 5px;
+}
+

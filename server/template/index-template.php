@@ -133,6 +133,13 @@
 										echo $arrayHtml;
 									?>
 									
+									
+									<span><a href="<?php 
+										$theCategoryArray = $theArticleUtil->categoryDetail(1);
+										$theCategoryWz = $theCategoryArray['categoryyw'];
+										$theUrl = 'http://' .$_SERVER['HTTP_HOST']. '/program/article/'.$theCategoryWz.'/'.$theCategoryWz.'-list-1.html';
+										echo $theUrl;
+									?>">更多</a></span>
 								</div>
 							</div>						
 						
@@ -180,7 +187,7 @@
 						<h3>封面列表</h3>
 					</div>
 					<div class="cover-title-right col-md-10">
-						<a href="./article/cover-page/cover-list-1.html">更多封面</a>
+						<a href="<?php $thePagePath = 'http://'.$_SERVER['HTTP_HOST'].'/program/article/cover-page/cover-list-1.html'; echo $thePagePath;?>">更多封面</a>
 					</div>
 				</div>
 				<ul class="row">

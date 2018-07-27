@@ -61,11 +61,13 @@ class articleUtil{
 		$getTheCaregoryString = implode(',' , $getTheCaregoryArray);
 		echo $getTheCaregoryString;
 		
+		
+		
 		if($isRand == "list"){
 			$theCategorySql = "select a.*,b.*,c.* from article as a join category as b on a.category_id = b.cid join page as c on a.article_cover = c.ptitle where a.category_id in ($getTheCaregoryString) order by aid DESC limit 0 , $num";
 		}
 		if($isRand == "rand"){
-			$theCategorySql = "select a.*,b.*,c.* from article as a join category as b on a.category_id = b.cid join page as c on a.article_cover = c.ptitle where a.aid >= ((select max(a.aid) from article)-(select min(a.aid) from article)) * rand() + (select min(a.aid) from article) limit 0, $num";
+			$theCategorySql = "select a.*,b.*,c.* from article as a join category as b on a.category_id = b.cid join page as c on a.article_cover = c.ptitle where a.aid >= ((select max(a.aid) from article)-(select min(a.aid) from article)) * rand() + (select min(a.aid) from article) and a.category_id in ($getTheCaregoryString) limit 0, $num";
 			
 		}
 		$theCategorySql_db = mysql_query($theCategorySql);
@@ -127,7 +129,17 @@ class articleUtil{
 		return $findCoverArray;
 	}
 	
-	//公共类：查询分类的信息
+	//公共类：返回对应分类的详细信息
+	//$categoryId,需要差选的分类ID 
+	function categoryDetail($categoryId){
+		$theCategorySql = "select * from category where cid = $categoryId";
+		$theCategorySql_db = mysql_query($theCategorySql);
+		$theCategoryArray = array();
+		while($theCategorySql_db_array = mysql_fetch_assoc($theCategorySql_db)){
+			$theCategoryArray = $theCategorySql_db_array;
+		}
+		return $theCategoryArray;
+	}
 }
 //$articleUtil = new articleUtil;
 //$articleUtil->getRandArticleList(5,2);

@@ -184,7 +184,7 @@ class theArticleClass{
 	function oBarticle(){
 		$theAid = $_GET['article_id'];
 		//数据库查询
-		$articleSql = "select a.*,b.* from article as a left join category as b on a.category_id = b.cid where a.aid = '$theAid'";
+		$articleSql = "select a.*,b.*,c.* from article as a left join category as b on a.category_id = b.cid left join  page as c on a.article_cover = c.ptitle where a.aid = '$theAid'";
 		$articleSql_db = mysql_query($articleSql);
 
 		$articleArray = array();
@@ -390,6 +390,9 @@ class theArticleClass{
 		//获取展示的文章数量
 		$theLimitOb = $_GET['getLimit'];
 		
+		//页码类型分类
+		$typePage = "list";
+		
 		$categoryArticleListSql = "select a.*,b.* from article as a left join category as b on a.category_id = b.cid where 1 = 1 and IF('$theCategoryObId' = 0, 0 = 0, category_id = '$theCategoryObId')";
 		
 		$categoryArticleListSql_db = mysql_query($categoryArticleListSql);
@@ -422,7 +425,7 @@ class theArticleClass{
 				//起始位置为页面乘以每页面的数量
 				
 				$qsNum = $i * $theLimitOb;
-				$listSql = "select a.*,b.* from article as a left join category as b on a.category_id = b.cid where 1 = 1 and IF('$theCategoryObId' = 0, 0 = 0, category_id = '$theCategoryObId') limit $qsNum,$theLimitOb";		
+				$listSql = "select a.*,b.*,c.* from article as a left join category as b on a.category_id = b.cid left join page as c on a.article_cover = c.ptitle where 1 = 1 and IF('$theCategoryObId' = 0, 0 = 0, category_id = '$theCategoryObId') limit $qsNum,$theLimitOb";		
 				$listSql_db = mysql_query($listSql);
 				$theArticleArray = array();
 				while($listSql_db_array = mysql_fetch_assoc($listSql_db)){
@@ -433,9 +436,17 @@ class theArticleClass{
 				//传建对应的文件夹	
 				$theUtil = new util();
 				$theUtil->mkdirWj($theArticleArray[0]['categoryyw']);	
-				//引入列表模板
-				include('../template/list.php');
-				 
+				
+				//将得到的文章列表值赋给模板中的值
+				$categoryNumArray = $theArticleArray;
+				$theCategoryId = $theCategoryObId;
+				
+				//因为页面一般都是从第一页开始的，所以生成的页面要加一
+				$w = $i + 1;				
+				
+				//引入列表模板				
+				//include('../template/list.php');
+				 include('../template/category-list-template.php');
 				 //获取缓存信息
 				$info = ob_get_contents();
 				 //echo $info;
@@ -444,10 +455,7 @@ class theArticleClass{
 				 
 				 //检测源码类型，解决乱码问题
 				 //$encode = mb_detect_encoding($info, array("ASCII",'UTF-8',"GB2312","GBK",'BIG5'));
-				 //echo $encode;
-				 
-				 //因为页面一般都是从第一页开始的，所以生成的页面要加一
-				$w = $i + 1;
+				 //echo $encode;			 
 				file_put_contents(APP_PATH3.'/article/'.$theArticleArray[0]['categoryyw'].'/'.$theArticleArray[0]['categoryyw'].'-'.$w.'.html', $info);
 				 
 				//输出完后，将缓存清除
@@ -493,6 +501,10 @@ class theArticleClass{
 		else{
 			$theCategoryId = $fid;
 		}
+		
+		//页码类型分类
+		$typePage = "categoryList";
+		
 		//echo $theCategoryId;
 		//根据得到的分类id获取对应的子集
 		$theArticleUtil = new articleUtil();
@@ -531,7 +543,7 @@ class theArticleClass{
 		}
 		
 		//循环获取对应的数组
-		for($i = 0; $i<=$getPageNum ; $i++){
+		for($i = 0; $i<$getPageNum; $i++){
 			//新建一个数组
 			$categoryNumArray = array();
 			//循环获取总数组中对应部分的数组

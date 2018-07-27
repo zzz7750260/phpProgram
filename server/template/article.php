@@ -33,27 +33,57 @@
 		getMenu();
 	?>
 	<div class="container">
+		<div>
+			<!--引入面包屑-->
+			<?php 
+				include_once('c-breadcrumb.php');
+			?>
+		</div>
 		<section>
-			<article class="theArticle col-md-10">
-				<div class="theArticle-title">
-					<h1><?php echo $value['title'];?></h1>
-					<hr/>
-				</div>
-				<div class="theArticle-img">
-					<div class="col-md-6 col-md-offset-3 theArticle-imgk">
-						<img class="" data-getid ="<?php echo $value['aid'];?>" src="../../upload/cover/<?php echo $value['article_img'];?>">
+			<div class="row">
+				<article class="theArticle col-md-9">
+					<div class="theArticle-title">
+						<h1><?php echo $value['title'];?></h1>
+						<hr/>
 					</div>
-					<div class="clear"></div>
-				</div>
-				<div class="theArticle-container">
-					<?php echo $value['article_container'];?>
-				</div>
-			</article>
-			
+					
+					<div class="theArticle-detail">
+						<span>作者:<?php $thePathShowHtml = '<a href="http://'.$_SERVER['HTTP_HOST'].'/program/article/user-page/'.$value['article_author'].'.html">'.$value['article_author'].'</a>'; echo $thePathShowHtml;?></span>
+						
+						<span>封面:<?php $thePathShowHtml = '<a href="http://'.$_SERVER['HTTP_HOST'].'/program/article/cover-page/'.$value['pid'].'.html">'.$value['article_cover'].'</a>'; echo $thePathShowHtml;?></span>
+						
+						<span>发布日期:<?php echo $value['commit_start']?></span>
+						
+						<span>分类:<?php $thePathShowHtml = '<a href="http://'.$_SERVER['HTTP_HOST'].'/program/article/'.$value['categoryyw'].'/'.$value['categoryyw'].'-1.html">'.$value['categoryname'].'</a>'; echo $thePathShowHtml;?></span>
+						<br/>
+						<hr/>
+					</div>
+					
+					<div class="theArticle-img">
+						<!--
+						<div class="col-md-6 col-md-offset-3 theArticle-imgk">
+							<img class="" data-getid ="<?php echo $value['aid'];?>" src="../../upload/cover/<?php echo $value['article_img'];?>">
+							
+							
+						</div>
+						-->
+						<div class="col-md-12 theArticle-imgk">
+							<img class="img-responsive" data-getid ="<?php echo $value['aid'];?>" src="../../upload/cover/<?php echo $value['article_img'];?>">
+							
+							
+						</div>
+						
+						<div class="clear"></div>
+					</div>
+					<div class="theArticle-container">
+						<?php echo $value['article_container'];?>
+					</div>
+				</article>
+			</div>
 			<aside class="col-md-2">
 			
 			</aside>
-			
+			<div class="clear"></div>
 		</section>
 		
 		<section>

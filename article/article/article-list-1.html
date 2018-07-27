@@ -1,9 +1,9 @@
 <br />
-<b>Warning</b>:  implode() [<a href='function.implode'>function.implode</a>]: Invalid arguments passed in <b>E:\wamp\www\program\server\ajax\article.class.php</b> on line <b>501</b><br />
+<b>Warning</b>:  implode() [<a href='function.implode'>function.implode</a>]: Invalid arguments passed in <b>E:\wamp\www\program\server\ajax\article.class.php</b> on line <b>518</b><br />
 <br />
-<b>Warning</b>:  mysql_num_rows(): supplied argument is not a valid MySQL result resource in <b>E:\wamp\www\program\server\ajax\article.class.php</b> on line <b>508</b><br />
+<b>Warning</b>:  mysql_num_rows(): supplied argument is not a valid MySQL result resource in <b>E:\wamp\www\program\server\ajax\article.class.php</b> on line <b>525</b><br />
 数量：<br />
-<b>Warning</b>:  mysql_fetch_assoc(): supplied argument is not a valid MySQL result resource in <b>E:\wamp\www\program\server\ajax\article.class.php</b> on line <b>512</b><br />
+<b>Warning</b>:  mysql_fetch_assoc(): supplied argument is not a valid MySQL result resource in <b>E:\wamp\www\program\server\ajax\article.class.php</b> on line <b>529</b><br />
 页数：0余数：0<!DOCTYPE html>
 <html lang="zh-CN">
   <head>
@@ -12,8 +12,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <!-- 上述3个meta标签*必须*放在最前面，任何其他内容都*必须*跟随其后！ -->
     <title>海量文章在线观看-文章列表1-课间十分钟</title>
-	<meta name="keywords" content="" />
-	<meta name="description" content="" />
+	<meta name="keywords" content="文章" />
+	<meta name="description" content="这个是文章分类" />
     <!-- Bootstrap -->
     <link href="https://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
     <link href="./css/common.css" rel="stylesheet">
@@ -28,8 +28,8 @@
 		<nav class="navbar navbar-default" role="navigation"><div class="container-fluid"><div class="navbar-header"><button type="button" class="navbar-toggle" data-toggle="collapse"
 data-target="#example-navbar-collapse"><span class="sr-only">切换导航</span><span class="icon-bar"></span><span class="icon-bar"></span><span class="icon-bar"></span></button><a class="navbar-brand" href="#">课间十分钟</a></div><div class="collapse navbar-collapse" id="example-navbar-collapse"><ul class="nav navbar-nav"><li><a href="http://localhost/program/article/music/music-0.html" class="dropdown-toggle" data-toggle="dropdown">音乐<b class="caret"></b><ul class="dropdown-menu"><li><a href="http://localhost/program/article/oldmusic/oldmusic-0.html">古典音乐</a></li><li><a href="http://localhost/program/article/lxmusic/lxmusic-0.html">流行音乐</a></li></ul></a></li><li><a href="http://localhost/program/article/article/article-0.html" class="dropdown-toggle" data-toggle="dropdown">文章<b class="caret"></b><ul class="dropdown-menu"></ul></a></li></div></ul></nav>		<div class="jumbotron">
 			<div class="container">
-				<h1></h1>
-				<p>这是一个超大屏幕（Jumbotron）的实例。</p>
+				<h2>文章</h2>
+				<p>这个是文章分类</p>
 				<p><a class="btn btn-primary btn-lg" role="button">
 				 学习更多</a>
 				</p>
@@ -81,8 +81,9 @@ data-target="#example-navbar-collapse"><span class="sr-only">切换导航</span>
 			<div>
 				<ul class="pager">
 					<li><a href="./article-list-2.html">Next</a></li>					<li>
-						<select>
-													</select>
+						<select onchange="window.location.href = this.value">
+							<option>选择页数</option>
+							<option value="http://localhost/program/article/article/article-list-1.html"">第1页</option><option value="http://localhost/program/article/article/article-list-2.html"">第2页</option><option value="http://localhost/program/article/article/article-list-3.html"">第3页</option><option value="http://localhost/program/article/article/article-list-4.html"">第4页</option><option value="http://localhost/program/article/article/article-list-5.html"">第5页</option>						</select>
 					<li>
 				</ul>
 			</div>

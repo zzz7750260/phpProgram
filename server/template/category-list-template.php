@@ -33,8 +33,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <!-- 上述3个meta标签*必须*放在最前面，任何其他内容都*必须*跟随其后！ -->
     <title><?php echo "海量" .$categoryInfoArray['categoryname'] . '在线观看-' . $categoryInfoArray['categoryname'] .'列表'.$p.'-课间十分钟' ?></title>
-	<meta name="keywords" content="<?php echo $getIndexArray[0]['web_keyword']?>" />
-	<meta name="description" content="<?php echo $getIndexArray[0]['web_short']?>" />
+	<meta name="keywords" content="<?php echo $categoryInfoArray['categoryname'];?>" />
+	<meta name="description" content="<?php echo $categoryInfoArray['categoryms'];?>" />
     <!-- Bootstrap -->
     <link href="https://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
     <link href="./css/common.css" rel="stylesheet">
@@ -52,8 +52,8 @@
 		?>
 		<div class="jumbotron">
 			<div class="container">
-				<h1><?php echo  $getIndexArray[0]['web_name'];?></h1>
-				<p>这是一个超大屏幕（Jumbotron）的实例。</p>
+				<h2><?php echo $categoryInfoArray['categoryname'];?></h2>
+				<p><?php echo $categoryInfoArray['categoryms'];?></p>
 				<p><a class="btn btn-primary btn-lg" role="button">
 				 学习更多</a>
 				</p>
@@ -63,15 +63,26 @@
 		<section>
 			<div class="container">			
 				<?php
-					//根据父类获取子类
-					$menuCategoryArray = $theArticleUtil->getCategoryArray($theCategoryId);
-					//print_r($menuCategoryArray);
-					$menuHtml = $categoryInfoArray['categoryname'] . ':';
+					//如果为总分类时，根据id寻找子分类，如果为子分类，根据其父分类找子分类
+					
+					if($typePage == "categoryList"){
+						//根据父类获取子类
+						$menuCategoryArray = $theArticleUtil->getCategoryArray($theCategoryId);
+						//print_r($menuCategoryArray);
+						$menuHtml = $categoryInfoArray['categoryname'] . ':';
+					}
+					if($typePage == "list"){
+						$menuCategoryArray = $theArticleUtil->getCategoryArray($categoryInfoArray['cpid']);
+						
+					}
+
 					//循环子分类菜单
 					foreach($menuCategoryArray as $menuKey => $menuValue){
-						$menuHtml .= '<a href="http://'.$_SERVER['HTTP_HOST'].'/program/article/'.$menuValue['categoryyw'].'/'.$menuValue['categoryyw'].'-0.html"><span>'.$menuValue['categoryname'].'</span></a>';						
+						$menuHtml .= '<a href="http://'.$_SERVER['HTTP_HOST'].'/program/article/'.$menuValue['categoryyw'].'/'.$menuValue['categoryyw'].'-1.html"><span>'.$menuValue['categoryname'].'</span></a>';						
 					}
-					echo $menuHtml;				
+					echo $menuHtml;		
+					//为了防止重复，将$menuHtml赋值为空
+					$menuHtml = '';
 				?>
 			
 			</div>
@@ -98,7 +109,7 @@
 							//print_r($hotArticleArray);
 							//遍历数组，将数组组装成html
 							foreach($categoryNumArray as $key => $value){
-								$theHtml .= '<div class="col-sm-6 col-md-3"><div class="thumbnail"><img src="../../upload/cover/'.$value['article_img'].'" alt="通用的占位符缩略图"><h5>'.$value['title'].'</h5><div><span>分类:<a href="http://'.$_SERVER['HTTP_HOST'].'/program/article/'.$value['categoryyw'].'/'.$value['categoryyw'].'-1.html">'.$value['categoryname'].'</a></span><span>来源:<a href="http://'.$_SERVER['HTTP_HOST'].'/program/article/cover-page/'.$value['pid'].'.html">'.$value['article_cover'].'</a></span></div></div></div>';
+								$theHtml .= '<div class="col-sm-6 col-md-3"><div class="thumbnail"><a href="http://'.$_SERVER['HTTP_HOST'].'/program/article/'.$value['categoryyw'].'/'.$value['aid'].'.html"><img src="../../upload/cover/'.$value['article_img'].'" alt="通用的占位符缩略图"><h5>'.$value['title'].'</h5></a><div><span>分类:<a href="http://'.$_SERVER['HTTP_HOST'].'/program/article/'.$value['categoryyw'].'/'.$value['categoryyw'].'-1.html">'.$value['categoryname'].'</a></span><span>来源:<a href="http://'.$_SERVER['HTTP_HOST'].'/program/article/cover-page/'.$value['pid'].'.html">'.$value['article_cover'].'</a></span></div></div></div>';
 							}
 							echo $theHtml;
 							
@@ -117,26 +128,55 @@
 			<div>
 				<ul class="pager">
 					<?php 
-						if($p == 1){
-							$n = $p + 1;
-							echo '<li><a href="./'.$categoryInfoArray['categoryyw'].'-list-'.$n.'.html">Next</a></li>';	
-						}	
-						else if($p == $pageNum){
-							$s  = $p - 1;
-							echo '<li><a href="./'.$categoryInfoArray['categoryyw'].'-list-'.$s.'.html">Previous</a></li>';							
-						}
-						else{
-							$n = $p + 1;
-							$s  = $p - 1;
-							echo '<li><a href="./'.$categoryInfoArray['categoryyw'].'-list-'.$s.'.html">Previous</a></li><li><a href="./'.$categoryInfoArray['categoryyw'].'-list-'.$n.'.html">Next</a></li>';					
+					
+						if($typePage == "categoryList"){
+							if($p == 1){
+								$n = $p + 1;
+								echo '<li><a href="./'.$categoryInfoArray['categoryyw'].'-list-'.$n.'.html">Next</a></li>';	
+							}	
+							else if($p == $getPageNum){
+								$s  = $p - 1;
+								echo '<li><a href="./'.$categoryInfoArray['categoryyw'].'-list-'.$s.'.html">Previous</a></li>';							
+							}
+							else{
+								$n = $p + 1;
+								$s  = $p - 1;
+								echo '<li><a href="./'.$categoryInfoArray['categoryyw'].'-list-'.$s.'.html">Previous</a></li><li><a href="./'.$categoryInfoArray['categoryyw'].'-list-'.$n.'.html">Next</a></li>';					
+							}														
 						}
 						
+						if($typePage == "list"){
+							if($w == 1){
+								$n = $w + 1;
+								echo '<li><a href="./'.$categoryInfoArray['categoryyw'].'-'.$n.'.html">Next</a></li>';	
+							}	
+							else if($w == $pageNumZ){
+								$s  = $w - 1;
+								echo '<li><a href="./'.$categoryInfoArray['categoryyw'].'-'.$s.'.html">Previous</a></li>';							
+							}
+							else{
+								$n = $w + 1;
+								$s  = $w - 1;
+								echo '<li><a href="./'.$categoryInfoArray['categoryyw'].'-'.$s.'.html">Previous</a></li><li><a href="./'.$categoryInfoArray['categoryyw'].'-'.$n.'.html">Next</a></li>';					
+							}								
+							
+						}
+											
 					?>
 					<li>
-						<select>
+						<select onchange="window.location.href = this.value">
+							<option>选择页数</option>
 							<?php 
-								for($a=1;$a<$getPageNum+1;$a++){
-									echo '<option>第'.$a.'页</option>';
+								if($typePage =="categoryList"){
+									//因为p为分页数，如果这里用p的话，会影响到静态化
+									for($lp=1;$lp<=$getPageNum;$lp++){
+										echo '<option value="http://'.$_SERVER['HTTP_HOST'].'/program/article/'.$categoryInfoArray['categoryyw'].'/'.$categoryInfoArray['categoryyw'].'-list-'.$lp.'.html"">第'.$lp.'页</option>';
+									}																	
+								}
+								if($typePage =="list"){
+									for($xp=1;$xp<=$pageNumZ;$xp++){
+										echo '<option value="http://'.$_SERVER['HTTP_HOST'].'/program/article/'.$categoryInfoArray['categoryyw'].'/'.$categoryInfoArray['categoryyw'].'-'.$xp.'.html"">第'.$xp.'页</option>';
+									}										
 								}
 							?>
 						</select>
