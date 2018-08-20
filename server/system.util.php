@@ -103,4 +103,37 @@
 		return $returnJson;
 	}
 	
+	//获取用户的IP
+	function getUserIp(){
+		if(isset($_SERVER["HTTP_CLIENT_IP"]) and strcasecmp($_SERVER["HTTP_CLIENT_IP"], "unknown")){
+			return $_SERVER["HTTP_CLIENT_IP"];
+		}
+		if(isset($_SERVER["HTTP_X_FORWARDED_FOR"]) and strcasecmp($_SERVER["HTTP_X_FORWARDED_FOR"], "unknown")){
+			return $_SERVER["HTTP_X_FORWARDED_FOR"];
+		}
+		if(isset($_SERVER["REMOTE_ADDR"])){
+			return $_SERVER["REMOTE_ADDR"];
+		}
+		return "";		
+	}
+
+	//物理根路径
+	function physicalPath($afterPath = ''){
+		//获取根目录
+		$rootPath = $_SERVER["DOCUMENT_ROOT"];
+		if($afterPath){
+			$rootPath = $rootPath . $afterPath; 
+		}
+		return $rootPath;		
+	}
+	
+	//网络路径
+	function webPath($afterPath = ''){
+		//获取根目录
+		$rootPath = $_SERVER['HTTP_HOST'];
+		if($afterPath){
+			$rootPath = $rootPath . '/' .$afterPath; 
+		}
+		return $rootPath;
+	}	
 }

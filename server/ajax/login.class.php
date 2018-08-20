@@ -40,7 +40,7 @@ class theLogin{
 		echo $num."<br/>";
 		echo $hostUrl;
 
-		$theURL = "http://".$hostUrl."/program/";
+		$theURL = "http://".$hostUrl."/";
 		
 		if($num == 0){
 			echo "登录密码错误!";
@@ -82,8 +82,8 @@ class theLogin{
 			}
 			else{
 				$loginYzReturnArray = array(
-					status => 400,
-					msg => '用户不合法',
+					status => 500,
+					msg => '用户账户或密码不正确',
 					result => ''
 				);								
 			}			
@@ -160,8 +160,7 @@ class theLogin{
 			$i++;
 		}
 		//print_r($menuList);
-		return $menuList;
-		
+		return $menuList;		
 	}
 		
 	//根据传进来的页面参数调用

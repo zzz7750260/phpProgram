@@ -538,17 +538,18 @@ function adminCategory(){
 					turl:"listCategory",		
 				},
 				dataType:"json",
+				
 				success:function(data){
 					console.log("================分类管理返回的数值===================");					
 					console.log(data);	
 					
 					//html渲染
-					$.each(data,function(index,item){
-						console.log("============菜单遍历展示=================");
-						console.log(item);
-						var category_html = '<option value="'+item.cid+'">'+item.categoryname+'</option>';
-						$(category_html).appendTo("#category_select");
-					})
+					//$.each(data,function(index,item){
+					//	console.log("============菜单遍历展示=================");
+					//	console.log(item);
+					//	var category_html = '<option value="'+item.cid+'">'+item.categoryname+'</option>';
+					//	$(category_html).appendTo("#category_select");
+					//})
 					
 					
 					
@@ -607,14 +608,89 @@ function adminArticle(){
 			//通过公共模块获取用户信息
 			var getMemberInfo = theUtil.memberUtil.theMemberYz();
 			
+			//通过公共模块确认是否存在参数，如果存在参数，就为编辑，没有为添加
+			var getArticleId = theUtil.theReg.getUrlParamsReg("editArticleId");
+			alert("该文章的id为"+getArticleId);
+			
+			
+			//初始化百度富文本编辑器
+			//var ue = UE.getEditor('editor');
+					
+			
 			//通过公共模块获取封面信息,并对HTML进行组装
 			var theCoverInfo = theUtil.memberUtil.getCoverInfo();
 			console.log("===============外部的封面列表============");
 			console.log(theCoverInfo);
 			theCoverInfo.result.forEach(function(item){
-				var coverHtml = '<option value="'+item['title']+'">'+item['title']+'</option>';
+				var coverHtml = '<option value="'+item['ptitle']+'">'+item['ptitle']+'</option>';
 				$(coverHtml).appendTo("#article-cover");
 			})
+			
+			//通过公共模块获取分类列表，并进行html组装
+			var getCategoryList = theUtil.categoryUtil.getListCategory();
+			console.log("==========(外部)分类列表===========");
+			console.log(getCategoryList);
+			getCategoryList.forEach(function(item){
+				var categoryHtml = '<option value="'+item['cid']+'">'+item['categoryname']+'</option>';
+				$(categoryHtml).appendTo("#category_select");
+			})
+			
+			//通过公共数据：用户数据来组装文章作者
+			$("#article-author").val(theAllUserInfo.article_author);
+			
+			
+			
+			if(getArticleId){
+				//如果有参数，为编辑文章
+				//公共模块：根据id获取文章的详细信息
+				var getArticleInfo = theUtil.commAricle.getEditArticleInfo(getArticleId);
+				
+				console.log("=========外部获取的编辑文章信息===============");
+				console.log(getArticleInfo);
+				
+				
+				//根据获取到的数值渲染到对应的表单中
+				var theData = getArticleInfo.result;			
+				$("#article-title").val(theData.title);
+				$("#article-short-title").val(theData.short_title);
+				//select 获取选中值
+				$("#category_select").find("option[value="+theData.category_id+"]").attr("selected",true);
+				//$("#category_select").val(theData.category_id);	
+				$("#article-keyword").val(theData.article_key);
+				$("#article-short").val(theData.article_short);
+				$("#article-cover").find("option[value="+theData.article_cover+"]").attr("selected",true);
+				$("#article-author").val(theData.article_author);
+				//checkbox复选框
+				if(theData.article_status){
+					$("input:checkbox[name='article-pl']").attr("checked",true);
+				}
+				$("#datemin").val(theData.commit_start);
+				$("#datemax").val(theData.commit_end);
+				
+				//图片赋值
+				$("#article-file").val(theData.article_img)
+				$("#article-file").attr("value",theData.article_img);
+				$(".show-picture").attr("src","../upload/cover/"+theData.article_img+"");
+				
+				//平台选择
+				$("#video-platform").find('option[value="'+theData.video_platform+'"]').attr("selected",true);
+				$("#video-source").val(theData.video_source);
+								
+				//百度富文本赋值
+				ue.addListener("ready", function () {
+			　　　　// editor准备好之后才可以使用
+			　　　ue.setContent(theData.article_container);
+
+			　　});
+			
+				//将提交按钮换为编辑按钮
+				$(".article-put-group").css("display","none");
+				$(".article-edit-group").css("display","block");
+				
+				//将需要编辑的文章编号存储到全局
+				that.editArticleId =  theData.aid;
+				
+			}				
 			
 			console.log("得到用户信息："+ getMemberInfo.result.username)
 			//将获取到的用户信息的用户名填到对应的用户框中
@@ -638,8 +714,15 @@ function adminArticle(){
 				//同时获取上传图片的名称
 				//this.GlobalVar.pictureName = theFile['name'];
 				that.pictureName = theFile['name'];
+				console.log("图片名称："+that.pictureName);
+				//$("#article-file").val(that.pictureName);
+				$("#article-file").attr("value",that.pictureName);
+				//$("#article-file").text("value",that.pictureName);
+				var articlePicName = $("#article-file").attr("value");
+				console.log("图片框名称："+articlePicName);
+				
 				//console.log("图片名称"+this.GlobalVar.pictureName);
-				console.log("图片名称"+that.pictureName);
+				//console.log("图片名称"+that.pictureName);
 			})
 			
 			//上传封面图
@@ -662,18 +745,27 @@ function adminArticle(){
 			})
 			
 			$("#btn-save").on("click",function(){
-				saveArticle("draft");
+				saveArticle("draft","add");
 			});
 			
 			$("#article-save").on("click",function(){
-				saveArticle("public");
+				saveArticle("public","add");
+				
+			});
+			
+			$("#btn-edit-save").on("click",function(){
+				saveArticle("draft","edit");
+			});
+			
+			$("#article-edit-save").on("click",function(){
+				saveArticle("public","edit");
 				
 			});
 			
 			
 			//提交文档的方法，是正式发布还是存草稿
 			
-			function saveArticle(isPublic){
+			function saveArticle(isPublic,isEdit){
 				var theArticleStatus;
 				//存草稿赋值
 				if(isPublic == "draft"){
@@ -684,6 +776,8 @@ function adminArticle(){
 					theArticleStatus == 'true';
 					
 				}
+				
+
 												
 				var thePostArray = {};
 				$("#form-article-add").find(".row").each(function(){
@@ -704,7 +798,11 @@ function adminArticle(){
 						
 					}
 					
-					
+					//当为article-file图片框时,获取它的value值
+					if(theKey == "article-pic"){
+						theValue = articlePicName = $("#article-file").attr("value");
+					}
+									
 					//console.log(theKey +":"+ theValue);
 					thePostArray[theKey] = theValue;
 				})
@@ -716,13 +814,24 @@ function adminArticle(){
 				console.log("===========获取表单信息==============");
 				console.log(thePostArray);
 				console.log("图片名称"+that.pictureName);
-				
+											
 				
 				//将提交的数据进行修改
 				thePostArray['turl'] = "addArticle";
-				thePostArray['article-pic'] = that.pictureName;
+				//thePostArray['article-pic'] = that.pictureName;
 				thePostArray['the-article'] = str;
 				thePostArray['article-status'] = isPublic;
+				//提交base64链接
+				thePostArray['article-img-base'] = that.baseImgurl;
+				
+				
+				//文章类型的提交：是编辑·还是添加
+				thePostArray['article-upload-type'] = isEdit;
+				
+				//如果存在参数为编辑，需要对该文章的id进行发送
+				thePostArray['edit-article-id'] = that.editArticleId;
+				
+				
 				console.log("===========修改后的表单信息==============");
 				console.log(thePostArray);
 				
@@ -954,6 +1063,51 @@ function adminArticle(){
 						console.log(data);
 					}
 				})				
+			})
+			
+			//用户列表静态化
+			$("#get-userPage-ob").click(function(){
+				//向后端提供用户列表静态化信息
+				$.ajax({
+					url:"../server/ajax/thecover.php",
+					data:{turl:"userPageOb",getOb:"ob"},
+					type:"get",
+					dataType:"json",
+					success:function(data){
+						console.log("===========用户列表静态化返回===============");
+						console.loh(data);
+					}
+				})
+			})
+			
+			//封面静态化
+			$("#get-coverPage-ob").click(function(){
+				//向后端提供用户列表静态化信息
+				$.ajax({
+					url:"../server/ajax/thecover.php",
+					data:{turl:"coverPageOb",coverOb:"ob"},
+					type:"get",
+					dataType:"json",
+					success:function(data){
+						console.log("===========用户列表静态化返回===============");
+						console.loh(data);
+					}
+				})
+			})
+			
+			//封面列表静态化
+			$("#get-coverList-ob").click(function(){
+				//向后端提供用户列表静态化信息
+				$.ajax({
+					url:"../server/ajax/thecover.php",
+					data:{turl:"coverListOb",thePageNum:5,theOb:"ob"},
+					type:"get",
+					dataType:"json",
+					success:function(data){
+						console.log("===========封面列表静态化返回===============");
+						console.loh(data);
+					}
+				})
 			})
 		},
 		
@@ -1922,9 +2076,27 @@ function util(){
 				}
 			})
 			return that.categoryJson;
-		}
+		},
 		
-		
+		//根据文章id返回详细的数据信息
+		getEditArticleInfo:function(articleId){
+			//向后端发出获取文章信息的请求
+			$.ajax({
+				url:"../server/ajax/thearticle.php",
+				data:{turl:"getArticleInfo",articleId:articleId},
+				type:'get',
+				dataType:'json',
+				async:false,//需要同步数据处理将得到的值传递给that.articleInfo
+				success:function(data){
+					console.log("==========获取从后端返回的文章信息==============");
+					console.log(data);
+					that.articleInfo = data;
+				}
+			})
+			//console.log("==========aaa获取从后端返回的文章信息==============");
+			//console.log(that.articleInfo);
+			return that.articleInfo;
+		}		
 	}
 	
 	//获取用户类型返回
@@ -1985,4 +2157,37 @@ function util(){
 			return that.CoverInfo;
 		}
 	}
+	
+	//获取分类类型返回
+	this.categoryUtil = {	
+		getListCategory:function(){
+			$.ajax({
+				url:"../server/ajax/thecategory.php",
+				type:'get',
+				data:{
+					turl:"listCategory",		
+				},
+				dataType:"json",
+				async:false,
+				success:function(data){
+					console.log("================分类管理返回的数值===================");					
+					console.log(data);	
+					
+					//html渲染
+					//$.each(data,function(index,item){
+					//	console.log("============菜单遍历展示=================");
+					//	console.log(item);
+					//	var category_html = '<option value="'+item.cid+'">'+item.categoryname+'</option>';
+					//	$(category_html).appendTo("#category_select");
+					//})
+					
+					that.categoryList = data;										
+				}
+			})
+			
+			console.log("==============后端获取的分类列表==================")
+			console.log(that.categoryList);
+			return that.categoryList
+		}
+	}	
 }

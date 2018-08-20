@@ -44,11 +44,11 @@
 			$breadcrumbLiHtml .= '<li><a href="';
 			//$breadcrumbValue[cpid] 为0 时为最顶层分类，链接也要为汇总链接,否则为普通分类链接
 			if($breadcrumbValue[cpid] == 0){
-				$breadcrumbLiHtml .= 'http://'.$_SERVER['HTTP_HOST'].'/program/article/'.$breadcrumbValue['categoryyw'].'/'.$breadcrumbValue['categoryyw'].'-list-1.html';
+				$breadcrumbLiHtml .= 'http://'.$_SERVER['HTTP_HOST'].'/article/'.$breadcrumbValue['categoryyw'].'/'.$breadcrumbValue['categoryyw'].'-list-1.html';
 					
 			}
 			else{
-				$breadcrumbLiHtml .= 'http://'.$_SERVER['HTTP_HOST'].'/program/article/'.$breadcrumbValue['categoryyw'].'/'.$breadcrumbValue['categoryyw'].'-1.html';			
+				$breadcrumbLiHtml .= 'http://'.$_SERVER['HTTP_HOST'].'/article/'.$breadcrumbValue['categoryyw'].'/'.$breadcrumbValue['categoryyw'].'-1.html';			
 			}
 			$breadcrumbLiHtml .= '">'.$breadcrumbValue['categoryname'].'</a></li>';
 			

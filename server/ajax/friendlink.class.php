@@ -31,7 +31,7 @@ class friendLink{
 				//设置上传的路径
 				//根目录
 				$rootPath = $_SERVER['DOCUMENT_ROOT'];
-				$thePath = $rootPath . '/program/upload/friendlink/';
+				$thePath = $rootPath . '/upload/friendlink/';
 				
 				//调用通用类中的上传文件柜
 				$theUtil = new util();

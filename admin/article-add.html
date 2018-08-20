@@ -66,7 +66,7 @@
 		<div class="row cl">
 			<label class="form-label col-xs-4 col-sm-2">文章摘要：</label>
 			<div class="formControls col-xs-8 col-sm-9">
-				<textarea name="article-short" cols="" rows="" class="article-short textarea value-v"  placeholder="说点什么...最少输入10个字符" datatype="*10-100" dragonfly="true" nullmsg="备注不能为空！" onKeyUp="textarealength(this,200)"></textarea>
+				<textarea name="article-short" cols="" rows="" id="article-short" class="article-short textarea value-v"  placeholder="说点什么...最少输入10个字符" datatype="*10-100" dragonfly="true" nullmsg="备注不能为空！" onKeyUp="textarealength(this,200)"></textarea>
 				<p class="textarea-numberbar"><em class="textarea-length">0</em>/200</p>
 			</div>
 		</div>
@@ -76,7 +76,7 @@
 			<label class="form-label col-xs-4 col-sm-2">封面选择：</label>
 			<div class="formControls col-xs-8 col-sm-9"> <span class="select-box">
 				<select name="article-cover" class="select value-v" id="article-cover">
-					
+					<option>请选择</option>
 				</select>
 				</span> </div>
 		</div>		
@@ -135,17 +135,30 @@
 		<div class="row cl">
 			<label class="form-label col-xs-4 col-sm-2">缩略图：</label>
 			<div class="formControls col-xs-8 col-sm-9">
-				<div class="uploader-thum-container">
-					<input type="file" id="article-fileList" class="uploader-list value-v" name="article-pic">
-				</div>
-			</div>
-			<div class="col-md-2 col-sm-4">
-				<img class="img-responsive show-picture" style="width:100%;">
-			</div>
-			<div>
-			<input type ="button" class="article-pic-push" id = "article-pic-push" value = "封面提交">
-			</div>
 				
+				<!--
+				<div class="uploader-thum-container">
+					<input type="file" id="article-fileList" class="uploader-list value-v" name="article-pic">			
+				
+				</div>
+				
+				<div>
+					<input type ="button" class="article-pic-push" id = "article-pic-push" value = "封面提交">
+				</div>
+				-->
+
+				<span class="btn-upload form-group">
+				  <input id="article-file" class="input-text upload-url radius value-v" type="text" name="article-pic"  readonly value=""><a href="javascript:void();" class="btn btn-primary radius "><i class="iconfont">&#xf0020;</i> 浏览文件</a>
+				  <input type="file" id="article-fileList" multiple name="article-pic-file" class="input-file friend-link-input value-v">
+				</span>	
+				
+			</div>
+			
+			<div>
+				<div class="col-md-2 col-sm-4 col-md-offset-2">
+					<img class="img-responsive show-picture" style="width:100%;">
+				</div>
+			</div>									
 		</div>
 			
 		<div class="row cl">
@@ -157,7 +170,8 @@
 					<option value="bilibili">├哔哩哔哩</option>
 					<option value="souhu">├搜狐视频</option>
 				</select>
-				</span> </div>
+				</span> 
+			</div>
 		</div>
 		
 		<div class="row cl">
@@ -176,9 +190,17 @@
 		</div>
 		<div class="row cl">
 			<div class="col-xs-8 col-sm-9 col-xs-offset-4 col-sm-offset-2">
-				<button  class="btn btn-primary radius" type="button" id="article-save"><i class="Hui-iconfont">&#xe632;</i> 保存并提交审核</button>
-				<button  class="btn btn-secondary radius" type="button" id="btn-save"><i class="Hui-iconfont">&#xe632;</i> 保存草稿</button>
-				<button onClick="removeIframe();" class="btn btn-default radius" type="button">&nbsp;&nbsp;取消&nbsp;&nbsp;</button>
+				<div class="article-put-group">
+					<button  class="btn btn-primary radius" type="button" id="article-save"><i class="Hui-iconfont">&#xe632;</i> 保存并提交审核</button>
+					<button  class="btn btn-secondary radius" type="button" id="btn-save"><i class="Hui-iconfont">&#xe632;</i> 保存草稿</button>
+					<button onClick="removeIframe();" class="btn btn-default radius" type="button">&nbsp;&nbsp;取消&nbsp;&nbsp;</button>
+				</div>
+				<div class="article-edit-group" style="display:none">
+					<button  class="btn btn-primary radius" type="button" id="article-edit-save"><i class="Hui-iconfont">&#xe632;</i> 编辑保存并提交审核</button>
+					<button  class="btn btn-secondary radius" type="button" id="btn-edit-save"><i class="Hui-iconfont">&#xe632;</i> 编辑保存草稿</button>
+					<button onClick="removeIframe();" class="btn btn-default radius" type="button">&nbsp;&nbsp;取消&nbsp;&nbsp;</button>
+				</div>
+				
 			</div>
 		</div>
 	</form>

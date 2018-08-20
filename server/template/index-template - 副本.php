@@ -74,7 +74,7 @@
 					print_r($indexArray);
 					foreach($indexArray as $key => $value){
 						//html渲染
-						$listHtml .= '<div class="list-container-k row"><a href="http://'.$_SERVER['HTTP_HOST'].'/program/article/'.$value['categoryyw'].'/'.$value['aid'].'.html"><div class="list-container-k-left col-md-9"><div class="list-container-k-left-title"><h4>'.$value['title'].'</h4></div><div class="list-container-k-left-container">'.$value['article_short'].'</div></div><div class="list-container-k-right col-md-3"><img src="http://'.$_SERVER['HTTP_HOST'].'/program/upload/cover/'.$value['article_img'].'" class="img-responsive"></div><div class="clear"></div><hr/></a></div>';  				
+						$listHtml .= '<div class="list-container-k row"><a href="http://'.$_SERVER['HTTP_HOST'].'/article/'.$value['categoryyw'].'/'.$value['aid'].'.html"><div class="list-container-k-left col-md-9"><div class="list-container-k-left-title"><h4>'.$value['title'].'</h4></div><div class="list-container-k-left-container">'.$value['article_short'].'</div></div><div class="list-container-k-right col-md-3"><img src="http://'.$_SERVER['HTTP_HOST'].'/upload/cover/'.$value['article_img'].'" class="img-responsive"></div><div class="clear"></div><hr/></a></div>';  				
 					}
 					echo $listHtml;
 				?>
@@ -100,7 +100,7 @@
 							//print_r($hotArticleArray);
 							//遍历数组，将数组组装成html
 							foreach($hotArticleArray as $key => $value){
-								$theHtml .= '<div class="col-sm-6 col-md-3"><div class="thumbnail"><img src="./upload/cover/'.$value['article_img'].'" alt="通用的占位符缩略图"><h5>'.$value['title'].'</h5><div><span>分类:<a href="http://'.$_SERVER['HTTP_HOST'].'/program/article/'.$value['categoryyw'].'/'.$value['categoryyw'].'-1.html">'.$value['categoryname'].'</a></span><span>来源:<a href="http://'.$_SERVER['HTTP_HOST'].'/program/article/cover-page/'.$value['pid'].'.html">'.$value['article_cover'].'</a></span></div></div></div>';
+								$theHtml .= '<div class="col-sm-6 col-md-3"><div class="thumbnail"><img src="./upload/cover/'.$value['article_img'].'" alt="通用的占位符缩略图"><h5>'.$value['title'].'</h5><div><span>分类:<a href="http://'.$_SERVER['HTTP_HOST'].'/article/'.$value['categoryyw'].'/'.$value['categoryyw'].'-1.html">'.$value['categoryname'].'</a></span><span>来源:<a href="http://'.$_SERVER['HTTP_HOST'].'/article/cover-page/'.$value['pid'].'.html">'.$value['article_cover'].'</a></span></div></div></div>';
 							}
 							echo $theHtml;
 						?>
@@ -142,7 +142,7 @@
 							//print_r($hotArticleArray);
 							//遍历数组，将数组组装成html
 							foreach($hotArticleArray as $key => $value){
-								$cinemaHtml .= '<div class="col-sm-6 col-md-3"><div class="thumbnail"><img src="./upload/cover/'.$value['article_img'].'" alt="通用的占位符缩略图"><h5>'.$value['title'].'</h5><div><span>分类:<a href="http://'.$_SERVER['HTTP_HOST'].'/program/article/'.$value['categoryyw'].'/'.$value['categoryyw'].'-1.html">'.$value['categoryname'].'</a></span><span>来源:<a href="http://'.$_SERVER['HTTP_HOST'].'/program/article/cover-page/'.$value['pid'].'.html">'.$value['article_cover'].'</a></span></div></div></div>';
+								$cinemaHtml .= '<div class="col-sm-6 col-md-3"><div class="thumbnail"><img src="./upload/cover/'.$value['article_img'].'" alt="通用的占位符缩略图"><h5>'.$value['title'].'</h5><div><span>分类:<a href="http://'.$_SERVER['HTTP_HOST'].'/article/'.$value['categoryyw'].'/'.$value['categoryyw'].'-1.html">'.$value['categoryname'].'</a></span><span>来源:<a href="http://'.$_SERVER['HTTP_HOST'].'/article/cover-page/'.$value['pid'].'.html">'.$value['article_cover'].'</a></span></div></div></div>';
 							}
 							echo $cinemaHtml;
 						?>

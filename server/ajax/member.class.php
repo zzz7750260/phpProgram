@@ -62,7 +62,7 @@ class theMember{
 			$rootPath = $_SERVER['DOCUMENT_ROOT'];
 			//echo $rootPath;
 			
-			$thePath = $rootPath .'/program/upload/head/';
+			$thePath = $rootPath .'/upload/head/';
 			
 			//图片上传base64引入
 			$imgArray = $theUtil->fileUpload($thePath,$theHead,$theBaseImg);

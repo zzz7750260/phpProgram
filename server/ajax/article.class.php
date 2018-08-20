@@ -1,5 +1,6 @@
 <?php 
 ob_start();
+session_start();
 include('../system.util.php');
 include('../system.article.php');
 class theArticleClass{
@@ -26,24 +27,53 @@ class theArticleClass{
 		$videoPlatform = $_POST['video-platform'];
 		$videoSource = $_POST['video-source'];
 		$theArticle = $_POST['the-article'];
-		$articleStatus = $_POST['article-status'];
+		$articleStatus = $_POST['article-status'];		
+		
+		$articleUploadType = $_POST['article-upload-type'];//获取上传的类型，是添加还是修改
+		$articleImgBase = $_POST['article-img-base']; //获取传递过来的图片base64的信息
+
+		//$editArticleId = $_POST['edit-article-id'] //获取传递过来需要编辑的文章id 
+		
+		$articleTime = date("Y-m-d");  //获取文章生成或者更新的时间
+		
+		
 		
 		//需要对传递过来的链接进行转码
 		$videoSourceT = urlencode($videoSource);
 		
 		
 		//$theCommit = $_POST[''];
+		//echo $articleTime;		
 		
-		$addSql = "insert into article (title, short_title, category_id, article_key, article_short, article_cover, article_author, article_source, commit_start, commit_end, article_img, video_platform, video_source, article_container, article_status, commit_status) values ('$theTitle', '$articleShortTitle', '$categorySelect', '$articleKeyword', '$articleShort', '$articleCover', '$articleAuthor', '$articleSource', '$plDataStart', '$plDataEnd', '$articlePic', '$videoPlatform', '$videoSource', '$theArticle', '$articleStatus', '$articlePl')";
+		if($articleUploadType == "add"){
+			$addSql = "insert into article (title, short_title, category_id, article_key, article_short, article_cover, article_author, article_source, commit_start, commit_end, article_time, article_img, video_platform, video_source, article_container, article_status, commit_status) values ('$theTitle', '$articleShortTitle', '$categorySelect', '$articleKeyword', '$articleShort', '$articleCover', '$articleAuthor', '$articleSource', '$plDataStart', '$plDataEnd', '$articleTime', '$articlePic', '$videoPlatform', '$videoSource', '$theArticle', '$articleStatus', '$articlePl')";
+		}
+		if($articleUploadType == "edit"){
+			//获取传递过来的文章id 
+			$editArticleId = $_POST['edit-article-id'];
+			$addSql = "update article set title='$theTitle', short_title='$articleShortTitle', category_id='$categorySelect', article_key='$articleKeyword', article_short='$articleShort', article_cover='$articleCover', article_author='$articleAuthor', article_source='$articleSource', commit_start='$plDataStart', commit_end='$plDataEnd', article_time='$articleTime', article_img='$articlePic', video_platform='$videoPlatform', video_source='$videoSource', article_container='$theArticle', article_status='$articleStatus', commit_status='$articlePl' where aid =$editArticleId";
+		}
 		
 		$addSql_db = mysql_query($addSql);			
 		if($addSql_db){
 			$theResult = "数据插入成功";
+			
+			//公共模块，根据传递过来的base64存储图片
+			$theUtil = new util();
+			
+			//公共模块，获取存储的目录
+			$theImgPath = '/upload/cover/';
+			
+			$theImgSavePath = $theUtil->physicalPath($theImgPath);			
+			$returnImgArray = $theUtil->fileUpload($theImgSavePath,$articlePic,$articleImgBase);
+			
+			
 			//返回数组
 			$resArray = array(
 				"status" =>200,
 				"msg" =>'ok',
-				"result" =>$theResult
+				"result" =>$theResult,
+				"img" => $returnImgArray,
 			);
 			
 		}
@@ -53,7 +83,8 @@ class theArticleClass{
 			$resArray = array(
 				"status" =>400,
 				"msg" =>'err',
-				"result" =>$theResult
+				"result" =>$theResult,
+				"img" =>"未插入图片"
 			);			
 		}
 		
@@ -118,11 +149,49 @@ class theArticleClass{
 						'result' => '',
 					);
 				}
-				print_r($baseArray);
+				//print_r($baseArray);
 			}
 		}
-		
+		return $baseArray;
 	}
+	
+	//根据id获取编辑文章
+	function getArticleInfo(){
+		//根据文章id获取对应的文章信息
+		$articleId = $_GET['articleId'];
+		
+		$articleInfoSql ="select a.*, b.*, c.* from article as a join category as b on a.category_id = b.cid join page as c on a.article_cover = c.ptitle where aid = $articleId";
+		
+		$articleInfoSql_db = mysql_query($articleInfoSql);
+		//echo $articleInfoSql_db;
+		if($articleInfoSql_db){
+			$articleInfoArray = array();
+			while($articleInfoSql_db_array = mysql_fetch_assoc($articleInfoSql_db)){
+				$articleInfoArray = $articleInfoSql_db_array;
+			}
+			//print_r($articleInfoArray);
+			//组装返回前端的数组
+			$returnArticleArray = array(
+				status => 200,
+				msg => "编号返回成功",
+				result=>$articleInfoArray
+			);
+		}
+		else{
+			$returnArticleArray = array(
+				status => 400,
+				msg =>"文章返回失败",
+				result=>''
+			);
+			
+		}
+		
+		//将数组转换为json返回给前端
+		$returnArticleJson = json_encode($returnArticleArray);
+		print_r($returnArticleJson);	
+				
+	}
+	
 	
 	//后端展示文章列表
 	function articleList(){
@@ -270,7 +339,7 @@ class theArticleClass{
 
 		$theReturnJson = json_encode($theReturnArray);
 
-		print_r($theReturnJson);
+		//print_r($theReturnJson);
 
 		//获取当前文章的位置
 		define("APP_PATH2",dirname(dirname(dirname(__FILE__))));
@@ -289,7 +358,7 @@ class theArticleClass{
 				//引入文章模板
 				include('../template/article.php');
 				//文章页静态化输出
-				print_r($value);
+				//print_r($value);
 				$moreOut = ob_get_contents();
 				//echo $moreOut;
 				if(file_put_contents(APP_PATH2.'/article/'.$value['categoryyw'].'/'.$value['aid'].'.html',$moreOut)){
@@ -502,6 +571,7 @@ class theArticleClass{
 			$theCategoryId = $fid;
 		}
 		
+		echo $theCategoryId;
 		//页码类型分类
 		$typePage = "categoryList";
 		
@@ -514,77 +584,137 @@ class theArticleClass{
 		
 		$theCategoryChildId = $theArticleUtil->findCategoryChilrenArray($theCategoryId,'article');
 		print_r($theCategoryChildId);
-		//将数组转成字符串
-		$theCategoryChildIdString = implode(',',$theCategoryChildId);
-		
-		//设置查询
-		$findAllAritcleArraySql = "select a.*,b.* from article as a join category as b on a.category_id = b.cid where a.category_id in ($theCategoryChildIdString) order by a.aid DESC";
-		$findAllAritcleArraySql_db = mysql_query($findAllAritcleArraySql);
-		
-		//获取文章数量
-		$findAllAritcleNum = mysql_num_rows($findAllAritcleArraySql_db);
-		echo "数量：".$findAllAritcleNum;
-		
-		$findAllAritcleArray = array();
-		while($findAllAritcleArraySql_db_array = mysql_fetch_assoc($findAllAritcleArraySql_db)){
-			$findAllAritcleArray[] = $findAllAritcleArraySql_db_array;
-		}
-		
-		//分页(需要取整)
-		$getPageNum = floor($findAllAritcleNum / $pageNum);
-		//取余，如果有余数时页数需要加一
-		$ysPageNum = $findAllAritcleNum % $pageNum;
-		
-		echo "页数：".$getPageNum;
-		echo "余数：".$ysPageNum;
-		
-		if($ysPageNum>0){
-			$getPageNum = $getPageNum + 1;			
-		}
-		
-		//循环获取对应的数组
-		for($i = 0; $i<$getPageNum; $i++){
-			//新建一个数组
-			$categoryNumArray = array();
-			//循环获取总数组中对应部分的数组
-			for($j = $i*$pageNum; $j<$i*$pageNum+$pageNum; $j++){
-				$categoryNumArray[] = $findAllAritcleArray[$j];				
-			}						
-			//引入模板
-			//因为页数是从第1页开始的，所以需要$i+1;
-			$p = $i + 1;
-			include("../template/category-list-template.php");				
+		if($theCategoryChildId){
+			//将数组转成字符串
+			$theCategoryChildIdString = implode(',',$theCategoryChildId);
 			
-			//静态化选择
-			$theOb = $_GET['theOb'];
-			if($theOb == 'Ob'){
-				//设置存储路径
-				$rootPath = $_SERVER['DOCUMENT_ROOT'];
-				echo "路径：".$rootPath;				
-				$thePath = $rootPath . "/program/article/";
-				//传建文件夹
-				$theUtil = new util();
-				$theUtil->createFile($thePath,$categoryInfoArray['categoryyw']);
-				
-				//使用file_put_contents传建存储文件，ob_get_contents获取缓存内容
-				
-				//存储的文件名称
-				$savePath = $thePath . $categoryInfoArray['categoryyw'] . '/' . $categoryInfoArray['categoryyw'] .'-list-' .$p. '.html';
-				
-				file_put_contents($savePath,ob_get_contents());
-				
-				//清除缓存区，以免造成缓存重复
-				ob_clean();  
-				
+			//设置查询
+			$findAllAritcleArraySql = "select a.*,b.* from article as a join category as b on a.category_id = b.cid where a.category_id in ($theCategoryChildIdString) order by a.aid DESC";
+			$findAllAritcleArraySql_db = mysql_query($findAllAritcleArraySql);
+			
+			//获取文章数量
+			$findAllAritcleNum = mysql_num_rows($findAllAritcleArraySql_db);
+			echo "数量：".$findAllAritcleNum;
+			
+			$findAllAritcleArray = array();
+			while($findAllAritcleArraySql_db_array = mysql_fetch_assoc($findAllAritcleArraySql_db)){
+				$findAllAritcleArray[] = $findAllAritcleArraySql_db_array;
 			}
 			
-			//unset($categoryNumArray);
+			//分页(需要取整)
+			$getPageNum = floor($findAllAritcleNum / $pageNum);
+			//取余，如果有余数时页数需要加一
+			$ysPageNum = $findAllAritcleNum % $pageNum;
 			
+			echo "页数：".$getPageNum;
+			echo "余数：".$ysPageNum;
+			
+			if($ysPageNum>0){
+				$getPageNum = $getPageNum + 1;			
+			}
+			
+			//循环获取对应的数组
+			for($i = 0; $i<$getPageNum; $i++){
+				//新建一个数组
+				$categoryNumArray = array();
+				//循环获取总数组中对应部分的数组
+				for($j = $i*$pageNum; $j<$i*$pageNum+$pageNum; $j++){
+					$categoryNumArray[] = $findAllAritcleArray[$j];				
+				}						
+				//引入模板
+				//因为页数是从第1页开始的，所以需要$i+1;
+				$p = $i + 1;
+				include("../template/category-list-template.php");				
+				
+				//静态化选择
+				$theOb = $_GET['theOb'];
+				if($theOb == 'Ob'){
+					//设置存储路径
+					$rootPath = $_SERVER['DOCUMENT_ROOT'];
+					echo "路径：".$rootPath;				
+					$thePath = $rootPath . "/article/";
+					//传建文件夹
+					$theUtil = new util();
+					$theUtil->createFile($thePath,$categoryInfoArray['categoryyw']);
+					
+					//使用file_put_contents传建存储文件，ob_get_contents获取缓存内容
+					
+					//存储的文件名称
+					$savePath = $thePath . $categoryInfoArray['categoryyw'] . '/' . $categoryInfoArray['categoryyw'] .'-list-' .$p. '.html';
+					
+					file_put_contents($savePath,ob_get_contents());
+					
+					//清除缓存区，以免造成缓存重复
+					ob_clean();  
+					
+				}
+				
+				//unset($categoryNumArray);
+				
 
-		}	
-		//print_r($findAllAritcleArray);
+			}	
+			//print_r($findAllAritcleArray);
+			
+		}
 				
 	}
+	
+	
+	//点击文章阅读时，浏览量加一
+	function articleViwe(){
+		$theUtil = new util();
+		$theIp = $theUtil->getUserIp();
+		echo $theIp;	
+		//获取对应的文章id				
+		$theArticleId = $_GET['articleId'];
+		
+		echo "文章id".$_SESSION['theArticleId'];
+		echo "id".$_SESSION['theIp'];
+		//检测避免刷浏览器，因而检测$_SESSION['theIp']是否存在
+		if(!$_SESSION['theIp'] || $_SESSION['theIp'] != $theIp && !$_SESSION['theArticleId'] || $_SESSION['theArticleId'] != $theArticleId){
+		
+			//将该ip存入session中
+			$_SESSION['theIp'] = $theIp;
+			$_SESSION['theArticleId'] = $theArticleId;
+			
+			//浏览量加一
+			$articleViweAddSql = "update article set article_view = article_view+1 where aid = $theArticleId";
+			$articleViweAddSql_db = mysql_query($articleViweAddSql);
+			
+			//执行返回选择
+			if($articleViweAddSql_db){
+				//组装返回数组
+				$returnArticleViewArray = array(
+					status => 200,
+					msg => '浏览量增加成功',
+					result => '',
+				);
+				
+			}
+			else{
+				$returnArticleViewArray = array(
+					status => 400,
+					msg => '浏览量增加失败',
+					result => '',
+				);				
+			}
+			
+		}
+		else{
+			$returnArticleViewArray = array(
+				status => 500,
+				msg => '该ip浏览过了，所以就不增加浏览量了',
+				result => '',
+			);		
+			
+		}
+			//将数组转换为json返回给前端
+			$returnArticleViewJson = json_encode($returnArticleViewArray);
+			print_r($returnArticleViewJson);
+		
+	}
+	
+	//
 	
 			
 	//调用功能类
@@ -621,6 +751,12 @@ class theArticleClass{
 		}
 		if($turl == 'fatherCategoryArrayPageOb'){
 			$this->fatherCategoryArrayPageOb();
+		}
+		if($turl == 'articleViwe'){
+			$this->articleViwe();
+		}
+		if($turl == 'getArticleInfo'){
+			$this->getArticleInfo();
 		}
 	}
 }

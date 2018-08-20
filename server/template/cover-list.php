@@ -93,7 +93,7 @@
 								
 								for($r = 0;$r<$pageNum;$r++){
 									$z = $r+1;
-									echo '<option value="http://'.$_SERVER['HTTP_HOST'].'/program/article/cover-page/cover-list-'.$z.'.html">第'.$z.'页</option>';
+									echo '<option value="http://'.$_SERVER['HTTP_HOST'].'/article/cover-page/cover-list-'.$z.'.html">第'.$z.'页</option>';
 								}
 							?>
 						</select>

@@ -24,10 +24,10 @@ class theCover{
 		
 		//根据$theType来识别是添加还是为编辑
 		if($theType == 'add'){
-			$coverSql = "insert into page (title, title_yw, author, cover_img, cover_introduction, cover_time) values ('$theTitle', '$theTitleYw', '$theAuthor', '$theImg', '$theShort', '$theTime')";					
+			$coverSql = "insert into page (ptitle, title_yw, author, cover_img, cover_introduction, cover_time) values ('$theTitle', '$theTitleYw', '$theAuthor', '$theImg', '$theShort', '$theTime')";					
 		}
 		if($theType == 'edit'){
-			$coverSql = "update page set title = '$theTitle', author = '$theAuthor', cover_img = '$theImg' , cover_introduction = '$theShort' where pid = '$theCoverEditId'";
+			$coverSql = "update page set ptitle = '$theTitle', author = '$theAuthor', cover_img = '$theImg' , cover_introduction = '$theShort' where pid = '$theCoverEditId'";
 		}
 		
 		$coverSql_db = mysql_query($coverSql);
@@ -40,7 +40,7 @@ class theCover{
 				//echo $theRoot;
 				
 				//详细地址
-				$thePath = $theRoot."/program/upload/user_cover/";
+				$thePath = $theRoot."/upload/user_cover/";
 				
 				
 				$returnPicArray = $theUtil->fileUpload($thePath,$theImg,$theBaseImg);				
@@ -161,7 +161,7 @@ class theCover{
 				//获取根目录
 				$theRoot = $_SERVER['DOCUMENT_ROOT'];
 				//存储路径
-				$thePath = $theRoot.'/program/article/user-page/'.$theUsername.'.html';
+				$thePath = $theRoot.'/article/user-page/'.$theUsername.'.html';
 				
 				//将缓存内容存储到对应的文件夹中
 				file_put_contents($thePath,ob_get_contents());
@@ -195,7 +195,7 @@ class theCover{
 			if($coverOb == 'ob'){
 				//设置存储的根目录
 				$rootPath = $_SERVER['DOCUMENT_ROOT'];
-				$theCoverPath = $rootPath . '/program/article/cover-page/' . $value['pid'] . '.html';
+				$theCoverPath = $rootPath . '/article/cover-page/' . $value['pid'] . '.html';
 				//静态化封面页面
 				file_put_contents($theCoverPath,ob_get_contents());
 				//清除上一次缓存（防止接下来保存的页面会有上个页面的记录）
@@ -265,7 +265,7 @@ class theCover{
 				//获取根目录
 				$rootPath = $_SERVER['DOCUMENT_ROOT'];
 				//组合存储路径
-				$thePath = $rootPath . '/program/article/cover-page/cover-list-' . $p . '.html';
+				$thePath = $rootPath . '/article/cover-page/cover-list-' . $p . '.html';
 				//利用file_put_contents 和 ob_get_contents将缓存内容存储到文件中
 				file_put_contents($thePath,ob_get_contents());
 				//清除缓存避免重复

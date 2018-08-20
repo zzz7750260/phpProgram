@@ -23,7 +23,7 @@ data-target="#example-navbar-collapse"><span class="sr-only">切换导航</span>
 	foreach($menuArray as $key => $value){
 		if($value['cpid'] == 0){
 			$childH = getChildMenu($menuArray,$value['cid']);
-			$menuHtml .= '<li><a href="http://'.$_SERVER['HTTP_HOST'].'/program/article/'.$value['categoryyw'].'/'.$value['categoryyw'].'-0.html" class="dropdown-toggle" data-toggle="dropdown">'.$value['categoryname'].'<b class="caret"></b>'.$childH.'</a></li>';	
+			$menuHtml .= '<li><a href="http://'.$_SERVER['HTTP_HOST'].'/article/'.$value['categoryyw'].'/'.$value['categoryyw'].'-0.html" class="dropdown-toggle" data-toggle="dropdown">'.$value['categoryname'].'<b class="caret"></b>'.$childH.'</a></li>';	
 				//$menuHtml .= '<li><a href="../../article/'.$value['categoryyw'].'/'.$value['categoryyw'].'-0.html" >'.$value['categoryname'].'</a></li>';					
 		}
 	}
@@ -45,7 +45,7 @@ function getChildMenu($fArr,$fid){
 		foreach($fArr as $key => $value){
 			//echo "分类:".$value['cpid'];
 			if($value['cpid'] == $fid){
-				$cHtml .='<li><a href="http://'.$_SERVER['HTTP_HOST'].'/program/article/'.$value['categoryyw'].'/'.$value['categoryyw'].'-0.html">'.$value['categoryname'].'</a></li>';
+				$cHtml .='<li><a href="http://'.$_SERVER['HTTP_HOST'].'/article/'.$value['categoryyw'].'/'.$value['categoryyw'].'-0.html">'.$value['categoryname'].'</a></li>';
 			}		
 		}
 	}  

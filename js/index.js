@@ -13,14 +13,14 @@ function loginYZ(){
 	
 	$(".tusername").blur(function(){
 		var tusernameVal = $(".tusername").val();
-		alert(tusernameVal);
+		//alert(tusernameVal);
 		$.ajax({
 			url:'./server/ajax/thelogin.php',
 			type:"get",
 			dataType:'text',
 			data:{username:tusernameVal,turl:'loginusername'},
 			success:function(data){
-				alert("这个是ajax返回后的值："+ data)	
+				//alert("这个是ajax返回后的值："+ data)	
 				if(data == 0){
 					$(".usernameis").text("该用户名不存在").css("color","#ff0000");
 					usernameYzValue = false;			
@@ -358,14 +358,22 @@ function userControl(){
 						alert(data.result.video_platform)
 						if(data.status == 200){
 							$(".theArticle-imgk").find("img").css("display","none");
+							
+							//获取图片的宽度
+							var videoWidth = $(".theArticle-imgk").width();
+							
+							//根据video的宽度来自适应高度
+							
+							var videoHeight = videoWidth/1.6;
+							
 							//根据返回的视频平台类型组装数据
 							switch(data.result.video_platform){
 								case 'bilibili':
-								var videoHtml = '<iframe src="'+data.result.video_source+'" scrolling="no" border="0" frameborder="no" framespacing="0" allowfullscreen="true" style="width:100%;max-height: 300px;height:280px"> </iframe>';
+								var videoHtml = '<iframe class="the-video" src="'+data.result.video_source+'" scrolling="no" border="0" frameborder="no" framespacing="0" allowfullscreen="true" style="width:'+videoWidth+'px;max-height:'+videoHeight+'px;height:'+videoHeight+'px"> </iframe>';
 								$(videoHtml).appendTo(".theArticle-imgk");								
 								break;		
 								case 'youku':
-								var videoHtml = '<embed src="'+data.result.video_source+'" allowFullScreen="true" quality="high" width="480" height="400" align="middle" allowScriptAccess="always" type="application/x-shockwave-flash"></embed>'
+								var videoHtml = '<embed class="the-video" src="'+data.result.video_source+'" allowFullScreen="true" quality="high" width="'+videoWidth+'px" height="'+videoHeight+'px" align="middle" allowScriptAccess="always" type="application/x-shockwave-flash"></embed>'
 								$(videoHtml).appendTo(".theArticle-imgk");							
 								break;
 							}
@@ -383,6 +391,7 @@ function userControl(){
 	theClick.searchClick();
 	theClick.commentPush();
 	theClick.imgVideoLoad();
+	
 	//滚动加载
 	var theScroll = {
 		srollLoadArticle:function(){
@@ -438,15 +447,33 @@ function userControl(){
 		
 	}
 	theScroll.srollLoadArticle();
+	
+	//拖动窗口操作
+	var dragControl = {
+		windowDrag:function(){
+			$(window).resize(function () { 
+				//获取video的宽度
+				var videoWidth = $(".theArticle-imgk").width();
+				var videoHeight = videoWidth/1.6;
+				$(".the-video").css({
+					"width":videoWidth+"px",
+					"height":videoHeight+"px",			
+				})
+			})		
+		}		
+	}
+	dragControl.windowDrag();
 }
 
 //打开时自动加载的
 function autoLoad(){
+	that = this;
 	var theLoad = {
 		//文章页面自动加载
 		commentLoad:function(){
 			//获取加载评论对应的文章id
-			var articleId = $('.the-comment-set').data("article")
+			var articleId = $('.the-comment-set').data("article");
+			that.articleId = articleId;
 			alert(articleId);
 			if(articleId){
 				$.ajax({
@@ -497,6 +524,23 @@ function autoLoad(){
 			}
 		},
 		
+		//阅读量加一
+		articleViewAdd:function(){
+			//向后端发送阅读量加一的请求
+			$.ajax({
+				url:'../../server/ajax/thearticle.php',
+				data:{turl:'articleViwe',articleId:that.articleId},
+				type:'get',
+				dataType:'json',
+				success:function(data){
+					console.log("==============文章浏览量后端返回==============");
+					console.log(data);
+				}
+			})
+			
+		}
+		
 	}
 	theLoad.commentLoad();
+	theLoad.articleViewAdd();
 }

@@ -1,3 +1,4 @@
+/*文章内容*/
 .theArticle-title{
 	text-align:center;
 }
@@ -10,3 +11,14 @@
 	margin:0 5px;
 }
 
+.theArticle-imgk img{
+	width:100%;
+}
+
+/*文章边列表*/
+.theSide>ul>li{
+	padding:0 8px;
+}
+.side-article-list-img>img{
+	width:100%;
+}

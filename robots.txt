@@ -1,0 +1,12 @@
+
+User-agent: *
+Disallow: /admin
+Disallow: /css
+Disallow: /js
+Disallow: /mysql
+Disallow: /PHPMailer_5.2.2
+Disallow: /server
+Disallow: /index.php
+Disallow: /login.php
+Disallow: /register.php
+

@@ -18,7 +18,7 @@ $hostUrl = $_SERVER['HTTP_HOST'];
 echo $num."<br/>";
 echo $hostUrl;
 
-$theURL = "http://".$hostUrl."/program/";
+$theURL = "http://".$hostUrl."/";
 
 if($num == 0){
 	echo "登录密码错误!";

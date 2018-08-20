@@ -78,7 +78,7 @@
 
 					//循环子分类菜单
 					foreach($menuCategoryArray as $menuKey => $menuValue){
-						$menuHtml .= '<a href="http://'.$_SERVER['HTTP_HOST'].'/program/article/'.$menuValue['categoryyw'].'/'.$menuValue['categoryyw'].'-1.html"><span>'.$menuValue['categoryname'].'</span></a>';						
+						$menuHtml .= '<a href="http://'.$_SERVER['HTTP_HOST'].'/article/'.$menuValue['categoryyw'].'/'.$menuValue['categoryyw'].'-1.html"><span>'.$menuValue['categoryname'].'</span></a>';						
 					}
 					echo $menuHtml;		
 					//为了防止重复，将$menuHtml赋值为空
@@ -109,7 +109,7 @@
 							//print_r($hotArticleArray);
 							//遍历数组，将数组组装成html
 							foreach($categoryNumArray as $key => $value){
-								$theHtml .= '<div class="col-sm-6 col-md-3"><div class="thumbnail"><a href="http://'.$_SERVER['HTTP_HOST'].'/program/article/'.$value['categoryyw'].'/'.$value['aid'].'.html"><img src="../../upload/cover/'.$value['article_img'].'" alt="通用的占位符缩略图"><h5>'.$value['title'].'</h5></a><div><span>分类:<a href="http://'.$_SERVER['HTTP_HOST'].'/program/article/'.$value['categoryyw'].'/'.$value['categoryyw'].'-1.html">'.$value['categoryname'].'</a></span><span>来源:<a href="http://'.$_SERVER['HTTP_HOST'].'/program/article/cover-page/'.$value['pid'].'.html">'.$value['article_cover'].'</a></span></div></div></div>';
+								$theHtml .= '<div class="col-sm-6 col-md-3"><div class="thumbnail"><a href="http://'.$_SERVER['HTTP_HOST'].'/article/'.$value['categoryyw'].'/'.$value['aid'].'.html"><img src="../../upload/cover/'.$value['article_img'].'" alt="通用的占位符缩略图"><h5>'.$value['title'].'</h5></a><div><span>分类:<a href="http://'.$_SERVER['HTTP_HOST'].'/article/'.$value['categoryyw'].'/'.$value['categoryyw'].'-1.html">'.$value['categoryname'].'</a></span><span>来源:<a href="http://'.$_SERVER['HTTP_HOST'].'/article/cover-page/'.$value['pid'].'.html">'.$value['article_cover'].'</a></span></div></div></div>';
 							}
 							echo $theHtml;
 							
@@ -170,12 +170,12 @@
 								if($typePage =="categoryList"){
 									//因为p为分页数，如果这里用p的话，会影响到静态化
 									for($lp=1;$lp<=$getPageNum;$lp++){
-										echo '<option value="http://'.$_SERVER['HTTP_HOST'].'/program/article/'.$categoryInfoArray['categoryyw'].'/'.$categoryInfoArray['categoryyw'].'-list-'.$lp.'.html"">第'.$lp.'页</option>';
+										echo '<option value="http://'.$_SERVER['HTTP_HOST'].'/article/'.$categoryInfoArray['categoryyw'].'/'.$categoryInfoArray['categoryyw'].'-list-'.$lp.'.html"">第'.$lp.'页</option>';
 									}																	
 								}
 								if($typePage =="list"){
 									for($xp=1;$xp<=$pageNumZ;$xp++){
-										echo '<option value="http://'.$_SERVER['HTTP_HOST'].'/program/article/'.$categoryInfoArray['categoryyw'].'/'.$categoryInfoArray['categoryyw'].'-'.$xp.'.html"">第'.$xp.'页</option>';
+										echo '<option value="http://'.$_SERVER['HTTP_HOST'].'/article/'.$categoryInfoArray['categoryyw'].'/'.$categoryInfoArray['categoryyw'].'-'.$xp.'.html"">第'.$xp.'页</option>';
 									}										
 								}
 							?>
