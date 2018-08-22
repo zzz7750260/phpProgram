@@ -48,7 +48,7 @@ class articleUtil{
 	
 	//公共类：根据对应的分类获取相关的文章
 	//$fCategory：分类的选择
-	//
+	//$num：查询文章的数量, 当为0时为无限数量
 	function getCategoryArticle($fCategory,$num = 6,$isRand="list"){
 		//获取对应的分类集
 		$getTheCaregoryArray = $this->findCategoryChilrenArray($fCategory,'article');
@@ -65,6 +65,11 @@ class articleUtil{
 		
 		if($isRand == "list"){
 			$theCategorySql = "select a.*,b.*,c.* from article as a join category as b on a.category_id = b.cid join page as c on a.article_cover = c.ptitle where a.category_id in ($getTheCaregoryString) order by aid DESC limit 0 , $num";
+			
+			//
+			if($num){
+				$theCategorySql = "select a.*,b.*,c.* from article as a join category as b on a.category_id = b.cid join page as c on a.article_cover = c.ptitle where a.category_id in ($getTheCaregoryString) order by aid DESC";
+			}
 		}
 		if($isRand == "rand"){
 			$theCategorySql = "select a.*,b.*,c.* from article as a join category as b on a.category_id = b.cid join page as c on a.article_cover = c.ptitle where a.aid >= ((select max(a.aid) from article)-(select min(a.aid) from article)) * rand() + (select min(a.aid) from article) and a.category_id in ($getTheCaregoryString) limit 0, $num";

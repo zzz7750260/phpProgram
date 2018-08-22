@@ -6,7 +6,7 @@
 	//$theCover = '脱口秀哈哈哈';
 	
 	//获取封面信息
-	$theCoverInfoSql = "select * from page where title = '$theCover'";
+	$theCoverInfoSql = "select * from page where ptitle = '$theCover'";
 	$theCoverInfoSql_db = mysql_query($theCoverInfoSql);	
 	$theCoverInfoArray = array();
 	while($theCoverInfoSql_db_array = mysql_fetch_assoc($theCoverInfoSql_db)){

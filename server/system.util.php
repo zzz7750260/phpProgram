@@ -132,7 +132,7 @@
 		//获取根目录
 		$rootPath = $_SERVER['HTTP_HOST'];
 		if($afterPath){
-			$rootPath = $rootPath . '/' .$afterPath; 
+			$rootPath = $rootPath .$afterPath; 
 		}
 		return $rootPath;
 	}	

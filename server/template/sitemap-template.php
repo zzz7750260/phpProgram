@@ -1,7 +1,188 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9 http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd">
 <?php 
-//èŽ·å–å½“å‰æ›´æ–°çš„æ—¶é—´
+	//include("../system.article.php");
+	
+	//ob_start();
+	//Á¬½ÓÊý¾Ý¿â
+	$conn = mysqli_connect("localhost","root","","mysql");
+	if($conn){
+		
+		//echo "Êý¾Ý¿â·þÎñÆ÷Á¬½Ó³É¹¦";
+		//Ñ¡ÔñÊý¾Ý¿â
+		$conn_db = mysqli_select_db($conn,"myprogram");
+		if($conn_db){
+		//echo "Êý¾Ý¿âÁ¬½Ó³É¹¦";
+			mysqli_query($conn,"set names utf8");	
+			
+		}
+		
+	}
+	
+	
+
+	
+	
+	//»ñÈ¡µ±Ç°¸üÐÂµÄÊ±¼ä
+	$theDate = date("Y-m-d");
+	//echo $theDate;
+
+	//»ñÈ¡µ±Ç°ÍøÕ¾¸ùÄ¿Â¼
+	//·â×°·µ»ØÂ·¾¶
+	function returnPath($thePath = ''){
+		$theRootPath = $_SERVER['HTTP_HOST'];
+		//echo $theRootPath;
+		
+		$theReturnPath = "http://" . $theRootPath;
+		if($thePath){
+			$theReturnPath = $theReturnPath . $thePath; 			
+		}
+		return $theReturnPath;
+	}
+
+
+?>
+<?php 
+//Ê×Ò³
+?>
+<url>
+<loc><?php $thePath = returnPath(); echo $thePath; ?></loc>
+<lastmod><?php echo $theDate;?></lastmod>
+<changefreq>hourly</changefreq>
+<priority>1.0</priority>
+</url>
+
+<?php 
+	//»ñÈ¡¸¸·ÖÀà
+	//$articleUtil = new articleUtil();
+	//$theCategoryArray = $articleUtil->getCategoryArticle(0);
+	//print_r($theCategoryArray);
+	//echo '$conn_db:' .$conn_db;
+	$categoryArraySql = "select * from category where cpid = '0'";
+	$categoryArraySql_db = mysqli_query($conn,$categoryArraySql);
+	$categoryArray = array();
+	while($categoryArraySql_db_array = mysqli_fetch_assoc($categoryArraySql_db)){
+		$categoryArray[] = $categoryArraySql_db_array; 
+	}
+	//print_r($categoryArray);
+	
+	//±éÀúÊý×éÑ­»·Êä³ö½Úµã
+	foreach($categoryArray as $categoryKey => $categoryValue){
+		//×é×°·ÖÀàµÄÁ´½Ó
+		$locXmlCategoryUrlPath = '/article/'.$categoryValue['categoryyw'].'/'.$categoryValue['categoryyw'].'-list-1.html';
+		$locXmlCategoryUrl = returnPath($locXmlCategoryUrlPath);
+		$locXmlCategory .='<url>
+					<loc>'.$locXmlCategoryUrl.'</loc>
+					<lastmod>'.$theDate.'</lastmod>
+					<changefreq>daily</changefreq>
+					<priority>0.9</priority>
+					</url>'	;
+	}
+	echo $locXmlCategory;	
+?>
+
+<?php 
+	//»ñÈ¡×Ó·ÖÀà
+	$childCategoryArraySql = "select * from category where cpid != 0";
+	$childCategoryArraySql_db = mysqli_query($conn,$childCategoryArraySql);
+	$childCategoryArray = array();
+	while($childCategoryArraySql_db_array = mysqli_fetch_assoc($childCategoryArraySql_db)){
+		$childCategoryArray[] = $childCategoryArraySql_db_array;		
+	}
+
+	//mysqli_free_result($childCategoryArraySql_db);
+	
+	//print_r($childCategoryArray);
+	
+	//±éÀúÊä³ö×Ó·ÖÀà
+	foreach($childCategoryArray as $childCategoryKey => $childCategoryValue){
+		//×é×°·ÖÀàµÄÁ´½Ó
+		$locXmlChildCategoryUrlPath = '/article/'.$childCategoryValue['categoryyw'].'/'.$childCategoryValue['categoryyw'].'-1.html';
+		$locXmlChildCategoryUrl = returnPath($locXmlChildCategoryUrlPath);
+		$locXmlChildCategory .='<url>
+							<loc>'.$locXmlChildCategoryUrl.'</loc>
+							<lastmod>'.$theDate.'</lastmod>
+							<changefreq>daily</changefreq>
+							<priority>0.6</priority>
+						</url>'	;
+	}
+	echo $locXmlChildCategory;
+?>
+<?php 
+	//Êä³öËùÓÐÓÃ»§Ò³Ãæ
+	$userPageArraySql = "select * from member where 1 = 1";
+	$userPageArraySql_db = mysqli_query($conn,$userPageArraySql);
+	$userPageArray = array();
+	while($userPageArraySql_db_array = mysqli_fetch_assoc($userPageArraySql_db)){
+		$userPageArray[] = $userPageArraySql_db_array;
+	}
+	//print_r($userPageArray);
+
+	//±éÀúÊä³ö¶ÔÓ¦µÄÐÅÏ¢
+	foreach($userPageArray as $userPageKey => $userPageValue){
+		//ÉèÖÃÂ·¾¶
+		$theUserPathAfter = '/article/user-page/' . $userPageValue['username'] . '.html';
+		$theUserPath = returnPath($theUserPathAfter);
+		$locXmltheUser .= '<url>
+							<loc>'.$theUserPath.'</loc>
+							<lastmod>'.$theDate.'</lastmod>
+							<changefreq>daily</changefreq>
+							<priority>0.5</priority>
+						</url>'	;
+	}
+	echo $locXmltheUser;
+?>
+
+<?php 
+	//Êä³öËùÓÐ·âÃæÐÅÏ¢
+	$coverPageArraySql = "select * from page where 1 = 1";
+	$coverPageArraySql_db = mysqli_query($conn,$coverPageArraySql);
+	$coverPageArray = array();
+	while($userPageArraySql_db_array = mysqli_fetch_assoc($coverPageArraySql_db)){
+		$coverPageArray[] = $userPageArraySql_db_array;
+	}
+	//print_r($coverPageArray);
+
+	//±éÀúÊä³ö¶ÔÓ¦µÄÐÅÏ¢
+	foreach($coverPageArray as $coverPageKey => $coverPageValue){
+		//ÉèÖÃÂ·¾¶
+		$theCoverPathAfter = '/article/cover-page/' . $coverPageValue['pid'] . '.html';
+		$theCoverPath = returnPath($theCoverPathAfter);
+		$locXmltheCover .= '<url>
+							<loc>'.$theCoverPath.'</loc>
+							<lastmod>'.$theDate.'</lastmod>
+							<changefreq>daily</changefreq>
+							<priority>0.5</priority>
+						</url>';
+	}
+	echo $locXmltheCover;
 	
 ?>
 
+<?php 
+	//Êä³öËùÓÐÎÄÕÂ
+	$articleArraySql = 'select a.*,b.* from article as a join category as b on a.category_id = b.cid where 1 = 1 order by aid DESC';
+	$articleArraySql_db = mysqli_query($conn,$articleArraySql);
+	$articleArray = array();
+	while($articleArraySql_db_array = mysqli_fetch_assoc($articleArraySql_db)){
+		$articleArray[] = $articleArraySql_db_array;
+	}
+	//print_r($articleArray);
+	//±éÀúÊý×éÊä³ö¶ÔÓ¦µÄÎÄÕÂ½Úµã
+	
+	foreach($articleArray as $articleKey => $articleValue){
+		//×é×°ÎÄÕÂÁ´½Ó
+		$locXmlArticleUrlPath = '/article/'.$articleValue['categoryyw'].'/'.$articleValue['aid'].'.html';
+		
+		$locXmlArticleUrl = returnPath($locXmlArticleUrlPath);		
+		
+		$locXmlArticle .= '<url>
+							<loc>'.$locXmlArticleUrl.'</loc>
+							<lastmod>'.$articleValue['article_time'].'</lastmod>
+							<changefreq>weekly</changefreq>
+							<priority>0.3</priority>
+						</url>'	;
+	}
+	echo $locXmlArticle;
+	
+?>
 </urlset>

@@ -1,4 +1,6 @@
 <?php
+include("../system.util.php");
+ob_start(); //开启缓冲区功能
 class theIndex{		
 	//设置文件的路径
 	function getTheParh(){
@@ -111,6 +113,87 @@ class theIndex{
 
 	}
 	
+	//生成sitemap.xml文件
+	function obSitemap(){
+		
+		//引入sitemap的模板
+		include("../template/sitemap-template.php");
+		
+		//获取是否为静态化
+		$theOb = $_GET['getOb'];
+		if($theOb == 'ob'){		
+			//获取存储路径
+			$theRootPathAfter = '/sitemap.xml';
+			
+			$theUtil = new util();
+			$theRootPath = $theUtil->physicalPath($theRootPathAfter);
+			//$thePath = 
+			//echo $theRootPath; 
+			if(file_put_contents($theRootPath,ob_get_clean())){
+				//组装返回前端数据
+				$returnSitemapArray = array(
+					status => 200,
+					msg => 'sitemap.xml文件生成成功',
+					result => ''
+				);
+				
+			}
+			else{
+				$returnSitemapArray = array(
+					status => 400,
+					msg => 'sitemap.xml文件生成失败',
+					result => ''
+				);
+			}
+			
+			$returnSitemapJson = json_encode($returnSitemapArray);
+			print_r($returnSitemapJson);
+		}	
+	}
+	
+	//生成urls.txt文件
+	function obUrlsTxt(){
+		//引入urls-template的模板
+		include("../template/urls-template.php");
+		
+		//选择是否生成静态化文件
+		$theOb = $_GET['getOb'];
+		
+		//获取存储的路径
+		$theFilePathAfter = '/urls.txt';
+		
+		//获取存储的物理地址
+		$theUtil = new util();
+		$thePathSave = $theUtil->physicalPath($theFilePathAfter);
+	
+		
+		if($theOb == 'ob'){
+			//ob_start();
+			if(file_put_contents($thePathSave,ob_get_clean())){
+				//组装返回前端数据
+				$returnUrlsArray = array(
+					status => 200,
+					msg => 'urls.txt文件生成成功',
+					result => ''
+				);
+				
+			}
+			else{
+				$returnUrlsArray = array(
+					status => 400,
+					msg => 'urls.txt文件生成失败',
+					result => ''
+				);
+			}
+			
+			$returnUrlsJson = json_encode($returnUrlsArray);
+			print_r($returnUrlsJson);				
+			
+		}			
+	}
+	
+	
+	
 	function returnIndex($turl){
 		if($turl == 'setIndexInfo'){
 			$this->setIndexInfo();
@@ -120,6 +203,12 @@ class theIndex{
 		}
 		if($turl =='obHtml'){
 			$this->obHtml();
+		}
+		if($turl =='obSitemap'){
+			$this->obSitemap();
+		}
+		if($turl == "obUrlsTxt"){
+			$this ->obUrlsTxt();
 		}
 	}	
 }
