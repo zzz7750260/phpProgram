@@ -52,11 +52,99 @@
 	//遍历数组循环输出父分类链接
 	foreach($categoryArray as $categoryArrayKey => $categoryArrayValue){
 		//组成链接后缀
-		$categoryPathAfter = '/article/'.$categoryArrayValue['categoryyw'].'/' .$categoryArrayValue['categoryyw'].'list-1.html';
+		$categoryPathAfter = '/article/'.$categoryArrayValue['categoryyw'].'/' .$categoryArrayValue['categoryyw'].'-list-1.html';
 		
 		$categoryPath .= returnPath($categoryPathAfter) .PHP_EOL;
 			
 	}
 	echo $categoryPath;
+	
+?>
+<?php 
+	//输出子分类
+	//获取子分类
+	$childCategoryArraySql = "select * from category where cpid != 0";
+	$childCategoryArraySql_db = mysqli_query($conn,$childCategoryArraySql);
+	$childCategoryArray = array();
+	while($childCategoryArraySql_db_array = mysqli_fetch_assoc($childCategoryArraySql_db)){
+		$childCategoryArray[] = $childCategoryArraySql_db_array;		
+	}
+
+	//mysqli_free_result($childCategoryArraySql_db);
+	
+	//print_r($childCategoryArray);
+	
+	//遍历输出子分类
+	foreach($childCategoryArray as $childCategoryKey => $childCategoryValue){
+		//组装分类的链接
+		$locXmlChildCategoryUrlPath = '/article/'.$childCategoryValue['categoryyw'].'/'.$childCategoryValue['categoryyw'].'-1.html';
+		$locXmlChildCategoryUrl = returnPath($locXmlChildCategoryUrlPath);
+		$locXmlChildCategory .= $locXmlChildCategoryUrl .PHP_EOL;
+	}
+	echo $locXmlChildCategory;	
+
+?>
+
+<?php
+	//输出所有用户页面
+	$userPageArraySql = "select * from member where 1 = 1";
+	$userPageArraySql_db = mysqli_query($conn,$userPageArraySql);
+	$userPageArray = array();
+	while($userPageArraySql_db_array = mysqli_fetch_assoc($userPageArraySql_db)){
+		$userPageArray[] = $userPageArraySql_db_array;
+	}
+	//print_r($userPageArray);
+
+	//遍历输出对应的信息
+	foreach($userPageArray as $userPageKey => $userPageValue){
+		//设置路径
+		$theUserPathAfter = '/article/user-page/' . $userPageValue['username'] . '.html';
+		$theUserPath = returnPath($theUserPathAfter);
+		$locXmltheUser .= $theUserPath .PHP_EOL;
+	}
+	echo $locXmltheUser;
+?>
+
+<?php 
+	//输出所有封面信息
+	$coverPageArraySql = "select * from page where 1 = 1";
+	$coverPageArraySql_db = mysqli_query($conn,$coverPageArraySql);
+	$coverPageArray = array();
+	while($userPageArraySql_db_array = mysqli_fetch_assoc($coverPageArraySql_db)){
+		$coverPageArray[] = $userPageArraySql_db_array;
+	}
+	//print_r($coverPageArray);
+
+	//遍历输出对应的信息
+	foreach($coverPageArray as $coverPageKey => $coverPageValue){
+		//设置路径
+		$theCoverPathAfter = '/article/cover-page/' . $coverPageValue['pid'] . '.html';
+		$theCoverPath = returnPath($theCoverPathAfter);
+		$locXmltheCover .= $theCoverPath .PHP_EOL;
+	}
+	echo $locXmltheCover;
+	
+?>
+
+<?php 
+	//输出所有文章
+	$articleArraySql = 'select a.*,b.* from article as a join category as b on a.category_id = b.cid where 1 = 1 order by aid DESC';
+	$articleArraySql_db = mysqli_query($conn,$articleArraySql);
+	$articleArray = array();
+	while($articleArraySql_db_array = mysqli_fetch_assoc($articleArraySql_db)){
+		$articleArray[] = $articleArraySql_db_array;
+	}
+	//print_r($articleArray);
+	//遍历数组输出对应的文章节点
+	
+	foreach($articleArray as $articleKey => $articleValue){
+		//组装文章链接
+		$locXmlArticleUrlPath = '/article/'.$articleValue['categoryyw'].'/'.$articleValue['aid'].'.html';
+		
+		$locXmlArticleUrl = returnPath($locXmlArticleUrlPath);		
+		
+		$locXmlArticle .= $locXmlArticleUrl	.PHP_EOL;
+	}
+	echo $locXmlArticle;
 	
 ?>

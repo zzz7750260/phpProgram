@@ -45,7 +45,7 @@ function getChildMenu($fArr,$fid){
 		foreach($fArr as $key => $value){
 			//echo "分类:".$value['cpid'];
 			if($value['cpid'] == $fid){
-				$cHtml .='<li><a href="http://'.$_SERVER['HTTP_HOST'].'/article/'.$value['categoryyw'].'/'.$value['categoryyw'].'-0.html">'.$value['categoryname'].'</a></li>';
+				$cHtml .='<li><a href="http://'.$_SERVER['HTTP_HOST'].'/article/'.$value['categoryyw'].'/'.$value['categoryyw'].'-1.html">'.$value['categoryname'].'</a></li>';
 			}		
 		}
 	}  

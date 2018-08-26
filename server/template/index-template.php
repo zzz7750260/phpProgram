@@ -15,8 +15,16 @@
 	
 	//调用文章类
 	$theArticleUtil = new articleUtil();
-		
+
 	
+	//获取各父类信息
+	$fatherCategoryListSql = "select * from category where cpid = 0";
+	$fatherCategoryListSql_db = mysql_query($fatherCategoryListSql);
+	$fatherCategoryListArray = array();
+	while($fatherCategoryListSql_db_array = mysql_fetch_assoc($fatherCategoryListSql_db)){
+		$fatherCategoryListArray[] = $fatherCategoryListSql_db_array; 
+	}
+		
 ?>
 <!DOCTYPE html>
 <html lang="zh-CN">
@@ -25,7 +33,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <!-- 上述3个meta标签*必须*放在最前面，任何其他内容都*必须*跟随其后！ -->
-    <title><?php echo $getIndexArray[0]['web_title'];?></title>
+    <title><?php echo $getIndexArray[0]['web_title'].'-'.$getIndexArray[0]['web_name'];?></title>
 	<meta name="keywords" content="<?php echo $getIndexArray[0]['web_keyword']?>" />
 	<meta name="description" content="<?php echo $getIndexArray[0]['web_short']?>" />
     <!-- Bootstrap -->
@@ -46,9 +54,9 @@
 		<div class="jumbotron">
 			<div class="container">
 				<h1><?php echo  $getIndexArray[0]['web_name'];?></h1>
-				<p>这是一个超大屏幕（Jumbotron）的实例。</p>
+				<p><?php echo $getIndexArray[0]['web_short']?></p>
 				<p><a class="btn btn-primary btn-lg" role="button">
-				 学习更多</a>
+				 关于我们</a>
 				</p>
 			</div>
 		</div>
@@ -58,34 +66,7 @@
 			</div>
 		</section>
 		
-		<!--
-		<section>
-			<div class="container list-container">
-				<div class="list-left col-md-12">
-				<?php 
-					$indexListSql = "select a.*,b.* from article as a left join category as b on a.category_id = b.cid  where article_status = 'public' order by aid DESC limit 0,10";
-					
-					$indexListSql_db = mysql_query($indexListSql);				
-					$indexArray = array();	
-					
-					while($indexListSql_db_array = mysql_fetch_assoc($indexListSql_db)){
-						$indexArray[] = $indexListSql_db_array;
-					}
-					print_r($indexArray);
-					foreach($indexArray as $key => $value){
-						//html渲染
-						$listHtml .= '<div class="list-container-k row"><a href="http://'.$_SERVER['HTTP_HOST'].'/article/'.$value['categoryyw'].'/'.$value['aid'].'.html"><div class="list-container-k-left col-md-9"><div class="list-container-k-left-title"><h4>'.$value['title'].'</h4></div><div class="list-container-k-left-container">'.$value['article_short'].'</div></div><div class="list-container-k-right col-md-3"><img src="http://'.$_SERVER['HTTP_HOST'].'/upload/cover/'.$value['article_img'].'" class="img-responsive"></div><div class="clear"></div><hr/></a></div>';  				
-					}
-					echo $listHtml;
-				?>
-				</div>
-				<div class="list-right col-md-3">
-				
-				</div>
-				
-			</div>
-		</section>
-		-->
+
 		
 		<section>
 			<div class="container hot-article">
@@ -100,7 +81,7 @@
 							//print_r($hotArticleArray);
 							//遍历数组，将数组组装成html
 							foreach($hotArticleArray as $key => $value){
-								$theHtml .= '<div class="col-sm-6 col-md-3"><div class="thumbnail"><a href="http://'.$_SERVER['HTTP_HOST'].'/article/'.$value['categoryyw'].'/'.$value['aid'].'.html"><img src="../../upload/cover/'.$value['article_img'].'" alt="'.$value['title'].'"><h5>'.$value['title'].'</h5></a><div><span>分类:<a href="http://'.$_SERVER['HTTP_HOST'].'/article/'.$value['categoryyw'].'/'.$value['categoryyw'].'-1.html">'.$value['categoryname'].'</a></span><span>来源:<a href="http://'.$_SERVER['HTTP_HOST'].'/article/cover-page/'.$value['pid'].'.html">'.$value['article_cover'].'</a></span></div></div></div>';
+								$theHtml .= '<div class="col-sm-6 col-md-3"><div class="thumbnail"><a href="http://'.$_SERVER['HTTP_HOST'].'/article/'.$value['categoryyw'].'/'.$value['aid'].'.html"><img src="../../upload/cover/'.$value['article_img'].'" alt="'.$value['title'].'"><h5>'.$value['title'].'</h5></a><div class="hot-article-short">'.$value['short_title'].'</div><div class="hot-article-category"><span>分类:<a href="http://'.$_SERVER['HTTP_HOST'].'/article/'.$value['categoryyw'].'/'.$value['categoryyw'].'-1.html">'.$value['categoryname'].'</a></span><span>来源:<a href="http://'.$_SERVER['HTTP_HOST'].'/article/cover-page/'.$value['pid'].'.html">'.$value['article_cover'].'</a></span></div></div></div>';
 							}
 							echo $theHtml;
 						?>
@@ -117,13 +98,13 @@
 						<div class="cinema-article-container col-md-12">						
 							<div class="cinema-article-title row">
 								<div class="cinema-article-title-left col-md-2">
-									<h3>电影解说</h3>
+									<h3><?php echo $fatherCategoryListArray[0]['categoryname'];?></h3>
 								</div>
 								<div class="cinema-article-title-right col-md-10">
 									
 									<?php 
 										//获取对应的分组目录,这里只需要下一层子集
-										$cinemaCategoryArray = $theArticleUtil->getCategoryArray(1);
+										$cinemaCategoryArray = $theArticleUtil->getCategoryArray($fatherCategoryListArray[0]['cid']);
 										
 										//print_r($cinemaCategoryArray);
 										//遍历数组获取对应的菜单渲染
@@ -135,7 +116,7 @@
 									
 									
 									<span><a href="<?php 
-										$theCategoryArray = $theArticleUtil->categoryDetail(1);
+										$theCategoryArray = $theArticleUtil->categoryDetail($fatherCategoryListArray[0]['cid']);
 										$theCategoryWz = $theCategoryArray['categoryyw'];
 										$theUrl = 'http://' .$_SERVER['HTTP_HOST']. '/article/'.$theCategoryWz.'/'.$theCategoryWz.'-list-1.html';
 										echo $theUrl;
@@ -147,7 +128,7 @@
 								<?php 
 									//新建，避免重复上面数据
 									$cinemaHtml = '';
-									$cinemaArticleArray = $theArticleUtil->getCategoryArticle(1,8);
+									$cinemaArticleArray = $theArticleUtil->getCategoryArticle($fatherCategoryListArray[0]['cid'],8);
 									//print_r($hotArticleArray);
 									//遍历数组，将数组组装成html
 									foreach($cinemaArticleArray as $key => $value){
@@ -166,7 +147,7 @@
 						<div class="cinema-article-container-list-container">
 							<ul class="list-group">
 								<?php 
-									$cinemaArticleListArray = $theArticleUtil->getCategoryArticle(1,10,'rand');
+									$cinemaArticleListArray = $theArticleUtil->getCategoryArticle($fatherCategoryListArray[0]['cid'],10,'rand');
 									//print_r($cinemaArticleListArray);
 									//遍历数组，前端渲染
 									foreach($cinemaArticleListArray as $key => $value){

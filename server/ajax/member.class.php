@@ -6,6 +6,7 @@ class theMember{
 	function registerAdd(){
 		$theUsername = $_POST['username'];
 		$thePassword = $_POST['password'];
+		$theName = $_POST['theName'];
 		$theSex = $_POST['sex'];		
 		$theEmail = $_POST['email'];
 		$theTel = $_POST['tel'];
@@ -47,10 +48,10 @@ class theMember{
 		$joinTime = date("Y-m-d H:i:s");
 		
 		if($theSelect == 'add'){
-			$registerAddSql = "insert into member (iid, username, password, sex, email, tel, join_time, user_head, city,  user_introduction, session_token) values ('$registerId', '$theUsername', '$thePassword','$theSex', '$theEmail', '$theTel', '$joinTime', '$theHead', '$theCity', '$theIntroduction', '$theSessionNum')";
+			$registerAddSql = "insert into member (iid, username, password, the_name, sex, email, tel, join_time, user_head, city, user_introduction, session_token) values ('$registerId', '$theUsername', '$thePassword', '$theName', '$theSex', '$theEmail', '$theTel', '$joinTime', '$theHead', '$theCity', '$theIntroduction', '$theSessionNum')";
 		}
 		if($theSelect == 'edit'){
-			$registerAddSql = "update member set username = '$theUsername', password = '$thePassword', sex = '$theSex', email = '$theEmail', tel = '$theTel', user_head = '$theHead', city = '$theCity', user_introduction = '$theIntroduction' ,session_token = '$theSessionNum' where username = '$theOldUserName'";
+			$registerAddSql = "update member set username = '$theUsername', password = '$thePassword', the_name = '$theName', sex = '$theSex', email = '$theEmail', tel = '$theTel', user_head = '$theHead', city = '$theCity', user_introduction = '$theIntroduction' ,session_token = '$theSessionNum' where username = '$theOldUserName'";
 		}			
 	
 		

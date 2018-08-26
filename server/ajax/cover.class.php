@@ -186,16 +186,17 @@ class theCover{
 		while($theCoverListSql_db_array = mysql_fetch_assoc($theCoverListSql_db)){
 			$theCoverListArray[] = 	$theCoverListSql_db_array;
 		}
+		//print_r($theCoverListArray);
 		//遍历封面数组
-		foreach($theCoverListArray as $key => $value){
+		foreach($theCoverListArray as $theCoverListKey => $theCoverListValue){
 			//引入封面模板
-			$theCover = $value['title'];
+			$theCover = $theCoverListValue['ptitle'];
 			include('../template/cover-index.php');		
 			//封面页面静态化
 			if($coverOb == 'ob'){
 				//设置存储的根目录
 				$rootPath = $_SERVER['DOCUMENT_ROOT'];
-				$theCoverPath = $rootPath . '/article/cover-page/' . $value['pid'] . '.html';
+				$theCoverPath = $rootPath . '/article/cover-page/'.$theCoverListValue['pid'].'.html';
 				//静态化封面页面
 				file_put_contents($theCoverPath,ob_get_contents());
 				//清除上一次缓存（防止接下来保存的页面会有上个页面的记录）
@@ -208,6 +209,7 @@ class theCover{
 	//$thePageNum：每页信息的数量
 	function coverListOb(){
 		$thePageNum = $_GET['thePageNum'];
+		//echo $thePageNum;
 		//获取所有的封面
 		$coverListSql = "select * from page where 1 = 1 order by pid DESC";
 		$coverListSql_db = mysql_query($coverListSql);
@@ -242,7 +244,7 @@ class theCover{
 			
 			//组装对应的html
 			foreach($getCoverArray as $key => $value){
-				$coverArrayHtml .= '<li class="col-md-3"><a href="../'.$value['categoryyw'].'/'.$value['aid'].'.html"><div class="cover-array-img"><img class="img-responsive" src="../../upload/cover/'.$value['article_img'].'"><div class="cover-array-img-title"><h5>'.$value['title'].'</h5></div></div></a></li>';						
+				$coverArrayHtml .= '<li class="col-md-3"><a href="http://'.$_SERVER['HTTP_HOST'].'/article/'.$value['categoryyw'].'/'.$value['aid'].'.html"><div class="cover-array-img"><img class="img-responsive" src="../../upload/cover/'.$value['article_img'].'"><div class="cover-array-img-title"><h5>'.$value['title'].'</h5></div></div></a></li>';						
 			}
 			return $coverArrayHtml;
 		};

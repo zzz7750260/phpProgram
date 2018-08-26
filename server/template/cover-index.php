@@ -29,7 +29,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <!-- 上述3个meta标签*必须*放在最前面，任何其他内容都*必须*跟随其后！ -->
-    <title><?php echo $theCoverInfoArray['title'] . '-' .$theCoverInfoArray['author'] ;?></title>
+    <title><?php echo $theCoverInfoArray['ptitle'] . '-' .$theCoverInfoArray['author'] . '-课间十分钟' ;?></title>
 
     <!-- Bootstrap -->
     <link href="https://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
@@ -45,7 +45,7 @@
   <body data-value="<?php echo $theCoverInfoArray['pid'];?>" data-type="cover">
 	<section>
 		<div class="user-head container">
-			<h2><?php echo $theCoverInfoArray['title']?>封面介绍</h2>	
+			<h2><?php echo $theCoverInfoArray['ptitle']?>封面介绍</h2>	
 			<div class ="user-head-info">
 				<div class="user-head-info-header col-md-2">
 					<img class="img-responsive" src="../../upload/user_cover/<?php echo $theCoverInfoArray['cover_img'];?>">
@@ -77,11 +77,10 @@
 		</div>
 	</section>
 	
-	<footer>
-		<div class="theFooter">
-			这个是底部
-		</div>
-	</footer>
+	<!--这个是底部-->
+	<?php 
+		include('c-footer.php');
+	?>
 	
     	
     <!-- jQuery (Bootstrap 的所有 JavaScript 插件都依赖 jQuery，所以必须放在前边) -->

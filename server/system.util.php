@@ -6,12 +6,21 @@
 		define('APP_PATH',dirname(dirname(__FILE__)));
 		//echo APP_PATH;
 		if(!file_exists(APP_PATH."/article/".$name)){
-			mkdir(APP_PATH."/article/".$name,0777);
-			//echo "传建文件成功";
+			//if(mkdir(APP_PATH."/article/".$name)){
+			//	echo $name."传建文件夹成功";
+			//	chmod(APP_PATH."/article/".$name, 0777);
+			//}
+			if(mkdir(APP_PATH."/article/".$name, 0777 ,true)){
+				echo $name."传建文件夹成功";
+				
+			}
+			else{
+				echo $name."传建文件夹失败";
+			}
 			//return true;
 		}
 		else{
-			//echo "该文件夹存在";
+			echo $name."该文件夹存在";
 			//return false;
 		}	
 	}

@@ -53,7 +53,7 @@
   <body data-value="<?php echo $userInfoArray['username'];?>" data-type="user">
 	<section>
 		<div class="user-head container">
-			<h2>你好，<?php echo $userInfoArray['username'];?>,欢迎来到你的空间</h2>	
+			<h2>你好，<?php echo $userInfoArray['the_name'];?>,欢迎来到你的空间</h2>	
 			<div class ="user-head-info">
 				<div class="user-head-info-header col-md-2">
 					<img class="img-responsive" src="../../upload/head/<?php echo $userInfoArray['user_head'];?>">
@@ -71,6 +71,8 @@
 		<div class="container user-cover">
 			<ul>
 			<?php 
+				//为了防止封面被重复加载，因而需要将之前的值进行清空
+				$theHtml = '';
 				//遍历数组组装HTML
 				foreach($coverListArray as $key => $value){
 					$theHtml .= '<li class="col-md-3 user-cover-k"><div class="user-cover-k-title"><h4>'.$value['title'].'</h4></div><div class="user-cover-k-img"><img src="../../upload/user_cover/'.$value['cover_img'].'"></div></li>';

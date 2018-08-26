@@ -1666,6 +1666,7 @@ function memberControl(){
 				//组装对应的html
 				$("input[name='username']").val(theMemberInfoVal.username);
 				$("input[name='password']").val(theMemberInfoVal.password);
+				$("input[name='theName']").val(theMemberInfoVal.the_name);
 				$("input:radio[value='"+theMemberInfoVal.sex+"']").attr("checked","true");
 				$("input[name='tel']").val(theMemberInfoVal.tel);
 				$("input[name='email']").val(theMemberInfoVal.email);

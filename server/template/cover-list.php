@@ -40,7 +40,7 @@
 						//循环输出文章列表
 						foreach($theArticleArray as $item => $value){						
 							
-							$theList .= '<div class="thelist-k row"><div class="thelist-k-img col-md-3"><img src="../../upload/user_cover/'.$value['cover_img'].'" class="img-responsive" ></div><div class="thelist-k-c col-md-9"><div class="thelist-k-title"><a href="./'.$value['pid'].'.html"><h4>'.$value['title'].'</h4></a></div><div class="thelist-k-container"><div class="thelist-k-container-xx"><span>作者：<a href="../user-page/'.$value['author'].'.html">'.$value['author'].'</a></span></div><div class="thelist-k-container-js">'.$value['cover_introduction'].'</div><div class="thelist-k-container-array"><ul class="row">'.getArticleArrayHtml($value['title']).'</ul></div><div class="thelist-k-container-more"><a  href="./'.$value['pid'].'.html">更多视频</a></div></div></div></div><hr/>';					
+							$theList .= '<div class="thelist-k row"><div class="thelist-k-img col-md-3"><img src="../../upload/user_cover/'.$value['cover_img'].'" class="img-responsive" ></div><div class="thelist-k-c col-md-9"><div class="thelist-k-title"><a href="./'.$value['pid'].'.html"><h4>'.$value['title'].'</h4></a></div><div class="thelist-k-container"><div class="thelist-k-container-xx"><span>作者：<a href="../user-page/'.$value['author'].'.html">'.$value['author'].'</a></span></div><div class="thelist-k-container-js">'.$value['cover_introduction'].'</div><div class="thelist-k-container-array"><ul class="row">'.getArticleArrayHtml($value['ptitle']).'</ul></div><div class="thelist-k-container-more"><a  href="./'.$value['pid'].'.html">更多视频</a></div></div></div></div><hr/>';					
 						}
 						echo $theList;
 						//由于$theList是使用字符串连接，因而在输出完后，需要将字符串清除，以免得到之前获取的数据
