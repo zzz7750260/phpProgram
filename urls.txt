@@ -4,6 +4,21 @@ http://www.10mins.com/article/article/article-list-1.html
 http://www.10mins.com/article/oldmusic/oldmusic-1.html
 http://www.10mins.com/article/lxmusic/lxmusic-1.html
 http://www.10mins.com/article/childoldmusic/childoldmusic-1.html
+http://www.10mins.com/article/cover-page/cover-list-1.html
+
+
+
+http://www.10mins.com/article/cover-page/1.html
+http://www.10mins.com/article/cover-page/2.html
+http://www.10mins.com/article/cover-page/5.html
+http://www.10mins.com/article/cover-page/6.html
+http://www.10mins.com/article/cover-page/7.html
+http://www.10mins.com/article/cover-page/8.html
+http://www.10mins.com/article/cover-page/9.html
+http://www.10mins.com/article/cover-page/10.html
+http://www.10mins.com/article/cover-page/11.html
+http://www.10mins.com/article/cover-page/12.html
+
 
 http://www.10mins.com/article/user-page/admin.html
 http://www.10mins.com/article/user-page/zzzaaa88.html
@@ -17,18 +32,10 @@ http://www.10mins.com/article/user-page/admin6126.html
 http://www.10mins.com/article/user-page/admin6126.html
 http://www.10mins.com/article/user-page/admin6126.html
 http://www.10mins.com/article/user-page/haha123456.html
+http://www.10mins.com/article/user-page/bigsmile.html
 
-http://www.10mins.com/article/cover-page/1.html
-http://www.10mins.com/article/cover-page/2.html
-http://www.10mins.com/article/cover-page/5.html
-http://www.10mins.com/article/cover-page/6.html
-http://www.10mins.com/article/cover-page/7.html
-http://www.10mins.com/article/cover-page/8.html
-http://www.10mins.com/article/cover-page/9.html
-http://www.10mins.com/article/cover-page/10.html
-http://www.10mins.com/article/cover-page/11.html
-http://www.10mins.com/article/cover-page/12.html
 
+http://www.10mins.com/article/childoldmusic/39.html
 http://www.10mins.com/article/childoldmusic/38.html
 http://www.10mins.com/article/childoldmusic/31.html
 http://www.10mins.com/article/childoldmusic/30.html

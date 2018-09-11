@@ -1,7 +1,8 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9 http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd">
-<?php 
+<?php 	
 	//include("../system.article.php");
-	
+	include_once('../system.util.php');
+	//$commonUtil = new util();
 	//ob_start();
 	//连接数据库
 	$conn = mysqli_connect("localhost","root","","mysql");
@@ -31,8 +32,8 @@
 	function returnPath($thePath = ''){
 		$theRootPath = $_SERVER['HTTP_HOST'];
 		//echo $theRootPath;
-		
-		$theReturnPath = "http://" . $theRootPath;
+		$commonUtil = new util();
+		$theReturnPath = $commonUtil->isHttpsCheckSelect()."//" . $theRootPath;
 		if($thePath){
 			$theReturnPath = $theReturnPath . $thePath; 			
 		}
@@ -107,6 +108,45 @@
 	}
 	echo $locXmlChildCategory;
 ?>
+
+<?php 
+	//获取封面列表
+?>
+		<url>
+			<loc><?php $coverListPath = "/article/cover-page/cover-list-1.html"; echo returnPath($coverListPath);?></loc>
+			<lastmod><?php echo $theDate?></lastmod>
+			<changefreq>daily</changefreq>
+			<priority>0.6</priority>
+		</url>
+		
+		
+<?php 
+	//输出所有封面信息
+	$coverPageArraySql = "select * from page where 1 = 1";
+	$coverPageArraySql_db = mysqli_query($conn,$coverPageArraySql);
+	$coverPageArray = array();
+	while($userPageArraySql_db_array = mysqli_fetch_assoc($coverPageArraySql_db)){
+		$coverPageArray[] = $userPageArraySql_db_array;
+	}
+	//print_r($coverPageArray);
+
+	//遍历输出对应的信息
+	foreach($coverPageArray as $coverPageKey => $coverPageValue){
+		//设置路径
+		$theCoverPathAfter = '/article/cover-page/' . $coverPageValue['pid'] . '.html';
+		$theCoverPath = returnPath($theCoverPathAfter);
+		$locXmltheCover .= '<url>
+							<loc>'.$theCoverPath.'</loc>
+							<lastmod>'.$theDate.'</lastmod>
+							<changefreq>daily</changefreq>
+							<priority>0.5</priority>
+						</url>';
+	}
+	echo $locXmltheCover;
+	
+?>		
+		
+
 <?php 
 	//输出所有用户页面
 	$userPageArraySql = "select * from member where 1 = 1";
@@ -132,31 +172,7 @@
 	echo $locXmltheUser;
 ?>
 
-<?php 
-	//输出所有封面信息
-	$coverPageArraySql = "select * from page where 1 = 1";
-	$coverPageArraySql_db = mysqli_query($conn,$coverPageArraySql);
-	$coverPageArray = array();
-	while($userPageArraySql_db_array = mysqli_fetch_assoc($coverPageArraySql_db)){
-		$coverPageArray[] = $userPageArraySql_db_array;
-	}
-	//print_r($coverPageArray);
 
-	//遍历输出对应的信息
-	foreach($coverPageArray as $coverPageKey => $coverPageValue){
-		//设置路径
-		$theCoverPathAfter = '/article/cover-page/' . $coverPageValue['pid'] . '.html';
-		$theCoverPath = returnPath($theCoverPathAfter);
-		$locXmltheCover .= '<url>
-							<loc>'.$theCoverPath.'</loc>
-							<lastmod>'.$theDate.'</lastmod>
-							<changefreq>daily</changefreq>
-							<priority>0.5</priority>
-						</url>';
-	}
-	echo $locXmltheCover;
-	
-?>
 
 <?php 
 	//输出所有文章

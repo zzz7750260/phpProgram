@@ -1,5 +1,5 @@
 <footer>
-	<div class="friendLink">
+	<div class="friendLink theFooter">
 		<div class="container">
 			<div class="friendLink-container">
 				友情链接：

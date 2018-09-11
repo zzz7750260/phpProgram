@@ -446,7 +446,23 @@ function userControl(){
 		}
 		
 	}
-	theScroll.srollLoadArticle();
+	
+	//按需控制:获取对应的地址进行对应的操作
+	var theSelfControl = new selfControl();
+	//var theUrlPath = theSelfControl.urlCheck('pathname','user-page')
+	//alert("当前的地址为："+theUrlPath);
+	if(theSelfControl.urlCheck('pathname','user-page') || theSelfControl.urlCheck('pathname','cover-page') &&!theSelfControl.urlCheck('pathname','list')){
+		//alert("触发的地址");	
+		
+		theScroll.srollLoadArticle();	
+	}
+	else{
+		//alert("不是触发的地址");		
+	}
+	
+	
+	
+	
 	
 	//拖动窗口操作
 	var dragControl = {
@@ -538,9 +554,34 @@ function autoLoad(){
 				}
 			})
 			
-		}
-		
+		},
+						
 	}
 	theLoad.commentLoad();
 	theLoad.articleViewAdd();
+}
+
+//按需控制
+function selfControl(){
+		//检测链接
+	//type:为查询url的类型，默认all为查询整个url，pathname只查询partname部分
+	//https://www.cnblogs.com/zhabayi/p/6419938.html
+	//name:为需要查询的对象
+	this.urlCheck = function(type ='all',name){
+		var theUrl,judge;
+		if(type == 'all'){
+			theUrl =  window.location.href;		
+		}
+		if(type == 'pathname'){
+			theUrl = window.location.pathname;
+		}
+		//return theUrl;
+		//判断是否存在某个字段
+		if(theUrl.indexOf(name)>-1){
+			judge = true;
+		}else{
+			judge = false;
+		}
+		return judge;
+	}	
 }

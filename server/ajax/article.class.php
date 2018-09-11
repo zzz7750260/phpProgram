@@ -318,7 +318,7 @@ class theArticleClass{
 		$theCategory = $_GET['categoryNum'];
 		//查询数据库
 
-		$theCategorySql = "select a.*,b.* from article as a left join category as b on a.category_id = b.cid where 1 = 1 and IF('$theCategory' = 0,0 = 0, a.category_id = '$theCategory')";
+		$theCategorySql = "select a.*,b.*,c.* from article as a join category as b on a.category_id = b.cid join page as c on a.article_cover = c.ptitle where 1 = 1 and IF('$theCategory' = 0,0 = 0, a.category_id = '$theCategory')";
 		$theCategorySql_db = mysql_query($theCategorySql);
 
 		$theCategoryArray = array();
@@ -350,6 +350,9 @@ class theArticleClass{
 		//判断是否有静态化请求，如果有，需对文件进行相关的输出
 		$theOb = $_GET['getOb'];
 		if($theOb == 'obMore'){
+			//设置已经静态化的数量
+			$n = 0;
+			
 			//循环数组，并输出静态文件
 			foreach($theCategoryArray as $key => $value){
 				//生成文章对于分类的文件夹
@@ -362,15 +365,26 @@ class theArticleClass{
 				$moreOut = ob_get_contents();
 				//echo $moreOut;
 				if(file_put_contents(APP_PATH2.'/article/'.$value['categoryyw'].'/'.$value['aid'].'.html',$moreOut)){
-					echo $value['aid']."输出成功";		
-					
+					echo $value['aid']."输出成功";							
 					//清除缓冲区,防止内容重复输出;
+					$n++;
 					ob_clean();
 				}
 				else{
 					echo $value['aid']."输出失败";
 				}
-			}		
+			}
+
+			//组装返回前端数据
+			$returnObMoreArray = array(
+				status => 200,
+				msg => "文章静态化返回成功",
+				result => $n
+			);
+			
+			//将数组转成json返回前端
+			$returnObMoreJson = json_encode($returnObMoreArray);
+			print_r($returnObMoreJson);
 		}
 	
 	}

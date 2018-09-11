@@ -220,12 +220,12 @@ class theCover{
 		$pageNum = floor($coverListSql_db_num / $thePageNum);
 		$pageNumYs = $coverListSql_db_num % $thePageNum;
 		
-		echo '余数'. $pageNumYs;
+		//echo '余数'. $pageNumYs;
 		//如果存在余数，页数加一
 		if($pageNumYs>0){
 			$pageNum = $pageNum +1;
 		}
-		echo '页数'. $pageNum;
+		//echo '页数'. $pageNum;
 	
 		$coverListArray = array();
 		while($coverListSql_db_array = mysql_fetch_assoc($coverListSql_db)){
@@ -234,6 +234,7 @@ class theCover{
 		//定义在模板内的函数，因为需要重复引用模板会造成重复定义，因而需要定义在模板外
 		//根据封面的名称获取对应的文章
 		function getArticleArrayHtml($coverName){
+			$commonUtil = new util();
 			//echo $coverName;
 			$getCoverSql = "select a.*,b.* from article as a join category as b on a.category_id = b.cid where a.article_cover = '$coverName' order by aid DESC limit 0,4";
 			$getCoverSql_db = mysql_query($getCoverSql);
@@ -244,7 +245,7 @@ class theCover{
 			
 			//组装对应的html
 			foreach($getCoverArray as $key => $value){
-				$coverArrayHtml .= '<li class="col-md-3"><a href="http://'.$_SERVER['HTTP_HOST'].'/article/'.$value['categoryyw'].'/'.$value['aid'].'.html"><div class="cover-array-img"><img class="img-responsive" src="../../upload/cover/'.$value['article_img'].'"><div class="cover-array-img-title"><h5>'.$value['title'].'</h5></div></div></a></li>';						
+				$coverArrayHtml .= '<li class="col-md-3"><a href="'.$commonUtil->isHttpsCheckSelect().'//'.$_SERVER['HTTP_HOST'].'/article/'.$value['categoryyw'].'/'.$value['aid'].'.html"><div class="cover-array-img"><img class="img-responsive" src="../../upload/cover/'.$value['article_img'].'"><div class="cover-array-img-title"><h5>'.$value['title'].'</h5></div></div></a></li>';						
 			}
 			return $coverArrayHtml;
 		};

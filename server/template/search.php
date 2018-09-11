@@ -3,6 +3,8 @@ include_once('c-menu.php');
 //获取传递过来的关键词
 $theKeyWord = $_GET['getKeyWord'];
 
+include_once('../system.util.php');
+$commonUtil = new util();
 ?>
 
 <!DOCTYPE html>
@@ -58,7 +60,7 @@ $theKeyWord = $_GET['getKeyWord'];
 						//print_r($indexArray);
 						foreach($searchGetListSqlArray as $key => $value){
 							//html渲染
-							$listHtml .= '<div class="list-container-k row"><a href="http://'.$_SERVER['HTTP_HOST'].'/article/'.$value['categoryyw'].'/'.$value['aid'].'.html"><div class="list-container-k-left col-md-9"><div class="list-container-k-left-title"><h4>'.$value['title'].'</h4></div><div class="list-container-k-left-container">'.$value['article_short'].'</div></div><div class="list-container-k-right col-md-3"><img src="http://'.$_SERVER['HTTP_HOST'].'/upload/cover/'.$value['article_img'].'" class="img-responsive"></div><div class="clear"></div><hr/></a></div>';  				
+							$listHtml .= '<div class="list-container-k row"><a href="'.$commonUtil->isHttpsCheckSelect().'//'.$_SERVER['HTTP_HOST'].'/article/'.$value['categoryyw'].'/'.$value['aid'].'.html"><div class="list-container-k-left col-md-9"><div class="list-container-k-left-title"><h4>'.$value['title'].'</h4></div><div class="list-container-k-left-container">'.$value['article_short'].'</div></div><div class="list-container-k-right col-md-3"><img src="'.$commonUtil->isHttpsCheckSelect().'//'.$_SERVER['HTTP_HOST'].'/upload/cover/'.$value['article_img'].'" class="img-responsive"></div><div class="clear"></div><hr/></a></div>';  				
 						}
 																			
 					}				

@@ -1,7 +1,8 @@
 <?php 
 	//include_once('../system.mysql.int.php');
 	//include_once('../system.article.php');
-	
+	include_once('../system.util.php');
+	$commonUtil = new util();
 	//获取分类页面的id
 	$getCategoryId = $theCategoryId;
 	
@@ -54,8 +55,10 @@
 			<div class="container">
 				<h2><?php echo $categoryInfoArray['categoryname'];?></h2>
 				<p><?php echo $categoryInfoArray['categoryms'];?></p>
-				<p><a class="btn btn-primary btn-lg" role="button">
-				 学习更多</a>
+				<p>
+					<?php 
+						include('c-search.php');
+					?>
 				</p>
 			</div>
 		</div>
@@ -78,7 +81,7 @@
 
 					//循环子分类菜单
 					foreach($menuCategoryArray as $menuKey => $menuValue){
-						$menuHtml .= '<a href="http://'.$_SERVER['HTTP_HOST'].'/article/'.$menuValue['categoryyw'].'/'.$menuValue['categoryyw'].'-1.html"><span>'.$menuValue['categoryname'].'</span></a>';						
+						$menuHtml .= '<a href="'.$commonUtil->isHttpsCheckSelect().'//'.$_SERVER['HTTP_HOST'].'/article/'.$menuValue['categoryyw'].'/'.$menuValue['categoryyw'].'-1.html"><span>'.$menuValue['categoryname'].'</span></a>';						
 					}
 					echo $menuHtml;		
 					//为了防止重复，将$menuHtml赋值为空
@@ -109,7 +112,7 @@
 							//print_r($hotArticleArray);
 							//遍历数组，将数组组装成html
 							foreach($categoryNumArray as $key => $value){
-								$theHtml .= '<div class="col-sm-6 col-md-3"><div class="thumbnail"><a href="http://'.$_SERVER['HTTP_HOST'].'/article/'.$value['categoryyw'].'/'.$value['aid'].'.html"><img src="../../upload/cover/'.$value['article_img'].'" alt="通用的占位符缩略图"><h5>'.$value['title'].'</h5></a><div><span>分类:<a href="http://'.$_SERVER['HTTP_HOST'].'/article/'.$value['categoryyw'].'/'.$value['categoryyw'].'-1.html">'.$value['categoryname'].'</a></span><span>来源:<a href="http://'.$_SERVER['HTTP_HOST'].'/article/cover-page/'.$value['pid'].'.html">'.$value['article_cover'].'</a></span></div></div></div>';
+								$theHtml .= '<div class="col-sm-6 col-md-3"><div class="thumbnail"><a href="'.$commonUtil->isHttpsCheckSelect().'//'.$_SERVER['HTTP_HOST'].'/article/'.$value['categoryyw'].'/'.$value['aid'].'.html"><img src="../../upload/cover/'.$value['article_img'].'" alt="通用的占位符缩略图"><h5>'.$value['title'].'</h5></a><div><span>分类:<a href="'.$commonUtil->isHttpsCheckSelect().'//'.$_SERVER['HTTP_HOST'].'/article/'.$value['categoryyw'].'/'.$value['categoryyw'].'-1.html">'.$value['categoryname'].'</a></span><span>来源:<a href="'.$commonUtil->isHttpsCheckSelect().'//'.$_SERVER['HTTP_HOST'].'/article/cover-page/'.$value['pid'].'.html">'.$value['article_cover'].'</a></span></div></div></div>';
 							}
 							echo $theHtml;
 							
@@ -170,12 +173,12 @@
 								if($typePage =="categoryList"){
 									//因为p为分页数，如果这里用p的话，会影响到静态化
 									for($lp=1;$lp<=$getPageNum;$lp++){
-										echo '<option value="http://'.$_SERVER['HTTP_HOST'].'/article/'.$categoryInfoArray['categoryyw'].'/'.$categoryInfoArray['categoryyw'].'-list-'.$lp.'.html"">第'.$lp.'页</option>';
+										echo '<option value="'.$commonUtil->isHttpsCheckSelect().'//'.$_SERVER['HTTP_HOST'].'/article/'.$categoryInfoArray['categoryyw'].'/'.$categoryInfoArray['categoryyw'].'-list-'.$lp.'.html"">第'.$lp.'页</option>';
 									}																	
 								}
 								if($typePage =="list"){
 									for($xp=1;$xp<=$pageNumZ;$xp++){
-										echo '<option value="http://'.$_SERVER['HTTP_HOST'].'/article/'.$categoryInfoArray['categoryyw'].'/'.$categoryInfoArray['categoryyw'].'-'.$xp.'.html"">第'.$xp.'页</option>';
+										echo '<option value="'.$commonUtil->isHttpsCheckSelect().'//'.$_SERVER['HTTP_HOST'].'/article/'.$categoryInfoArray['categoryyw'].'/'.$categoryInfoArray['categoryyw'].'-'.$xp.'.html"">第'.$xp.'页</option>';
 									}										
 								}
 							?>
@@ -184,12 +187,16 @@
 				</ul>
 			</div>
 		</section>
+		<?php 
+			//引入footer
+			include('c-footer.php');	
+		?>
 					
     <!-- jQuery (Bootstrap 的所有 JavaScript 插件都依赖 jQuery，所以必须放在前边) -->
     <script src="https://cdn.bootcss.com/jquery/1.12.4/jquery.min.js"></script>
     <!-- 加载 Bootstrap 的所有 JavaScript 插件。你也可以根据需要只加载单个插件。 -->
     <script src="https://cdn.bootcss.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 	
-	<script src="./js/index.js"></script>
+	<script src="../../js/index.js"></script>
   </body>
 </html>

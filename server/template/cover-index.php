@@ -1,4 +1,6 @@
 <?php
+	include_once('../system.util.php');
+	$commonUtil = new util();
 	//include('../system.mysql.int.php');
 	//$theUsername = 'haha123456';
 	//$ob = $_GET['getOb'];   //获取是否存在静态化的标识

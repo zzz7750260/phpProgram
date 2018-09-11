@@ -7,6 +7,8 @@
 		//print_r($value);
 		//echo "<hr/>";
 	//	echo $value['title'];
+	include_once('../system.util.php');
+	$commonUtil = new util();
 	
 	//根据文章的id获取评论数
 	$commArticleId = $value['aid'];
@@ -44,7 +46,8 @@
 		<div>
 			<!--引入面包屑-->
 			<?php 
-				include_once('c-breadcrumb.php');
+				include('c-breadcrumb.php');
+				//$theBreadcrumbArray = $this->getCategoryInfoArray($value['category_id']);
 			?>
 		</div>
 		<section>
@@ -56,13 +59,13 @@
 					</div>
 					
 					<div class="theArticle-detail">
-						<span>作者:<?php $thePathShowHtml = '<a href="http://'.$_SERVER['HTTP_HOST'].'/article/user-page/'.$value['article_author'].'.html">'.$value['article_author'].'</a>'; echo $thePathShowHtml;?></span>
+						<span>作者:<?php $thePathShowHtml = '<a href="'.$commonUtil->isHttpsCheckSelect().'//'.$_SERVER['HTTP_HOST'].'/article/user-page/'.$value['article_author'].'.html">'.$value['article_author'].'</a>'; echo $thePathShowHtml;?></span>
 						
-						<span>封面:<?php $thePathShowHtml = '<a href="http://'.$_SERVER['HTTP_HOST'].'/article/cover-page/'.$value['pid'].'.html">'.$value['article_cover'].'</a>'; echo $thePathShowHtml;?></span>
+						<span>封面:<?php $thePathShowHtml = '<a href="'.$commonUtil->isHttpsCheckSelect().'//'.$_SERVER['HTTP_HOST'].'/article/cover-page/'.$value['pid'].'.html">'.$value['article_cover'].'</a>'; echo $thePathShowHtml;?></span>
 						
 						
 						
-						<span>分类:<?php $thePathShowHtml = '<a href="http://'.$_SERVER['HTTP_HOST'].'/article/'.$value['categoryyw'].'/'.$value['categoryyw'].'-1.html">'.$value['categoryname'].'</a>'; echo $thePathShowHtml;?></span>
+						<span>分类:<?php $thePathShowHtml = '<a href="'.$commonUtil->isHttpsCheckSelect().'//'.$_SERVER['HTTP_HOST'].'/article/'.$value['categoryyw'].'/'.$value['categoryyw'].'-1.html">'.$value['categoryname'].'</a>'; echo $thePathShowHtml;?></span>
 						
 						<span>发布日期:<?php echo $value['commit_start'];?></span>
 						
@@ -106,7 +109,7 @@
 					
 					//遍历数组,组装html列表
 					foreach($theArticleSideRandArray as $key => $SideAritcleValue){
-						$sideArticleListHtml = '<li class="col-md-6 col-xs-6"><a href="http://'.$_SERVER['HTTP_HOST'].'/article/'.$SideAritcleValue['categoryyw'].'/'.$SideAritcleValue['aid'].'.html"><div class="side-article-list-img"><img class="img-responsive" src="../../upload/cover/'.$SideAritcleValue['article_img'].'">'.substr($SideAritcleValue['title'],0,18).'</div></a></li>';
+						$sideArticleListHtml = '<li class="col-md-6 col-xs-6"><a href="'.$commonUtil->isHttpsCheckSelect().'//'.$_SERVER['HTTP_HOST'].'/article/'.$SideAritcleValue['categoryyw'].'/'.$SideAritcleValue['aid'].'.html"><div class="side-article-list-img"><img class="img-responsive" src="../../upload/cover/'.$SideAritcleValue['article_img'].'">'.substr($SideAritcleValue['title'],0,18).'</div></a></li>';
 						echo $sideArticleListHtml;				
 					}
 					

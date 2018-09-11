@@ -18,7 +18,11 @@ $hostUrl = $_SERVER['HTTP_HOST'];
 echo $num."<br/>";
 echo $hostUrl;
 
-$theURL = "http://".$hostUrl."/";
+$theUtil = new util();
+
+
+
+$theURL = $theUtil->isHttpsCheckSelect()."//".$hostUrl."/";
 
 if($num == 0){
 	echo "登录密码错误!";
@@ -32,7 +36,7 @@ else{
 	
 	//同时生成一个session_token 存到对应用户的数据库中
 	//获取随机数
-	$theUtil = new util();
+	//$theUtil = new util();
 	$theRandNum = $theUtil->setSessionToken(8);
 	echo $theRandNum;
 	

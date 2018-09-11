@@ -1,6 +1,8 @@
 <?php 
 	//include_once('../system.mysql.int.php');
 	include_once('../system.article.php');
+	include_once('../system.util.php');
+	$commonUtil = new util();
 	
 	//查询网站的设置信息
 	$getIndexSql = "select * from web_info where 1 = 1";
@@ -55,17 +57,18 @@
 			<div class="container">
 				<h1><?php echo  $getIndexArray[0]['web_name'];?></h1>
 				<p><?php echo $getIndexArray[0]['web_short']?></p>
-				<p><a class="btn btn-primary btn-lg" role="button">
-				 关于我们</a>
+				<p>
+					<?php include('c-search.php');?>
 				</p>
 			</div>
 		</div>
+		<!--
 		<section>
 			<div class="container">
 				<?php include('c-search.php');?>
 			</div>
 		</section>
-		
+		-->
 
 		
 		<section>
@@ -81,7 +84,7 @@
 							//print_r($hotArticleArray);
 							//遍历数组，将数组组装成html
 							foreach($hotArticleArray as $key => $value){
-								$theHtml .= '<div class="col-sm-6 col-md-3"><div class="thumbnail"><a href="http://'.$_SERVER['HTTP_HOST'].'/article/'.$value['categoryyw'].'/'.$value['aid'].'.html"><img src="../../upload/cover/'.$value['article_img'].'" alt="'.$value['title'].'"><h5>'.$value['title'].'</h5></a><div class="hot-article-short">'.$value['short_title'].'</div><div class="hot-article-category"><span>分类:<a href="http://'.$_SERVER['HTTP_HOST'].'/article/'.$value['categoryyw'].'/'.$value['categoryyw'].'-1.html">'.$value['categoryname'].'</a></span><span>来源:<a href="http://'.$_SERVER['HTTP_HOST'].'/article/cover-page/'.$value['pid'].'.html">'.$value['article_cover'].'</a></span></div></div></div>';
+								$theHtml .= '<div class="col-sm-6 col-md-3"><div class="thumbnail"><a href="'.$commonUtil->isHttpsCheckSelect().'//'.$_SERVER['HTTP_HOST'].'/article/'.$value['categoryyw'].'/'.$value['aid'].'.html"><img src="../../upload/cover/'.$value['article_img'].'" alt="'.$value['title'].'"><h5>'.$value['title'].'</h5></a><div class="hot-article-short">'.$value['short_title'].'</div><div class="hot-article-category"><span>分类:<a href="'.$commonUtil->isHttpsCheckSelect().'//'.$_SERVER['HTTP_HOST'].'/article/'.$value['categoryyw'].'/'.$value['categoryyw'].'-1.html">'.$value['categoryname'].'</a></span><span>来源:<a href="'.$commonUtil->isHttpsCheckSelect().'//'.$_SERVER['HTTP_HOST'].'/article/cover-page/'.$value['pid'].'.html">'.$value['article_cover'].'</a></span></div></div></div>';
 							}
 							echo $theHtml;
 						?>
@@ -109,7 +112,7 @@
 										//print_r($cinemaCategoryArray);
 										//遍历数组获取对应的菜单渲染
 										foreach($cinemaCategoryArray as $key => $value){
-											$arrayHtml .= '<span style="margin:5px"><a href="http://'.$_SERVER['HTTP_HOST'].'/article/'.$value['categoryyw'].'/'.$value['categoryyw'].'-1.html">'.$value['categoryname'].'</a></span>';
+											$arrayHtml .= '<span style="margin:5px"><a href="'.$commonUtil->isHttpsCheckSelect().'//'.$_SERVER['HTTP_HOST'].'/article/'.$value['categoryyw'].'/'.$value['categoryyw'].'-1.html">'.$value['categoryname'].'</a></span>';
 										}
 										echo $arrayHtml;
 									?>
@@ -118,7 +121,7 @@
 									<span><a href="<?php 
 										$theCategoryArray = $theArticleUtil->categoryDetail($fatherCategoryListArray[0]['cid']);
 										$theCategoryWz = $theCategoryArray['categoryyw'];
-										$theUrl = 'http://' .$_SERVER['HTTP_HOST']. '/article/'.$theCategoryWz.'/'.$theCategoryWz.'-list-1.html';
+										$theUrl = ''.$commonUtil->isHttpsCheckSelect().'//' .$_SERVER['HTTP_HOST']. '/article/'.$theCategoryWz.'/'.$theCategoryWz.'-list-1.html';
 										echo $theUrl;
 									?>">更多</a></span>
 								</div>
@@ -132,7 +135,7 @@
 									//print_r($hotArticleArray);
 									//遍历数组，将数组组装成html
 									foreach($cinemaArticleArray as $key => $value){
-										$cinemaHtml .= '<div class="col-sm-6 col-md-3"><div class="thumbnail"><a href="http://'.$_SERVER['HTTP_HOST'].'/article/'.$value['categoryyw'].'/'.$value['aid'].'.html"><img src="../../upload/cover/'.$value['article_img'].'" alt="通用的占位符缩略图"><h5>'.$value['title'].'</h5></a><div><span>分类:<a href="http://'.$_SERVER['HTTP_HOST'].'/article/'.$value['categoryyw'].'/'.$value['categoryyw'].'-1.html">'.$value['categoryname'].'</a></span><span>来源:<a href="http://'.$_SERVER['HTTP_HOST'].'/article/cover-page/'.$value['pid'].'.html">'.$value['article_cover'].'</a></span></div></div></div>';
+										$cinemaHtml .= '<div class="col-sm-6 col-md-3"><div class="thumbnail"><a href="'.$commonUtil->isHttpsCheckSelect().'//'.$_SERVER['HTTP_HOST'].'/article/'.$value['categoryyw'].'/'.$value['aid'].'.html"><img src="../../upload/cover/'.$value['article_img'].'" alt="通用的占位符缩略图"><h5>'.$value['title'].'</h5></a><div><span>分类:<a href="'.$commonUtil->isHttpsCheckSelect().'//'.$_SERVER['HTTP_HOST'].'/article/'.$value['categoryyw'].'/'.$value['categoryyw'].'-1.html">'.$value['categoryname'].'</a></span><span>来源:<a href="'.$commonUtil->isHttpsCheckSelect().'//'.$_SERVER['HTTP_HOST'].'/article/cover-page/'.$value['pid'].'.html">'.$value['article_cover'].'</a></span></div></div></div>';
 									}
 									echo $cinemaHtml;
 								?>
@@ -151,7 +154,7 @@
 									//print_r($cinemaArticleListArray);
 									//遍历数组，前端渲染
 									foreach($cinemaArticleListArray as $key => $value){
-										$cinemaArticleListHtml = '<li class="list-group-item"><a href="http://'.$_SERVER['HTTP_HOST'].'/article/'.$value['categoryyw'].'/'.$value['aid'].'.html">'.$value['title'].'</a></li>';
+										$cinemaArticleListHtml = '<li class="list-group-item"><a href="'.$commonUtil->isHttpsCheckSelect().'//'.$_SERVER['HTTP_HOST'].'/article/'.$value['categoryyw'].'/'.$value['aid'].'.html">'.$value['title'].'</a></li>';
 										echo $cinemaArticleListHtml;
 									}
 								?>
@@ -168,7 +171,7 @@
 						<h3>封面列表</h3>
 					</div>
 					<div class="cover-title-right col-md-10">
-						<a href="<?php $thePagePath = 'http://'.$_SERVER['HTTP_HOST'].'/article/cover-page/cover-list-1.html'; echo $thePagePath;?>">更多封面</a>
+						<a href="<?php $thePagePath = ''.$commonUtil->isHttpsCheckSelect().'//'.$_SERVER['HTTP_HOST'].'/article/cover-page/cover-list-1.html'; echo $thePagePath;?>">更多封面</a>
 					</div>
 				</div>
 				<ul class="row">
@@ -177,7 +180,7 @@
 						//print_r($theCoverArray);
 						//遍历数组搭建html
 						foreach($theCoverArray as $key => $value){
-							$coverHtml .= '<li class="col-md-3 cover-array-li"><div class="cover-array-li-img"><img class ="img-responsive" src="../../upload/user_cover/'.$value['cover_img'].'"><div class="cover-array-li-img-title">'.$value['title'].'</div></div></li>';						
+							$coverHtml .= '<li class="col-md-3 cover-array-li"><a href="'.$commonUtil->isHttpsCheckSelect().'//'.$_SERVER['HTTP_HOST'].'/article/cover-page/'.$value['pid'].'.html"><div class="cover-array-li-img"><img class ="img-responsive" src="../../upload/user_cover/'.$value['cover_img'].'"><div class="cover-array-li-img-title">'.$value['ptitle'].'</div></div></a></li>';						
 						}
 						echo $coverHtml;
 					?>				

@@ -560,7 +560,7 @@ function adminCategory(){
 		//菜单管理页列表
 		pageListCategory:function(){
 			$.ajax({
-				url:"../server/ajax/theCategory.php",
+				url:"../server/ajax/thecategory.php",
 				type:'get',
 				data:{
 					turl:"pageListCategory",
@@ -1063,6 +1063,34 @@ function adminArticle(){
 						console.log(data);
 					}
 				})				
+			})
+			
+			//sitemap静态化操作
+			$("#get-sitemap-ob").click(function(){
+				//向后端提交静态化请求
+				$.ajax({
+					url:'../server/ajax/theindex.php',
+					data:{turl:"obSitemap",getOb:"ob"},
+					type:"get",
+					dataType:"json",
+					success:function(data){
+						console.log(data);
+					}
+				})			
+			})	
+	
+			//URL.txt静态化操作
+			$("#get-url-ob").click(function(){
+				//向后端提交静态化请求
+				$.ajax({
+					url:'../server/ajax/theindex.php',
+					data:{turl:"obUrlsTxt",getOb:"ob"},
+					type:"get",
+					dataType:"json",
+					success:function(data){
+						console.log(data);
+					}
+				})			
 			})
 			
 			//用户列表静态化

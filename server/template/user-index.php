@@ -1,4 +1,6 @@
 <?php
+	include_once('../system.util.php');
+	$commonUtil = new util();
 	//include('../system.mysql.int.php');
 	//$theUsername = 'haha123456';
 	//$ob = $_GET['getOb'];   //获取是否存在静态化的标识
@@ -37,7 +39,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <!-- 上述3个meta标签*必须*放在最前面，任何其他内容都*必须*跟随其后！ -->
-    <title><?php echo $userInfoArray['username'];?>的主页</title>
+    <title><?php echo $userInfoArray['username'];?>的主页-课间十分钟</title>
 
     <!-- Bootstrap -->
     <link href="https://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
@@ -53,7 +55,7 @@
   <body data-value="<?php echo $userInfoArray['username'];?>" data-type="user">
 	<section>
 		<div class="user-head container">
-			<h2>你好，<?php echo $userInfoArray['the_name'];?>,欢迎来到你的空间</h2>	
+			<h2>你好，欢迎来到<?php echo $userInfoArray['username'];?>的空间</h2>	
 			<div class ="user-head-info">
 				<div class="user-head-info-header col-md-2">
 					<img class="img-responsive" src="../../upload/head/<?php echo $userInfoArray['user_head'];?>">

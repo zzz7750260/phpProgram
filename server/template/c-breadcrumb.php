@@ -1,21 +1,24 @@
 <?php 
 	include_once('../system.article.php');
-	
+	include_once('../system.util.php');
+	$commonUtil = new util();
 	//根据当前的id获取对应的分类信息
 	
-	//$theCategoryInfoBreadcrumb = $theArticleUtil->categoryDetail($value['category_id']);	
+	$theArticleUtil = new articleUtil();
+	$theCategoryInfoBreadcrumb = $theArticleUtil->categoryDetail($value['category_id']);	
 	
 	//根据文章的信息来获取父类对应的信息
 	
 	//echo $value['category_id'];
 	
 	//print_r($theCategoryInfoBreadcrumb);
-	$theBreadcrumbArray = getCategoryInfoArray($value['category_id']);
+	$theBreadcrumbArray = $theArticleUtil->getCategoryInfoArray($value['category_id']);
 	//对数组进行顺序调整
 	sort($theBreadcrumbArray);
 	//print_r($theBreadcrumbArray);
 	
 	//根据递归方法获取对应的面板屑数组
+	/*
 	function getCategoryInfoArray($fid,&$categoryArray = ''){
 		if($fid){
 			//根据当前分类的父类信息获取该父类的详情	
@@ -31,24 +34,29 @@
 
 		return $categoryArray;
 	}
+	*/
 	
 	
 	
 ?>
 
 	<ol class="breadcrumb">
+	<li>
+		<a href="<?php $indexUrl = ''.$commonUtil->isHttpsCheckSelect().'//'.$_SERVER['HTTP_HOST']; echo $indexUrl;?>">首页</a>
+	</li>
 	
 	<?php 
+		$breadcrumbLiHtml = '';
 		//遍历数组组成面板屑
 		foreach($theBreadcrumbArray as $key => $breadcrumbValue){
 			$breadcrumbLiHtml .= '<li><a href="';
 			//$breadcrumbValue[cpid] 为0 时为最顶层分类，链接也要为汇总链接,否则为普通分类链接
 			if($breadcrumbValue[cpid] == 0){
-				$breadcrumbLiHtml .= 'http://'.$_SERVER['HTTP_HOST'].'/article/'.$breadcrumbValue['categoryyw'].'/'.$breadcrumbValue['categoryyw'].'-list-1.html';
+				$breadcrumbLiHtml .= ''.$commonUtil->isHttpsCheckSelect().'//'.$_SERVER['HTTP_HOST'].'/article/'.$breadcrumbValue['categoryyw'].'/'.$breadcrumbValue['categoryyw'].'-list-1.html';
 					
 			}
 			else{
-				$breadcrumbLiHtml .= 'http://'.$_SERVER['HTTP_HOST'].'/article/'.$breadcrumbValue['categoryyw'].'/'.$breadcrumbValue['categoryyw'].'-1.html';			
+				$breadcrumbLiHtml .= ''.$commonUtil->isHttpsCheckSelect().'//'.$_SERVER['HTTP_HOST'].'/article/'.$breadcrumbValue['categoryyw'].'/'.$breadcrumbValue['categoryyw'].'-1.html';			
 			}
 			$breadcrumbLiHtml .= '">'.$breadcrumbValue['categoryname'].'</a></li>';
 			

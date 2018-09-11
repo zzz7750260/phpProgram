@@ -144,5 +144,16 @@
 			$rootPath = $rootPath .$afterPath; 
 		}
 		return $rootPath;
-	}	
+	}
+
+	//判断请求是http还是https，并选择当前的请求
+	function isHttpsCheckSelect(){
+		$http_type = ((isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] == 'on') || (isset($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO'] == 'https')) ? 'https:' : 'http:';
+		//echo $http_type .'//'. $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI']."==========<br/>";
+		//echo $http_type;
+		return $http_type;
+	}
 }
+
+//$a = new util();
+//echo $a->isHttpsCheckSelect();

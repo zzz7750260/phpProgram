@@ -1,5 +1,7 @@
 <?php
 include('../system.mysql.int.php');
+include_once('../system.util.php');
+$commonUtil = new util();
 
 $theAid = $_GET['article_id'];
 //数据库查询

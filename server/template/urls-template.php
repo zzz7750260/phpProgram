@@ -1,4 +1,6 @@
 <?php
+	include_once('../system.util.php');
+	//$commonUtil = new util();
 	//echo php_uname('s'); //获取服务器版本
 	//echo $_SERVER['PROCESSOR_IDENTIFIER'];
 	//echo PHP_EOL;  根据不同环境变量的换行符，在windows下会是/r/n，在linux下是/n，在mac下是/r
@@ -28,8 +30,8 @@
 	function returnPath($thePath = ''){
 		$theRootPath = $_SERVER['HTTP_HOST'];
 		//echo $theRootPath;
-		
-		$theReturnPath = "http://" . $theRootPath;
+		$commonUtil = new util();
+		$theReturnPath = $commonUtil->isHttpsCheckSelect().'//' . $theRootPath;
 		if($thePath){
 			$theReturnPath = $theReturnPath . $thePath; 			
 		}
@@ -84,26 +86,15 @@
 	echo $locXmlChildCategory;	
 
 ?>
-
 <?php
-	//输出所有用户页面
-	$userPageArraySql = "select * from member where 1 = 1";
-	$userPageArraySql_db = mysqli_query($conn,$userPageArraySql);
-	$userPageArray = array();
-	while($userPageArraySql_db_array = mysqli_fetch_assoc($userPageArraySql_db)){
-		$userPageArray[] = $userPageArraySql_db_array;
-	}
-	//print_r($userPageArray);
-
-	//遍历输出对应的信息
-	foreach($userPageArray as $userPageKey => $userPageValue){
-		//设置路径
-		$theUserPathAfter = '/article/user-page/' . $userPageValue['username'] . '.html';
-		$theUserPath = returnPath($theUserPathAfter);
-		$locXmltheUser .= $theUserPath .PHP_EOL;
-	}
-	echo $locXmltheUser;
+	//输出封面列表
+	$theCoverListPathAfter = "/article/cover-page/cover-list-1.html";
+	$theCoverListPath = returnPath($theCoverListPathAfter);
+	$locXmltheCoverList = $theCoverListPath.PHP_EOL;
+	echo $locXmltheCoverList;
 ?>
+
+
 
 <?php 
 	//输出所有封面信息
@@ -125,6 +116,28 @@
 	echo $locXmltheCover;
 	
 ?>
+
+
+<?php
+	//输出所有用户页面
+	$userPageArraySql = "select * from member where 1 = 1";
+	$userPageArraySql_db = mysqli_query($conn,$userPageArraySql);
+	$userPageArray = array();
+	while($userPageArraySql_db_array = mysqli_fetch_assoc($userPageArraySql_db)){
+		$userPageArray[] = $userPageArraySql_db_array;
+	}
+	//print_r($userPageArray);
+
+	//遍历输出对应的信息
+	foreach($userPageArray as $userPageKey => $userPageValue){
+		//设置路径
+		$theUserPathAfter = '/article/user-page/' . $userPageValue['username'] . '.html';
+		$theUserPath = returnPath($theUserPathAfter);
+		$locXmltheUser .= $theUserPath .PHP_EOL;
+	}
+	echo $locXmltheUser;
+?>
+
 
 <?php 
 	//输出所有文章

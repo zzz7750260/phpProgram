@@ -6,6 +6,8 @@
 		//echo "<hr/>";
 		//echo $value['title'];
 		include_once('../system.article.php');
+		include_once('../system.util.php');
+		$commonUtil = new util();
 		$articleUtil = new articleUtil();
 	?>
 <!DOCTYPE html>

@@ -6,10 +6,10 @@ class articleUtil{
 		
 		//默认为获取随机，可进行设置
 		if($isRand = 'rand'){
-			$listSql = "select a.* from article as a join (select round(rand()*(select max(aid) from article)) as aid) as b on a.aid >= b.aid where category_id = '$categoryId' order by a.aid ASC limit $limitNum";
+			$listSql = "select a.* from article as a join (select round(rand()*(select max(aid) from article)) as aid) as b on a.aid >= b.aid where category_id = '$categoryId' order by a.aid ASC limit 0,$limitNum";
 		}
 		if($isRand == 'common'){
-			$listSql = "select * from article where category_id = '$categoryId' order by ASC limit $limitNum";
+			$listSql = "select * from article where category_id = '$categoryId' order by ASC limit 0,$limitNum";
 			
 		}
 		//$listSql = "SELECT * FROM `table`  AS t1 JOIN (SELECT ROUND(RAND() * (SELECT MAX(id) FROM `table`)) AS id) AS t2 WHERE t1.id >= t2.id";
@@ -67,7 +67,7 @@ class articleUtil{
 			$theCategorySql = "select a.*,b.*,c.* from article as a join category as b on a.category_id = b.cid join page as c on a.article_cover = c.ptitle where a.category_id in ($getTheCaregoryString) order by aid DESC limit 0 , $num";
 			
 			//
-			if($num){
+			if($num == 0){
 				$theCategorySql = "select a.*,b.*,c.* from article as a join category as b on a.category_id = b.cid join page as c on a.article_cover = c.ptitle where a.category_id in ($getTheCaregoryString) order by aid DESC";
 			}
 		}
@@ -144,6 +144,24 @@ class articleUtil{
 			$theCategoryArray = $theCategorySql_db_array;
 		}
 		return $theCategoryArray;
+	}
+	
+	//公共类：获取该category_id下的分类链，用于生成面板屑
+	//根据递归方法获取对应的面板屑数组
+	function getCategoryInfoArray($fid,&$categoryArray = ''){
+		if($fid){
+			//根据当前分类的父类信息获取该父类的详情	
+			//$theArticleUtil = new articleUtil();//调用必须要放在内部
+			$fatherCategoryInfo = $this->categoryDetail($fid);	
+			//将父类信息存放到数组中
+			$categoryArray[] = $fatherCategoryInfo;
+			//再根据父类的父类进行递归			
+			$this->getCategoryInfoArray($fatherCategoryInfo['cpid'],$categoryArray);
+			
+			//返回得到的数组	
+		}
+
+		return $categoryArray;
 	}
 }
 //$articleUtil = new articleUtil;
