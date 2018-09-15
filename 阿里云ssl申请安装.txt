@@ -37,6 +37,8 @@ https://www.aliyunbaike.com/ssl/390/
 多站点安装
 http://blog.51cto.com/guoxh/2114630
 
+https://help.aliyun.com/knowledge_detail/48032.html  阿里云
+
 多站点证书
 https://www.jb51.net/article/143599.htm 重要
 

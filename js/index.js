@@ -352,10 +352,15 @@ function userControl(){
 					data:{turl:"checkArticle",article_Id:articleVideoId},
 					type:'get',
 					dataType:'json',
+					async:false,//设为同步等待视频加载
 					success:function(data){
 						console.log("============从后端返回的文章详细请求信息===========");
 						console.log(data);
 						alert(data.result.video_platform)
+						
+						//通过异步操作将video_platform转到全局数
+						that.video_platform = data.result.video_platform;
+						
 						if(data.status == 200){
 							$(".theArticle-imgk").find("img").css("display","none");
 							
@@ -369,15 +374,25 @@ function userControl(){
 							//根据返回的视频平台类型组装数据
 							switch(data.result.video_platform){
 								case 'bilibili':
-								var videoHtml = '<iframe class="the-video" src="'+data.result.video_source+'" scrolling="no" border="0" frameborder="no" framespacing="0" allowfullscreen="true" style="width:'+videoWidth+'px;max-height:'+videoHeight+'px;height:'+videoHeight+'px"> </iframe>';
-								$(videoHtml).appendTo(".theArticle-imgk");								
+								var videoHtml = '<iframe class="the-video" id="platform_bilibili" src="'+data.result.video_source+'" scrolling="no" border="0" frameborder="no" framespacing="0" allowfullscreen="true" webkitallowfullscreen="true" mozallowfullscreen="true" allowtransparency="true" style="width:100%;max-height:100%;height:'+videoHeight+'px"> </iframe>';
+								//$(videoHtml).appendTo(".theArticle-imgk");								
 								break;		
+								
 								case 'youku':
 								var videoHtml = '<embed class="the-video" src="'+data.result.video_source+'" allowFullScreen="true" quality="high" width="'+videoWidth+'px" height="'+videoHeight+'px" align="middle" allowScriptAccess="always" type="application/x-shockwave-flash"></embed>'
-								$(videoHtml).appendTo(".theArticle-imgk");							
+								//$(videoHtml).appendTo(".theArticle-imgk");							
 								break;
+								
+								case 'youkuHttps':
+								//var videoHtml = '<iframe class="the-video" src="'+data.result.video_source+'" scrolling="no" border="0" frameborder="no" framespacing="0" allowfullscreen="true" webkitallowfullscreen="true" mozallowfullscreen="true" style="width:'+videoWidth+'px;max-height:'+videoHeight+'px;height:'+videoHeight+'px"> </iframe>';
+								var videoHtml = '<iframe class="the-video" src="'+data.result.video_source+'" scrolling="no" border="0" frameborder="no" framespacing="0" allowfullscreen="true" webkitallowfullscreen="true" mozallowfullscreen="true" allowtransparency="true" style="width:100%;max-height:100%;height:'+videoHeight+'px"> </iframe>';
+								break;
+								
+								
 							}
 							
+							//将视频加到网站中
+							$(videoHtml).appendTo(".theArticle-imgk");
 						}
 						
 

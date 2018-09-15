@@ -85,7 +85,7 @@
 						</div>
 						-->
 						<div class="col-md-12 theArticle-imgk">
-							<img class="img-responsive" data-getid ="<?php echo $value['aid'];?>" src="../../upload/cover/<?php echo $value['article_img'];?>">
+							<img class="img-responsive theArticle-imgk-img" data-getid ="<?php echo $value['aid'];?>" src="../../upload/cover/<?php echo $value['article_img'];?>">
 							
 							
 						</div>

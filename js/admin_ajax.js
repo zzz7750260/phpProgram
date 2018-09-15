@@ -744,6 +744,201 @@ function adminArticle(){
 				})
 			})
 			
+			
+			//继续添加视频
+			$("#video-add").click(function(){
+				var videoHtml = '<div class="row video-k"><label class="form-label col-xs-4 col-sm-2 col-md-2">视频添加：</label><div class="video-put col-xs-8 col-sm-9 col-md-8"><input type="text" class="input-text video-value col-md-2 col-sm-2" value="" placeholder="输入视频名称"  name="video-name"><hr/> <select name="video-platform" class="select video-value col-md-2 col-sm-2"><option value="none">全部栏目</option><option value="youkuHttps">├优酷</option><option value="youkuVideo">├百度video</option><option value="bilibili">├哔哩哔哩</option><option value="souhu">├搜狐视频</option></select><hr/><input type="text" class="input-text video-value col-md-8 col-sm-8" value="" placeholder="输入视频链接"  name="video-link"><span class="video-btn-upload btn-upload form-group"><input id="video-file" class="input-text upload-url radius video-value the-video-file" type="text" name="video-pic"  readonly value="" placeholder="输入视频图片"><a href="javascript:void();" class="btn btn-primary radius "><i class="iconfont">&#xf0020;</i> 浏览文件</a><input type="file" id="video-fileList" multiple name="video-pic-file" class="video-input-file video-value input-file" data-imgbase></span><div class="video-img col-md-12"><div class="video-img-show col-md-4"><img src="" class="img-responsive"></div><div style="clear:both"></div></div></div><div class="video-close col-md-1 col-sm-1">X</div><div style="clear:both"></div></div>';
+				
+				//$(".video-k").clone().appendTo(".theVideo");
+				
+				$(videoHtml).appendTo(".theVideo");
+				
+			})
+			
+			//消除增加的视频链接
+			$(document).on("click", ".video-close", function(){
+				$(this).parent().remove();
+			})	
+
+			
+			//获取视频的值
+			$("#video-get").click(function(){
+				var videoArray = {};			
+				var n = 0;
+				$(".theVideo").find(".video-k").each(function(keyFather,itemFather){
+					
+					
+					var videoChildrenArray = {};  //必须要对前一个值清除，否则就会导致最后一个循环值存在
+					//console.log(key);
+					//console.log(itemFather);
+					
+					$(itemFather).find(".video-put").find(".video-value").each(function(key,item){
+						//console.log(key);
+						//console.log(item);	
+						
+						//获取各个框的值并组成一个数组
+						var videoChildrenKey = $(item).attr("name");		
+						var videoChildrenValue = $(item).val();
+						if(videoChildrenKey == "video-pic"){
+							videoChildrenValue = $(item).attr("value");
+						}
+						if(videoChildrenKey == "video-pic-file"){
+							videoChildrenValue = $(item).data("imgbase");
+						}
+						videoChildrenArray[videoChildrenKey] = videoChildrenValue;
+						
+						//that.videoChildrenArray = videoChildrenArray;
+						
+						//将这个数据的值存放在父类数组中		
+																		
+					})	
+					console.log(keyFather);	
+					console.log(videoChildrenArray);	
+					//console.log(n);
+					videoArray[keyFather] = videoChildrenArray;
+					//console.log(videoArray);			
+					
+				})
+				
+				console.log(videoArray);		
+				//将获取组装好的数组存储到全局变量
+				that.videoArray = videoArray;
+				//console.log(that);
+				
+				//将获取到的数据提交到后台
+				$.ajax({
+					url:"../server/ajax/thevideo.php",
+					data:{turl:"addVideo",theVideoArray:that.videoArray},
+					type:"post",
+					dataType:"json",
+					success:function(data){
+						console.log("===========后端返回的video数据===============");
+						console.log(data)
+					}
+					
+				})
+				
+			})
+			
+			//获取视频的图片
+			$(document).on("change",".video-input-file",function(){
+				//console.log(that);
+				
+				var index = $(this).parents(".video-k").index();
+				console.log(index);						
+				//图片上传转为base64
+				var file = this.files[0];
+				
+				console.log(file);
+					
+				//获取兄弟节点
+				var theVideoInputHtml = $(this).siblings(".the-video-file");				
+				//console.log(theVideoInputHtml);	
+				var theVideoShowHtml = $(this).parent().siblings(".video-img");	
+				
+				$(theVideoInputHtml).attr("value",file['name']);
+				
+				var theValue = $(theVideoInputHtml).attr("value");
+				console.log(theValue);
+				
+				var reader = new FileReader();
+				reader.readAsDataURL(file);
+				//var self = this;
+				reader.onload = function(e){
+					//console.log(that);
+					
+					//获取兄弟节点,并将获取到图片的的值传递给兄弟节点
+					//获取到base64的值
+					var imgBase = this.result;
+					//console.log(imgBase);
+					$(theVideoShowHtml).find("img").attr("src",this.result);
+					
+					//将base64储存到全局变量
+					that.imgBaseShow = imgBase;
+					//将获取到的base存到input中方便提取	
+					//console.log("内："+that.imgBaseShow);		
+
+					//console.log($(this));
+					if(index !=0){
+						index = index-1;
+					}
+					$(".video-input-file").eq(index).attr("data-imgbase",that.imgBaseShow);
+					
+				}
+				
+				//这里因为是异步的问题，所以外部不能取到值
+				//console.log("外：" + that.imgBaseShow);
+				//$(this).attr("data-imgbase",that.imgBaseShow);
+				
+			})
+			
+			//$(".video-input-file").click(function(){
+			//	var index = $(this).index();
+			//	console.log(index);	
+			//})
+			
+			
+			
+			//封装获取视频信息
+			function getVideoInfoArray(articleId){
+				var videoArray = {};			
+				var n = 0;
+				$(".theVideo").find(".video-k").each(function(keyFather,itemFather){
+					
+					
+					var videoChildrenArray = {};  //必须要对前一个值清除，否则就会导致最后一个循环值存在
+					//console.log(key);
+					//console.log(itemFather);
+					
+					$(itemFather).find(".video-put").find(".video-value").each(function(key,item){
+						//console.log(key);
+						//console.log(item);	
+						
+						//获取各个框的值并组成一个数组
+						var videoChildrenKey = $(item).attr("name");		
+						var videoChildrenValue = $(item).val();
+						if(videoChildrenKey == "video-pic"){
+							videoChildrenValue = $(item).attr("value");
+						}
+						if(videoChildrenKey == "video-pic-file"){
+							videoChildrenValue = $(item).data("imgbase");
+						}
+						videoChildrenArray[videoChildrenKey] = videoChildrenValue;
+						
+						//that.videoChildrenArray = videoChildrenArray;
+						
+						//将这个数据的值存放在父类数组中		
+																		
+					})	
+					console.log(keyFather);	
+					console.log(videoChildrenArray);	
+					//console.log(n);
+					videoArray[keyFather] = videoChildrenArray;
+					//console.log(videoArray);			
+					
+				})
+				
+				console.log(videoArray);		
+				//将获取组装好的数组存储到全局变量
+				that.videoArray = videoArray;
+				//console.log(that);
+				
+				//将获取到的数据提交到后台
+				$.ajax({
+					url:"../server/ajax/thevideo.php",
+					data:{turl:"addVideo",theVideoArray:that.videoArray,theArticleId:articleId},
+					type:"post",
+					dataType:"json",
+					success:function(data){
+						console.log("===========后端返回的video数据===============");
+						console.log(data)
+					}
+					
+				})				
+				
+			}
+			
+						
 			$("#btn-save").on("click",function(){
 				saveArticle("draft","add");
 			});
@@ -845,6 +1040,13 @@ function adminArticle(){
 					success:function(data){
 						console.log("===========提交文章草稿的返回值============");
 						console.log(data);
+						
+						//在文章文章添加成功返回后，获取到对应的文章id，并向该id提交对应的视频
+						if(data.status == 200){
+							//获取文章的id,并调用video获取提交
+							getVideoInfoArray(data.result);
+							
+						}
 					}
 										
 				})

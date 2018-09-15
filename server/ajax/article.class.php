@@ -69,13 +69,28 @@ class theArticleClass{
 			
 			
 			//返回数组
+			//$resArray = array(
+			//	"status" =>200,
+			//	"msg" =>'ok',
+			//	"result" =>$theResult,
+			//	"img" => $returnImgArray,
+			//);
+			
+			//在存储成功后返回该文章的id用于存储针对该篇文章的视频
+			$checkTheArticleSql = "select * from article where title = '$theTitle'";
+			$checkTheArticleSql_db = mysql_query($checkTheArticleSql);
+			$checkTheArticleArray = array();
+			while($checkTheArticleSql_db_array = mysql_fetch_assoc($checkTheArticleSql_db)){
+				$checkTheArticleArray = $checkTheArticleSql_db_array;
+			}
+			
+			//返回数组
 			$resArray = array(
 				"status" =>200,
-				"msg" =>'ok',
-				"result" =>$theResult,
+				"msg" =>'文章增加或修改成功',
+				"result" =>$checkTheArticleArray['aid'],
 				"img" => $returnImgArray,
-			);
-			
+			);		
 		}
 		else{
 			$theResult = "数据插入失败";	
