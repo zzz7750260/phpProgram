@@ -15,10 +15,38 @@
 	width:100%;
 }
 
+
 /*文章边列表*/
 .theSide>ul>li{
 	padding:0 8px;
 }
 .side-article-list-img>img{
 	width:100%;
+}
+
+
+/*媒体查询控制*/
+/*控制模态框大小*/
+@media (min-width: 300px) and (max-width:767px){
+	.modal-video{
+		width:350px;
+	}
+}
+
+@media (min-width: 768px) and (max-width:991px){
+	.modal-video{
+		width:700px;
+	}
+}
+
+@media (min-width: 992px) and (max-width:1200px){
+	.modal-video{
+		width:800px;
+	}
+}
+
+@media (min-width: 1200px){
+	.modal-video{
+		width:900px;
+	}
 }

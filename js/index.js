@@ -400,7 +400,97 @@ function userControl(){
 				})
 			})
 			
+			//利用模态框
+			$(".theArticle-imgks-img").click(function(){
+				//获取到该video的id
+				var theVideoId = $(this).data('getvideoid');
+				alert(theVideoId);
+				
+				//打开模态框
+				$('#myModal').modal();
+							
+				//向后端提交视频请求
+				$.ajax({
+					url:"../../server/ajax/thevideo.php",
+					data:{turl:"showVideo",videoId:theVideoId},
+					type:"get",
+					dataType:"json",
+					success:function(data){
+						console.log("==========后台传递过来video的信息==============");
+						console.log(data);
+						//获取返回的状态
+						if(data.status == 200){
+													
+							//获取图片的宽度
+							var videoWidth = $(".modal-dialog").width();
+							
+							//根据video的宽度来自适应高度
+							
+							var videoHeight = videoWidth/1.6;
+							
+							console.log(data.result.video_pt);
+							//根据返回的视频平台类型组装数据
+							switch(data.result.video_pt){
+								case 'bilibili':
+								var videoHtml = '<iframe class="the-video" id="platform_bilibili" src="'+data.result.video_link+'" scrolling="no" border="0" frameborder="no" framespacing="0" allowfullscreen="true" webkitallowfullscreen="true" mozallowfullscreen="true" allowtransparency="true" style="width:100%;max-height:100%;height:'+videoHeight+'px"> </iframe>';
+								//$(videoHtml).appendTo(".theArticle-imgk");								
+								break;		
+								
+								case 'youku':
+								var videoHtml = '<embed class="the-video" src="'+data.result.video_link+'" allowFullScreen="true" quality="high" width="'+videoWidth+'px" height="'+videoHeight+'px" align="middle" allowScriptAccess="always" type="application/x-shockwave-flash"></embed>'
+								//$(videoHtml).appendTo(".theArticle-imgk");							
+								break;
+								
+								case 'youkuHttps':
+								//var videoHtml = '<iframe class="the-video" src="'+data.result.video_source+'" scrolling="no" border="0" frameborder="no" framespacing="0" allowfullscreen="true" webkitallowfullscreen="true" mozallowfullscreen="true" style="width:'+videoWidth+'px;max-height:'+videoHeight+'px;height:'+videoHeight+'px"> </iframe>';
+								var videoHtml = '<iframe class="the-video" src="'+data.result.video_link+'" scrolling="no" border="0" frameborder="no" framespacing="0" allowfullscreen="true" webkitallowfullscreen="true" mozallowfullscreen="true" allowtransparency="true" style="width:100%;max-height:100%;height:'+videoHeight+'px"> </iframe>';
+								break;															
+							}						
+										
+							//将视频加到模态框中
+							//$(videoHtml).appendTo(".modal-body");
+							
+							//更改模态框的状态
+							$(".modal").find(".modal-title").text(data.result.video_name);
+							
+							//将之前modal-body中的内容清除后，再添加新的视频内容
+							$(".modal").find(".modal-body").empty();
+							
+							console.log(videoHtml);
+							$(videoHtml).appendTo(".modal-body");							
+						}	
+					}
+				})
+				
+				//当模态框关闭后同样将modal-body的内容清空
+				$('#myModal').on('hide.bs.modal', function () {
+				  // 执行一些动作...
+				  	$(".modal").find(".modal-body").empty();
+				})
 						
+				//判断是手机端，ipad，还是pc端
+				//var userAgentInfo = navigator.userAgent;  
+				//console.log(userAgentInfo);
+				
+				var theSelfControl = new selfControl();			
+				var isPhone = theSelfControl.checkPhoneSide();
+				
+				console.log("是否移动端：" +isPhone);
+				
+				//判断为手机端,如果为手机端，将模态框位置进行新定位
+				if(isPhone =="Android" || isPhone == "iPhone" || isPhone == "SymbianOS" || isPhone == "Windows Phone"){
+					//获取该图的高度
+					var imgHeight = $(this).height();
+					
+					//获取当前图片到顶部的距离			
+					var imgTop = $(this).offset().top - imgHeight;
+					console.log("移动端图片离顶部的距离:"+ imgTop);
+					
+					//实机测试暂时使用默认高度
+					//$("#myModal").css("top",imgTop);
+				}				
+			})
+								
 		}
 	}
 	theClick.searchClick();
@@ -484,7 +574,9 @@ function userControl(){
 		windowDrag:function(){
 			$(window).resize(function () { 
 				//获取video的宽度
-				var videoWidth = $(".theArticle-imgk").width();
+				var videoWidth = $(".modal-dialog").width() - 30;
+
+				
 				var videoHeight = videoWidth/1.6;
 				$(".the-video").css({
 					"width":videoWidth+"px",
@@ -570,6 +662,7 @@ function autoLoad(){
 			})
 			
 		},
+		
 						
 	}
 	theLoad.commentLoad();
@@ -599,4 +692,25 @@ function selfControl(){
 		}
 		return judge;
 	}	
+	
+	
+	//检测是否是pc端还是移动端
+	this.checkPhoneSide = function(){
+		var userAgentInfo = navigator.userAgent;  
+		var Agents = new Array("Android", "iPhone", "SymbianOS", "Windows Phone", "iPad", "iPod");  
+		var agentinfo = null;  
+		for (var i = 0; i < Agents.length; i++) {  
+		   if (userAgentInfo.indexOf(Agents[i]) > 0) { 
+			   //agentinfo = userAgentInfo; 
+			   agentinfo = Agents[i];
+			   break; 
+		   }  
+		}  
+		if(agentinfo){
+			return agentinfo;
+		}else{
+			return "PC"; 
+		}  
+	}
+	
 }

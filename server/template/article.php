@@ -16,6 +16,9 @@
 	$theCommentSql_db = mysql_query($theCommentSql);
 	$theCommentSql_db_num = mysql_num_rows($theCommentSql_db);
 	
+	//根据文章的id获取对应的视频集
+	
+	
 	?>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -77,17 +80,74 @@
 					</div>
 					
 					<div class="theArticle-img">
+						<h3>相关视频</h3>
 						<!--
 						<div class="col-md-6 col-md-offset-3 theArticle-imgk">
-							<img class="" data-getid ="<?php echo $value['aid'];?>" src="../../upload/cover/<?php echo $value['article_img'];?>">
-							
-							
+							<img class="" data-getid ="<?php echo $value['aid'];?>" src="../../upload/cover/<?php echo $value['article_img'];?>">													
 						</div>
 						-->
-						<div class="col-md-12 theArticle-imgk">
-							<img class="img-responsive theArticle-imgk-img" data-getid ="<?php echo $value['aid'];?>" src="../../upload/cover/<?php echo $value['article_img'];?>">
+						
+						<div class="col-md-12 theArticle-imgks ">				
+							<!--<img class="img-responsive theArticle-imgk-img" data-getid ="<?php echo $value['aid'];?>" src="../../upload/cover/<?php echo $value['article_img'];?>">-->
+							
+						<?php 
+							//根据文章的id获取对应的视频集
+							$theVideoArraySql = "select * from video where video_article = '$commArticleId'";
+							$theVideoArraySql_db = mysql_query($theVideoArraySql);
+							$theVideoArraySql_db_num = mysql_num_rows($theVideoArraySql_db);
+							$theVideoArray = array();
+							while($theVideoArraySql_db_array = mysql_fetch_assoc($theVideoArraySql_db)){
+								$theVideoArray[] = $theVideoArraySql_db_array;
+							}
+													
+							//根据视频的数量来决定框的大小	
+							switch($theVideoArraySql_db_num){
+								case 1:
+									$htmlVideoK = '<div class="col-md-12">';
+									break;
+								case 2:
+									$htmlVideoK = '<div class="col-md-6">';
+									break;
+								case 3:
+									$htmlVideoK = '<div class="col-md-4">';
+									break;					
+								default: 
+									$htmlVideoK = '<div class="col-md-3">';
+							}
+							
+							$htmlVideoContainer = '';
+							//遍历数组，将video的图片输出
+							foreach($theVideoArray as $theVideoKey => $theVideoValue){							
+								$htmlVideoContainer .= $htmlVideoK . '<img class="img-responsive theArticle-imgks-img" data-getvideoid ="'.$theVideoValue['vid'].'" src="../../upload/video/'.$theVideoValue['video_img'].'" title="'.$theVideoValue['video_name'].'" alt="'.$theVideoValue['video_name'].'"></div>';							
+							}
+							
+							echo $htmlVideoContainer;
+							//if($theVideoArraySql_db_num = 1){
+							//	$htmlVideoK .= '<div class="col-md-12">';
+							//}
+																												
+						?>
+						
+							<div class="clear"></div>
 							
 							
+							<!--设置模态框-->
+							<!-- 模态框（Modal） -->
+							<div class="modal fade videoModal" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+								<div class="modal-dialog modal-video">
+									<div class="modal-content">
+										<div class="modal-header">
+											<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+											<h4 class="modal-title" id="myModalLabel">模态框（Modal）标题</h4>
+										</div>
+										<div class="modal-body">在这里添加一些文本</div>
+										<div class="modal-footer">
+											<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+											<button type="button" class="btn btn-primary">提交更改</button>
+										</div>
+									</div><!-- /.modal-content -->
+								</div><!-- /.modal -->
+							</div>
 						</div>
 						
 						<div class="clear"></div>
@@ -124,7 +184,7 @@
 			
 			<div class="article-comment-input">
 			<?php 
-				if($value['commit_status'] == true){
+				if($value['commit_status'] == "true"){
 					include('c-comment-input.php');					
 				}
 				else{

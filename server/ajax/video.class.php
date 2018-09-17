@@ -49,11 +49,46 @@ class theVideo{
 		$returnVideoJson = json_encode($returnVideoArray);		
 		print_r($returnVideoJson);
 	}
-
+	
+	//根据video的id来返回对应的信息
+	function showVideo(){
+		$theVideoId = $_GET['videoId'];
+		$videoShowArraySql = "select * from video where vid = $theVideoId";
+		$videoShowArraySql_db = mysql_query($videoShowArraySql);
+		$videoShowArray = array();
+		while($videoShowArraySql_db_array = mysql_fetch_assoc($videoShowArraySql_db)){
+			$videoShowArray = $videoShowArraySql_db_array;
+		}
+		//print_r($videoShowArray);
+		
+		//获取数据个数
+		if($videoShowArray){
+			//组装返回视频的数据
+			$returnVideoShowArray = array(
+				status => 200,
+				msg =>"视频返回成功",
+				result => $videoShowArray
+			);			
+		}
+		else{
+			//组装返回视频的数据
+			$returnVideoShowArray = array(
+				status => 400,
+				msg =>"视频返回失败",
+				result => ''
+			);	
+		}
+		//将数组转换为json返回给前端
+		$returnVideoShowJson = json_encode($returnVideoShowArray);		
+		print_r($returnVideoShowJson);	
+	}
+	
 	function theReturn($turl){
 		if($turl =='addVideo'){
-			$this->addVideo();
-			
+			$this->addVideo();		
 		}	
+		if($turl =='showVideo'){
+			$this->showVideo();
+		}
 	}	
 }
