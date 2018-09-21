@@ -141,10 +141,21 @@
 		//获取根目录
 		$rootPath = $_SERVER['HTTP_HOST'];
 		if($afterPath){
-			$rootPath = $rootPath .$afterPath; 
+			$rootPath = $this->isHttpsCheckSelect .'//'.$rootPath .$afterPath; 
 		}
 		return $rootPath;
 	}
+	
+	//weixin 网络路径(由于微信检测不出http或者https，因而需要自己定义);
+	function wxPath($afterPath = ''){
+		//获取根目录
+		$rootPath = $_SERVER['HTTP_HOST'];
+		if($afterPath){
+			$rootPath = 'https://'.$rootPath .$afterPath; 
+		}
+		return $rootPath;
+	}
+	
 
 	//判断请求是http还是https，并选择当前的请求
 	function isHttpsCheckSelect(){
