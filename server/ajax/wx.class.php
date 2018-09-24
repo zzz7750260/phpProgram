@@ -90,6 +90,7 @@
 		
 			//当获取到的信息为文字时
 			if(strtolower($postObj->MsgType == "text")){
+																			
 				//查询该内容是否在category中
 				$num = $this->checkWordNum("category",$postObj->Content);
 				
@@ -125,9 +126,13 @@
 						}									
 					}
 					
-				}
-				
+				}				
 				echo $info;	
+				
+				//测试：输出图片$info
+				$thePath = $theUtil->physicalPath('/wx_test/info.xml');
+				//存储到对应的文件中
+				file_put_contents($thePath,$info);	
 			}		
 
 			//当接受到的为图片信息时
@@ -203,12 +208,50 @@
 						$theTime = time();
 						
 						//当查询的表为category时
-						if($theDataTable == "category"){							
-							$theCheckSqlDuotuwenSql = "select a.*, b.* from category as a join article as b on a.cid = b.category_id where a.categoryname = '$theWord'";
+						if($theDataTable == "category"){			
+							//获取所有的分类
+							$getAllCategorySql = "select * from category where 1 = 1";
+							$getAllCategorySql_db = mysql_query($getAllCategorySql);
+							$getAllCategoryArray = array();
+							while($getAllCategorySql_db_array = mysql_fetch_assoc($getAllCategorySql_db)){
+								$getAllCategoryArray[] = $getAllCategorySql_db_array;
+							}
+															
+																				
+							
+							//遍历数组找出查询的文字对应cid
+							foreach($getAllCategoryArray as $getAllCategoryKey => $getAllCategoryValue){
+								//当微信输入的关键字与查询类组的名称相同时，调用公共类查询之类，并组成对应的数组
+								if($getAllCategoryValue['categoryname'] == $theWord){
+									//$thePath = $theUtil->physicalPath('/wx_test/categoryID.txt');
+									//存储到对应的文件中
+									//file_put_contents($thePath,$getAllCategoryValue['cid']);
+									
+									//$getCategoryIdArray[] = $getAllCategoryValue['cid'];
+									$getCategoryIdArray = $this->getChildCategory($getAllCategoryArray,$getAllCategoryValue['cid']);
+								}					
+							}
+							
+							//$getAllCategoryString = implode(',',$getAllCategoryArray);
+							
+							//var_export是将数组转换为字符串并用file_put_contents输出
+							//$getAllCategoryString = var_export($getCategoryIdArray,true);
+							//测试：输出得到的数组$getCategoryIdString
+							//$thePath = $theUtil->physicalPath('/wx_test/stringS.txt');
+							//存储到对应的文件中
+							//file_put_contents($thePath,$getAllCategoryString);
+							
+							//将组成的数组转换为字符串
+							$getCategoryIdString = implode(',',$getCategoryIdArray);
+
+																						
+							
+							$theCheckSqlDuotuwenSql = "select a.*,b.* from article as a join category as b on a.category_id = b.cid where b.cid in ($getCategoryIdString) order by aid DESC limit 0,5";					
+							//$theCheckSqlDuotuwenSql = "select a.*, b.* from category as a join article as b on a.cid = b.category_id where a.categoryname = '$theWord' order by b.aid DESC limit 0,5";
 						}
 						
 						if($theDataTable == "article"){							
-							$theCheckSqlDuotuwenSql = "select a.*, b.* from article as a join category as b on a.category_id = b.cid where title like '%$theWord%'";
+							$theCheckSqlDuotuwenSql = "select a.*, b.* from article as a join category as b on a.category_id = b.cid where title like '%$theWord%' order by a.aid DESC limit 0,5";
 						}		
 						
 						$theCheckSqlDuotuwenSql_db = mysql_query($theCheckSqlDuotuwenSql);
@@ -301,6 +344,31 @@
 			$theCheckSql_db_num = mysql_num_rows($theCheckSql_db);
 			return $theCheckSql_db_num;
 		}
+		
+		//封装类：根据得到的分类查询子分类，并组成数组
+		//$theAllCategory:为查询到的所有数组
+		//$theId:需要对比category的id
+		//$resultArray:组成的数组
+		function getChildCategory($theAllCategory,$theId,&$resultArray=''){
+				$theUtil = new util();
+			$resultArray[] = $theId; //如果需要获取父类值，就首先将父类值赋值到数组中
+			//遍历数组，找出符合的category放在数组中
+			foreach($theAllCategory as $CategoryKey => $CategoryValue){
+				if($CategoryValue['cpid'] == $theId){													
+					//$resultArray[] = $CategoryValue['cid']; //如果只是获取子类值就用这个，如果需要父类值就不需要这个了，因为这个会导致重复赋值，上面已经赋过该父类的值了
+					$this->getchildCategory($theAllCategory,$CategoryValue['cid'],$resultArray);
+				}
+			}
+			//var_export是将数组转换为字符串并用file_put_contents输出
+			//$getAllCategoryString = var_export($resultArray,true);
+			//测试：输出得到的数组$getCategoryIdString
+			//$thePath = $theUtil->physicalPath('/wx_test/CategoryValueArrayS.txt');
+			//存储到对应的文件中
+			//file_put_contents($thePath,$getAllCategoryString);
+				
+			return $resultArray;
+		}
+		
 		
 		//封装类，设置curl获取
 		function curl_http($theUrl){

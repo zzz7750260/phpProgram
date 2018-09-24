@@ -502,7 +502,13 @@ function userControl(){
 					console.log("移动端图片离顶部的距离:"+ imgTop);
 					
 					//实机测试暂时使用默认高度
-					//$("#myModal").css("top",imgTop);
+					//$("#myModal").css("top",imgTop);				
+					
+					//当为手机端时，获取整个屏幕的宽度，在根据比例对modal-video宽度进行控制
+					var windowWidth = $(window).width();
+					console.log("window的宽度："+windowWidth);
+					var theModalWidth = (windowWidth * 0.95);
+					$(".modal-video").css("width",theModalWidth+"px");
 				}				
 			})
 								

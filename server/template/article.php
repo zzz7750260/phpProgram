@@ -143,7 +143,7 @@
 										<div class="modal-body">在这里添加一些文本</div>
 										<div class="modal-footer">
 											<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
-											<button type="button" class="btn btn-primary">提交更改</button>
+											<!--<button type="button" class="btn btn-primary">提交更改</button>-->
 										</div>
 									</div><!-- /.modal-content -->
 								</div><!-- /.modal -->

@@ -1,0 +1,66 @@
+array (
+  0 => 
+  array (
+    'cid' => '6',
+    'cpid' => '0',
+    'categoryname' => '电影',
+    'categoryyw' => 'cinema',
+    'categoryms' => '收集短视频，电影解说',
+  ),
+  1 => 
+  array (
+    'cid' => '7',
+    'cpid' => '6',
+    'categoryname' => '解说影评',
+    'categoryyw' => 'cinema_commentary',
+    'categoryms' => '收集各类up主针对电影做出的解说，影评，吐槽等',
+  ),
+  2 => 
+  array (
+    'cid' => '8',
+    'cpid' => '6',
+    'categoryname' => '微电影',
+    'categoryyw' => 'micro-cinema',
+    'categoryms' => '由管理员在网络中收集分享的各类微电影，希望大家十分钟的微电影中，体会到属于自己的感受',
+  ),
+  3 => 
+  array (
+    'cid' => '9',
+    'cpid' => '0',
+    'categoryname' => '生活',
+    'categoryyw' => 'live',
+    'categoryms' => '生活频道主要是收集各类生活常识，生活小妙招/技巧类的视频，帮助大家更好的生活',
+  ),
+  4 => 
+  array (
+    'cid' => '10',
+    'cpid' => '9',
+    'categoryname' => '生活常识',
+    'categoryyw' => 'live-knowledge',
+    'categoryms' => '收集分享网络中关于生活常识/生活小知识方面的视频',
+  ),
+  5 => 
+  array (
+    'cid' => '11',
+    'cpid' => '9',
+    'categoryname' => '生活妙招',
+    'categoryyw' => 'live-way',
+    'categoryms' => '收集生活中常见的生活妙招视频，让你懂得更多的生活技巧',
+  ),
+  6 => 
+  array (
+    'cid' => '12',
+    'cpid' => '0',
+    'categoryname' => '美食',
+    'categoryyw' => 'food',
+    'categoryms' => '美食频道，收集精选各种美食烹饪，美食介绍等相关视频',
+  ),
+  7 => 
+  array (
+    'cid' => '13',
+    'cpid' => '12',
+    'categoryname' => '美食烹饪',
+    'categoryyw' => 'food-cooking',
+    'categoryms' => '收集网络中各种关于美食烹饪制作的视频，在观看这些美食视频之余，大家不妨动手制作一下这些美食吧',
+  ),
+)
