@@ -27,7 +27,9 @@
     <title><?php echo $value['title'] .'-'. $value['categoryname'] .'- 课间十分钟'?></title>
 	<meta name="keywords" content="<?php echo $value['article_key']?>" />
 	<meta name="description" content="<?php echo $value['article_short']?>" />
-
+	<!--图标-->
+	<link rel="shortcut icon" href="favicon.ico"/>
+	<link rel="bookmark" href="favicon.ico"/>	
     <!-- Bootstrap -->
     <link href="https://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
 	<link href="../../css/common.css" rel="stylesheet">

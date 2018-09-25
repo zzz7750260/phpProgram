@@ -71,7 +71,13 @@ class theCover{
 	//根据用户获取对应的封面信息
 	function coverList(){
 		$theUsername = $_GET['username'];
-		$theCoverSql = "select * from page where author = '$theUsername'";
+		if($theUsername =="admin"){
+			$theCoverSql = 	"select * from page where 1 = 1";	
+		}
+		else{
+			$theCoverSql = "select * from page where author = '$theUsername'";
+		}
+		
 		$theCoverSql_db = mysql_query($theCoverSql);
 		$coverArray = array();
 		while($theCoverSql_db_array = mysql_fetch_assoc($theCoverSql_db)){

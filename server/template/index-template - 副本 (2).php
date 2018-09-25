@@ -38,9 +38,6 @@
     <title><?php echo $getIndexArray[0]['web_title'].'-'.$getIndexArray[0]['web_name'];?></title>
 	<meta name="keywords" content="<?php echo $getIndexArray[0]['web_keyword']?>" />
 	<meta name="description" content="<?php echo $getIndexArray[0]['web_short']?>" />
-	<!--图标-->
-	<link rel="shortcut icon" href="favicon.ico"/>
-	<link rel="bookmark" href="favicon.ico"/>	
     <!-- Bootstrap -->
     <link href="https://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
     <link href="./css/common.css" rel="stylesheet">
@@ -97,19 +94,75 @@
 			</div>	
 		</section>
 		
-		<?php 
-			//引入分类的内容模板，这样做能保证控制内容的灵活性
-			//将获取到的父类分类信息赋值到内容模板中
-			$theCategorySelect = $fatherCategoryListArray[0];
-			//引入内容模板
-			include('index-template-cantainer.php');
-			
-			//遍历数组，将各类分类的内容放入主页中
-			//foreach($fatherCategoryListArray as $fatherCategoryListKey => $fatherCategoryListValue){
-			//	$theCategorySelect = $fatherCategoryListValue;	
-			//	include('index-template-cantainer.php');
-			//}
-		?>
+		<section>
+			<div class="container cinema-article">
+				<div class="cinema-article-container row">
+					<div class="cinema-article-container-video col-md-9">
+						<div class="cinema-article-container col-md-12">						
+							<div class="cinema-article-title row">
+								<div class="cinema-article-title-left col-md-2">
+									<h3><?php echo $fatherCategoryListArray[0]['categoryname'];?></h3>
+								</div>
+								<div class="cinema-article-title-right col-md-10">
+									
+									<?php 
+										//获取对应的分组目录,这里只需要下一层子集
+										$cinemaCategoryArray = $theArticleUtil->getCategoryArray($fatherCategoryListArray[0]['cid']);
+										
+										//print_r($cinemaCategoryArray);
+										//遍历数组获取对应的菜单渲染
+										foreach($cinemaCategoryArray as $key => $value){
+											$arrayHtml .= '<span style="margin:5px"><a href="'.$commonUtil->isHttpsCheckSelect().'//'.$_SERVER['HTTP_HOST'].'/article/'.$value['categoryyw'].'/'.$value['categoryyw'].'-1.html">'.$value['categoryname'].'</a></span>';
+										}
+										echo $arrayHtml;
+									?>
+									
+									
+									<span><a href="<?php 
+										$theCategoryArray = $theArticleUtil->categoryDetail($fatherCategoryListArray[0]['cid']);
+										$theCategoryWz = $theCategoryArray['categoryyw'];
+										$theUrl = ''.$commonUtil->isHttpsCheckSelect().'//' .$_SERVER['HTTP_HOST']. '/article/'.$theCategoryWz.'/'.$theCategoryWz.'-list-1.html';
+										echo $theUrl;
+									?>">更多</a></span>
+								</div>
+							</div>						
+						
+							<div class="row">
+								<?php 
+									//新建，避免重复上面数据
+									$cinemaHtml = '';
+									$cinemaArticleArray = $theArticleUtil->getCategoryArticle($fatherCategoryListArray[0]['cid'],8);
+									//print_r($hotArticleArray);
+									//遍历数组，将数组组装成html
+									foreach($cinemaArticleArray as $key => $value){
+										$cinemaHtml .= '<div class="col-sm-6 col-md-3"><div class="thumbnail"><a href="'.$commonUtil->isHttpsCheckSelect().'//'.$_SERVER['HTTP_HOST'].'/article/'.$value['categoryyw'].'/'.$value['aid'].'.html"><img src="../../upload/cover/'.$value['article_img'].'" alt="通用的占位符缩略图"><h5>'.$value['title'].'</h5></a><div><span>分类:<a href="'.$commonUtil->isHttpsCheckSelect().'//'.$_SERVER['HTTP_HOST'].'/article/'.$value['categoryyw'].'/'.$value['categoryyw'].'-1.html">'.$value['categoryname'].'</a></span><span>来源:<a href="'.$commonUtil->isHttpsCheckSelect().'//'.$_SERVER['HTTP_HOST'].'/article/cover-page/'.$value['pid'].'.html">'.$value['article_cover'].'</a></span></div></div></div>';
+									}
+									echo $cinemaHtml;
+								?>
+							</div>				
+						</div>										
+					</div>
+					
+					<div class="cinema-article-container-list col-md-3">
+						<div class="cinema-article-container-list-title">
+							<h4>猜你喜欢</h4>
+						</div>
+						<div class="cinema-article-container-list-container">
+							<ul class="list-group">
+								<?php 
+									$cinemaArticleListArray = $theArticleUtil->getCategoryArticle($fatherCategoryListArray[0]['cid'],10,'rand');
+									//print_r($cinemaArticleListArray);
+									//遍历数组，前端渲染
+									foreach($cinemaArticleListArray as $key => $value){
+										$cinemaArticleListHtml = '<li class="list-group-item"><a href="'.$commonUtil->isHttpsCheckSelect().'//'.$_SERVER['HTTP_HOST'].'/article/'.$value['categoryyw'].'/'.$value['aid'].'.html">'.$value['title'].'</a></li>';
+										echo $cinemaArticleListHtml;
+									}
+								?>
+							</ul>
+						</div>						
+					</div>					
+				</div>
+		</section>
 		
 		<section>
 			<div class="container">
