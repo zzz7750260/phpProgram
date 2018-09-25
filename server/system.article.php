@@ -52,14 +52,14 @@ class articleUtil{
 	function getCategoryArticle($fCategory,$num = 6,$isRand="list"){
 		//获取对应的分类集
 		$getTheCaregoryArray = $this->findCategoryChilrenArray($fCategory,'article');
-		print_r($getTheCaregoryArray);
+		//print_r($getTheCaregoryArray);
 		
 		//查询相关的文章集
 		//$theCategorySql = "select * from article where category_id in (select cid from category where cpid = '$fCategory')";
 		
 		//将获取到的集合数组转成字符串
 		$getTheCaregoryString = implode(',' , $getTheCaregoryArray);
-		echo $getTheCaregoryString;
+		//echo $getTheCaregoryString;
 		
 		
 		
@@ -162,6 +162,18 @@ class articleUtil{
 		}
 
 		return $categoryArray;
+	}
+	
+	//文章公共类，将标签规范化并转化为数组
+	//$theTag:为输入的标签
+	function tagChangeArray($theTag){
+		//设定转化的正则规范,查找逗号，空格等
+		$theRex = "/(\n)|(\s)|(\t)|(\')|(')|(，)/";
+		//将特殊符号改变为,
+		$theResult = preg_replace($theRex,',',$theTag);
+		//将$theResult分割为数组进行返回
+		$theArray = explode(',',$theResult);
+		return $theArray;
 	}
 }
 //$articleUtil = new articleUtil;

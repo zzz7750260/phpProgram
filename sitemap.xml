@@ -1,41 +1,41 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9 http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd">
 <url>
 <loc>http://www.10mins.com</loc>
-<lastmod>2018-09-11</lastmod>
+<lastmod>2018-09-25</lastmod>
 <changefreq>hourly</changefreq>
 <priority>1.0</priority>
 </url>
 
 <url>
 					<loc>http://www.10mins.com/article/music/music-list-1.html</loc>
-					<lastmod>2018-09-11</lastmod>
+					<lastmod>2018-09-25</lastmod>
 					<changefreq>daily</changefreq>
 					<priority>0.9</priority>
 					</url><url>
 					<loc>http://www.10mins.com/article/article/article-list-1.html</loc>
-					<lastmod>2018-09-11</lastmod>
+					<lastmod>2018-09-25</lastmod>
 					<changefreq>daily</changefreq>
 					<priority>0.9</priority>
 					</url>
 <url>
 							<loc>http://www.10mins.com/article/oldmusic/oldmusic-1.html</loc>
-							<lastmod>2018-09-11</lastmod>
+							<lastmod>2018-09-25</lastmod>
 							<changefreq>daily</changefreq>
 							<priority>0.6</priority>
 						</url><url>
 							<loc>http://www.10mins.com/article/lxmusic/lxmusic-1.html</loc>
-							<lastmod>2018-09-11</lastmod>
+							<lastmod>2018-09-25</lastmod>
 							<changefreq>daily</changefreq>
 							<priority>0.6</priority>
 						</url><url>
 							<loc>http://www.10mins.com/article/childoldmusic/childoldmusic-1.html</loc>
-							<lastmod>2018-09-11</lastmod>
+							<lastmod>2018-09-25</lastmod>
 							<changefreq>daily</changefreq>
 							<priority>0.6</priority>
 						</url>
 		<url>
 			<loc>http://www.10mins.com/article/cover-page/cover-list-1.html</loc>
-			<lastmod>2018-09-11</lastmod>
+			<lastmod>2018-09-25</lastmod>
 			<changefreq>daily</changefreq>
 			<priority>0.6</priority>
 		</url>
@@ -43,52 +43,52 @@
 		
 <url>
 							<loc>http://www.10mins.com/article/cover-page/1.html</loc>
-							<lastmod>2018-09-11</lastmod>
+							<lastmod>2018-09-25</lastmod>
 							<changefreq>daily</changefreq>
 							<priority>0.5</priority>
 						</url><url>
 							<loc>http://www.10mins.com/article/cover-page/2.html</loc>
-							<lastmod>2018-09-11</lastmod>
+							<lastmod>2018-09-25</lastmod>
 							<changefreq>daily</changefreq>
 							<priority>0.5</priority>
 						</url><url>
 							<loc>http://www.10mins.com/article/cover-page/5.html</loc>
-							<lastmod>2018-09-11</lastmod>
+							<lastmod>2018-09-25</lastmod>
 							<changefreq>daily</changefreq>
 							<priority>0.5</priority>
 						</url><url>
 							<loc>http://www.10mins.com/article/cover-page/6.html</loc>
-							<lastmod>2018-09-11</lastmod>
+							<lastmod>2018-09-25</lastmod>
 							<changefreq>daily</changefreq>
 							<priority>0.5</priority>
 						</url><url>
 							<loc>http://www.10mins.com/article/cover-page/7.html</loc>
-							<lastmod>2018-09-11</lastmod>
+							<lastmod>2018-09-25</lastmod>
 							<changefreq>daily</changefreq>
 							<priority>0.5</priority>
 						</url><url>
 							<loc>http://www.10mins.com/article/cover-page/8.html</loc>
-							<lastmod>2018-09-11</lastmod>
+							<lastmod>2018-09-25</lastmod>
 							<changefreq>daily</changefreq>
 							<priority>0.5</priority>
 						</url><url>
 							<loc>http://www.10mins.com/article/cover-page/9.html</loc>
-							<lastmod>2018-09-11</lastmod>
+							<lastmod>2018-09-25</lastmod>
 							<changefreq>daily</changefreq>
 							<priority>0.5</priority>
 						</url><url>
 							<loc>http://www.10mins.com/article/cover-page/10.html</loc>
-							<lastmod>2018-09-11</lastmod>
+							<lastmod>2018-09-25</lastmod>
 							<changefreq>daily</changefreq>
 							<priority>0.5</priority>
 						</url><url>
 							<loc>http://www.10mins.com/article/cover-page/11.html</loc>
-							<lastmod>2018-09-11</lastmod>
+							<lastmod>2018-09-25</lastmod>
 							<changefreq>daily</changefreq>
 							<priority>0.5</priority>
 						</url><url>
 							<loc>http://www.10mins.com/article/cover-page/12.html</loc>
-							<lastmod>2018-09-11</lastmod>
+							<lastmod>2018-09-25</lastmod>
 							<changefreq>daily</changefreq>
 							<priority>0.5</priority>
 						</url>		
@@ -96,194 +96,224 @@
 
 <url>
 							<loc>http://www.10mins.com/article/user-page/admin.html</loc>
-							<lastmod>2018-09-11</lastmod>
+							<lastmod>2018-09-25</lastmod>
 							<changefreq>daily</changefreq>
 							<priority>0.5</priority>
 						</url><url>
 							<loc>http://www.10mins.com/article/user-page/zzzaaa88.html</loc>
-							<lastmod>2018-09-11</lastmod>
+							<lastmod>2018-09-25</lastmod>
 							<changefreq>daily</changefreq>
 							<priority>0.5</priority>
 						</url><url>
 							<loc>http://www.10mins.com/article/user-page/a11111.html</loc>
-							<lastmod>2018-09-11</lastmod>
+							<lastmod>2018-09-25</lastmod>
 							<changefreq>daily</changefreq>
 							<priority>0.5</priority>
 						</url><url>
 							<loc>http://www.10mins.com/article/user-page/a11111.html</loc>
-							<lastmod>2018-09-11</lastmod>
+							<lastmod>2018-09-25</lastmod>
 							<changefreq>daily</changefreq>
 							<priority>0.5</priority>
 						</url><url>
 							<loc>http://www.10mins.com/article/user-page/a22222.html</loc>
-							<lastmod>2018-09-11</lastmod>
+							<lastmod>2018-09-25</lastmod>
 							<changefreq>daily</changefreq>
 							<priority>0.5</priority>
 						</url><url>
 							<loc>http://www.10mins.com/article/user-page/cc2222.html</loc>
-							<lastmod>2018-09-11</lastmod>
+							<lastmod>2018-09-25</lastmod>
 							<changefreq>daily</changefreq>
 							<priority>0.5</priority>
 						</url><url>
 							<loc>http://www.10mins.com/article/user-page/aapp999.html</loc>
-							<lastmod>2018-09-11</lastmod>
+							<lastmod>2018-09-25</lastmod>
 							<changefreq>daily</changefreq>
 							<priority>0.5</priority>
 						</url><url>
 							<loc>http://www.10mins.com/article/user-page/admin6126.html</loc>
-							<lastmod>2018-09-11</lastmod>
+							<lastmod>2018-09-25</lastmod>
 							<changefreq>daily</changefreq>
 							<priority>0.5</priority>
 						</url><url>
 							<loc>http://www.10mins.com/article/user-page/admin6126.html</loc>
-							<lastmod>2018-09-11</lastmod>
+							<lastmod>2018-09-25</lastmod>
 							<changefreq>daily</changefreq>
 							<priority>0.5</priority>
 						</url><url>
 							<loc>http://www.10mins.com/article/user-page/admin6126.html</loc>
-							<lastmod>2018-09-11</lastmod>
+							<lastmod>2018-09-25</lastmod>
 							<changefreq>daily</changefreq>
 							<priority>0.5</priority>
 						</url><url>
 							<loc>http://www.10mins.com/article/user-page/admin6126.html</loc>
-							<lastmod>2018-09-11</lastmod>
+							<lastmod>2018-09-25</lastmod>
 							<changefreq>daily</changefreq>
 							<priority>0.5</priority>
 						</url><url>
 							<loc>http://www.10mins.com/article/user-page/haha123456.html</loc>
-							<lastmod>2018-09-11</lastmod>
+							<lastmod>2018-09-25</lastmod>
 							<changefreq>daily</changefreq>
 							<priority>0.5</priority>
 						</url><url>
 							<loc>http://www.10mins.com/article/user-page/bigsmile.html</loc>
-							<lastmod>2018-09-11</lastmod>
+							<lastmod>2018-09-25</lastmod>
 							<changefreq>daily</changefreq>
 							<priority>0.5</priority>
 						</url>
 
 
 <url>
-							<loc>http://www.10mins.com/article/childoldmusic/39.html</loc>
+							<loc>http://www.10mins.com/article/childoldmusic/show-51.html</loc>
+							<lastmod>2018-09-25</lastmod>
+							<changefreq>weekly</changefreq>
+							<priority>0.3</priority>
+						</url><url>
+							<loc>http://www.10mins.com/article/childoldmusic/show-50.html</loc>
+							<lastmod>2018-09-16</lastmod>
+							<changefreq>weekly</changefreq>
+							<priority>0.3</priority>
+						</url><url>
+							<loc>http://www.10mins.com/article/childoldmusic/show-49.html</loc>
+							<lastmod>2018-09-15</lastmod>
+							<changefreq>weekly</changefreq>
+							<priority>0.3</priority>
+						</url><url>
+							<loc>http://www.10mins.com/article/childoldmusic/show-48.html</loc>
+							<lastmod>2018-09-15</lastmod>
+							<changefreq>weekly</changefreq>
+							<priority>0.3</priority>
+						</url><url>
+							<loc>http://www.10mins.com/article/childoldmusic/show-47.html</loc>
+							<lastmod>2018-09-15</lastmod>
+							<changefreq>weekly</changefreq>
+							<priority>0.3</priority>
+						</url><url>
+							<loc>http://www.10mins.com/article/childoldmusic/show-40.html</loc>
+							<lastmod>2018-09-15</lastmod>
+							<changefreq>weekly</changefreq>
+							<priority>0.3</priority>
+						</url><url>
+							<loc>http://www.10mins.com/article/childoldmusic/show-39.html</loc>
 							<lastmod>2018-08-27</lastmod>
 							<changefreq>weekly</changefreq>
 							<priority>0.3</priority>
 						</url><url>
-							<loc>http://www.10mins.com/article/childoldmusic/38.html</loc>
+							<loc>http://www.10mins.com/article/childoldmusic/show-38.html</loc>
 							<lastmod>2018-08-20</lastmod>
 							<changefreq>weekly</changefreq>
 							<priority>0.3</priority>
 						</url><url>
-							<loc>http://www.10mins.com/article/childoldmusic/31.html</loc>
+							<loc>http://www.10mins.com/article/childoldmusic/show-31.html</loc>
 							<lastmod>2018-08-20</lastmod>
 							<changefreq>weekly</changefreq>
 							<priority>0.3</priority>
 						</url><url>
-							<loc>http://www.10mins.com/article/childoldmusic/30.html</loc>
+							<loc>http://www.10mins.com/article/childoldmusic/show-30.html</loc>
 							<lastmod></lastmod>
 							<changefreq>weekly</changefreq>
 							<priority>0.3</priority>
 						</url><url>
-							<loc>http://www.10mins.com/article/childoldmusic/29.html</loc>
+							<loc>http://www.10mins.com/article/childoldmusic/show-29.html</loc>
 							<lastmod></lastmod>
 							<changefreq>weekly</changefreq>
 							<priority>0.3</priority>
 						</url><url>
-							<loc>http://www.10mins.com/article/childoldmusic/28.html</loc>
+							<loc>http://www.10mins.com/article/childoldmusic/show-28.html</loc>
 							<lastmod></lastmod>
 							<changefreq>weekly</changefreq>
 							<priority>0.3</priority>
 						</url><url>
-							<loc>http://www.10mins.com/article/childoldmusic/27.html</loc>
+							<loc>http://www.10mins.com/article/childoldmusic/show-27.html</loc>
 							<lastmod></lastmod>
 							<changefreq>weekly</changefreq>
 							<priority>0.3</priority>
 						</url><url>
-							<loc>http://www.10mins.com/article/childoldmusic/26.html</loc>
+							<loc>http://www.10mins.com/article/childoldmusic/show-26.html</loc>
 							<lastmod></lastmod>
 							<changefreq>weekly</changefreq>
 							<priority>0.3</priority>
 						</url><url>
-							<loc>http://www.10mins.com/article/childoldmusic/25.html</loc>
+							<loc>http://www.10mins.com/article/childoldmusic/show-25.html</loc>
 							<lastmod></lastmod>
 							<changefreq>weekly</changefreq>
 							<priority>0.3</priority>
 						</url><url>
-							<loc>http://www.10mins.com/article/childoldmusic/24.html</loc>
+							<loc>http://www.10mins.com/article/childoldmusic/show-24.html</loc>
 							<lastmod></lastmod>
 							<changefreq>weekly</changefreq>
 							<priority>0.3</priority>
 						</url><url>
-							<loc>http://www.10mins.com/article/childoldmusic/23.html</loc>
+							<loc>http://www.10mins.com/article/childoldmusic/show-23.html</loc>
 							<lastmod></lastmod>
 							<changefreq>weekly</changefreq>
 							<priority>0.3</priority>
 						</url><url>
-							<loc>http://www.10mins.com/article/childoldmusic/19.html</loc>
+							<loc>http://www.10mins.com/article/childoldmusic/show-19.html</loc>
 							<lastmod></lastmod>
 							<changefreq>weekly</changefreq>
 							<priority>0.3</priority>
 						</url><url>
-							<loc>http://www.10mins.com/article/childoldmusic/17.html</loc>
+							<loc>http://www.10mins.com/article/childoldmusic/show-17.html</loc>
 							<lastmod></lastmod>
 							<changefreq>weekly</changefreq>
 							<priority>0.3</priority>
 						</url><url>
-							<loc>http://www.10mins.com/article/childoldmusic/16.html</loc>
+							<loc>http://www.10mins.com/article/childoldmusic/show-16.html</loc>
 							<lastmod></lastmod>
 							<changefreq>weekly</changefreq>
 							<priority>0.3</priority>
 						</url><url>
-							<loc>http://www.10mins.com/article/childoldmusic/15.html</loc>
+							<loc>http://www.10mins.com/article/childoldmusic/show-15.html</loc>
 							<lastmod></lastmod>
 							<changefreq>weekly</changefreq>
 							<priority>0.3</priority>
 						</url><url>
-							<loc>http://www.10mins.com/article/childoldmusic/14.html</loc>
+							<loc>http://www.10mins.com/article/childoldmusic/show-14.html</loc>
 							<lastmod></lastmod>
 							<changefreq>weekly</changefreq>
 							<priority>0.3</priority>
 						</url><url>
-							<loc>http://www.10mins.com/article/childoldmusic/13.html</loc>
+							<loc>http://www.10mins.com/article/childoldmusic/show-13.html</loc>
 							<lastmod></lastmod>
 							<changefreq>weekly</changefreq>
 							<priority>0.3</priority>
 						</url><url>
-							<loc>http://www.10mins.com/article/childoldmusic/12.html</loc>
+							<loc>http://www.10mins.com/article/childoldmusic/show-12.html</loc>
 							<lastmod></lastmod>
 							<changefreq>weekly</changefreq>
 							<priority>0.3</priority>
 						</url><url>
-							<loc>http://www.10mins.com/article/article/11.html</loc>
+							<loc>http://www.10mins.com/article/article/show-11.html</loc>
 							<lastmod></lastmod>
 							<changefreq>weekly</changefreq>
 							<priority>0.3</priority>
 						</url><url>
-							<loc>http://www.10mins.com/article/childoldmusic/10.html</loc>
+							<loc>http://www.10mins.com/article/childoldmusic/show-10.html</loc>
 							<lastmod></lastmod>
 							<changefreq>weekly</changefreq>
 							<priority>0.3</priority>
 						</url><url>
-							<loc>http://www.10mins.com/article/lxmusic/9.html</loc>
+							<loc>http://www.10mins.com/article/lxmusic/show-9.html</loc>
 							<lastmod></lastmod>
 							<changefreq>weekly</changefreq>
 							<priority>0.3</priority>
 						</url><url>
-							<loc>http://www.10mins.com/article/article/8.html</loc>
+							<loc>http://www.10mins.com/article/article/show-8.html</loc>
 							<lastmod></lastmod>
 							<changefreq>weekly</changefreq>
 							<priority>0.3</priority>
 						</url><url>
-							<loc>http://www.10mins.com/article/childoldmusic/7.html</loc>
+							<loc>http://www.10mins.com/article/childoldmusic/show-7.html</loc>
 							<lastmod></lastmod>
 							<changefreq>weekly</changefreq>
 							<priority>0.3</priority>
 						</url><url>
-							<loc>http://www.10mins.com/article/lxmusic/3.html</loc>
+							<loc>http://www.10mins.com/article/lxmusic/show-3.html</loc>
 							<lastmod></lastmod>
 							<changefreq>weekly</changefreq>
 							<priority>0.3</priority>
 						</url><url>
-							<loc>http://www.10mins.com/article/oldmusic/2.html</loc>
+							<loc>http://www.10mins.com/article/oldmusic/show-2.html</loc>
 							<lastmod></lastmod>
 							<changefreq>weekly</changefreq>
 							<priority>0.3</priority>

@@ -44,7 +44,7 @@
 					<?php 
 						//循环输出文章列表
 						foreach($theArticleArray as $item => $value){
-							$theList .= '<div class="thelist-k"><a href="../../article/'.$value['categoryyw'].'/'.$value['aid'].'.html"><div class="thelist-k-c col-md-9"><div class="thelist-k-title"><h4>'.$value['title'].'</h4></div><div class="thelist-k-container">'.$value['article_short'].'</div></div><div class="thelist-k-img col-md-3"><img src="../../upload/cover/'.$value['article_img'].'" class="img-responsive" ></div></a></div><hr/>';					
+							$theList .= '<div class="thelist-k"><a href="../../article/'.$value['categoryyw'].'/show-'.$value['aid'].'.html"><div class="thelist-k-c col-md-9"><div class="thelist-k-title"><h4>'.$value['title'].'</h4></div><div class="thelist-k-container">'.$value['article_short'].'</div></div><div class="thelist-k-img col-md-3"><img src="../../upload/cover/'.$value['article_img'].'" class="img-responsive" ></div></a></div><hr/>';					
 						}
 						echo $theList;
 						//由于$theList是使用字符串连接，因而在输出完后，需要将字符串清除，以免得到之前获取的数据
@@ -55,6 +55,7 @@
 				
 				<aside class="col-md-2">
 					<?php //print_r($articleUtil->getRandArticleList(5,2));
+						$listHtml = '';
 						$getListArray = $articleUtil->getRandArticleList(5,2);
 						foreach($getListArray as $key =>$value ){
 							$listHtml .= '<div class="side-list"><div class="side-list-title">'.$value['title'].'</div><div class="side-list-container">'.$value['article_short'].'</div></div>';

@@ -8,8 +8,9 @@
 		//echo "<hr/>";
 	//	echo $value['title'];
 	include_once('../system.util.php');
+	include_once('../system.article.php');
 	$commonUtil = new util();
-	
+	$articleUtil = new articleUtil();
 	//根据文章的id获取评论数
 	$commArticleId = $value['aid'];
 	$theCommentSql = "select * from comment where cmtid = '$commArticleId'";
@@ -156,6 +157,26 @@
 					</div>
 					<div class="theArticle-container">
 						<?php echo $value['article_container'];?>
+					</div>
+					
+					<div class="clear"></div>
+					
+					<div class="theArticle-tag">
+						<?php 
+							if($value['article_tag']){
+								//将tag字符串转换为数组
+								$tagArray = $articleUtil->tagChangeArray($value['article_tag']);
+								//print_r($tagArray);
+								//遍历数组渲染htmls
+								$tagHtml = '';
+								$tagHtml .= '<div class="theArticle-tag-li">标签：';
+								foreach($tagArray as $tagKey => $tagValue){
+									$tagHtml .="<span>".$tagValue."</span>";									
+								}
+								$tagHtml .="</div>";
+								echo $tagHtml;
+							}
+						?>
 					</div>
 				</article>
 				

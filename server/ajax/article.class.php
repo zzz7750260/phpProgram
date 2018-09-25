@@ -28,6 +28,7 @@ class theArticleClass{
 		$videoSource = $_POST['video-source'];
 		$theArticle = $_POST['the-article'];
 		$articleStatus = $_POST['article-status'];		
+		$articleTag = $_POST['article-tag'];
 		
 		$articleUploadType = $_POST['article-upload-type'];//获取上传的类型，是添加还是修改
 		$articleImgBase = $_POST['article-img-base']; //获取传递过来的图片base64的信息
@@ -46,12 +47,12 @@ class theArticleClass{
 		//echo $articleTime;		
 		
 		if($articleUploadType == "add"){
-			$addSql = "insert into article (title, short_title, category_id, article_key, article_short, article_cover, article_author, article_source, commit_start, commit_end, article_time, article_img, video_platform, video_source, article_container, article_status, commit_status) values ('$theTitle', '$articleShortTitle', '$categorySelect', '$articleKeyword', '$articleShort', '$articleCover', '$articleAuthor', '$articleSource', '$plDataStart', '$plDataEnd', '$articleTime', '$articlePic', '$videoPlatform', '$videoSource', '$theArticle', '$articleStatus', '$articlePl')";
+			$addSql = "insert into article (title, short_title, category_id, article_key, article_short, article_cover, article_author, article_source, commit_start, commit_end, article_time, article_img, video_platform, video_source, article_container, article_status, commit_status , article_tag) values ('$theTitle', '$articleShortTitle', '$categorySelect', '$articleKeyword', '$articleShort', '$articleCover', '$articleAuthor', '$articleSource', '$plDataStart', '$plDataEnd', '$articleTime', '$articlePic', '$videoPlatform', '$videoSource', '$theArticle', '$articleStatus', '$articlePl', '$articleTag')";
 		}
 		if($articleUploadType == "edit"){
 			//获取传递过来的文章id 
 			$editArticleId = $_POST['edit-article-id'];
-			$addSql = "update article set title='$theTitle', short_title='$articleShortTitle', category_id='$categorySelect', article_key='$articleKeyword', article_short='$articleShort', article_cover='$articleCover', article_author='$articleAuthor', article_source='$articleSource', commit_start='$plDataStart', commit_end='$plDataEnd', article_time='$articleTime', article_img='$articlePic', video_platform='$videoPlatform', video_source='$videoSource', article_container='$theArticle', article_status='$articleStatus', commit_status='$articlePl' where aid =$editArticleId";
+			$addSql = "update article set title='$theTitle', short_title='$articleShortTitle', category_id='$categorySelect', article_key='$articleKeyword', article_short='$articleShort', article_cover='$articleCover', article_author='$articleAuthor', article_source='$articleSource', commit_start='$plDataStart', commit_end='$plDataEnd', article_time='$articleTime', article_img='$articlePic', video_platform='$videoPlatform', video_source='$videoSource', article_container='$theArticle', article_status='$articleStatus', commit_status='$articlePl', article_tag='$articleTag' where aid =$editArticleId";
 		}
 		
 		$addSql_db = mysql_query($addSql);			
@@ -320,7 +321,7 @@ class theArticleClass{
 		if($theOb == "ob")
 		{
 			//将内容静态化输出
-			if(file_put_contents(APP_PATH.'/article/'.$articleArray['categoryyw'].'/'.$articleArray['aid'].'.html',$out1)){
+			if(file_put_contents(APP_PATH.'/article/'.$articleArray['categoryyw'].'/show-'.$articleArray['aid'].'.html',$out1)){
 				echo "输出成功";
 			}
 			else{
@@ -379,7 +380,7 @@ class theArticleClass{
 				//print_r($value);
 				$moreOut = ob_get_contents();
 				//echo $moreOut;
-				if(file_put_contents(APP_PATH2.'/article/'.$value['categoryyw'].'/'.$value['aid'].'.html',$moreOut)){
+				if(file_put_contents(APP_PATH2.'/article/'.$value['categoryyw'].'/show-'.$value['aid'].'.html',$moreOut)){
 					echo $value['aid']."输出成功";							
 					//清除缓冲区,防止内容重复输出;
 					$n++;
@@ -583,14 +584,38 @@ class theArticleClass{
 		//获取所有的父类id
 		$theUtil = new articleUtil();
 		$theFatherCategoryArray = $theUtil->getCategoryArray(0);
+		$r = 0; //静态化父类成功的结果
 		//遍历数组获取获取各父类的id
 		foreach($theFatherCategoryArray as $key =>$value){
-			$this->categoryArrayPageOb($value['cid']);	
+			//调用有分页的列表
+			//$this->categoryArrayPageOb($value['cid']);
+			//调用展示各个分类信息的列表
+			if($this->categoryArrayCollectOb($value['cid'])){
+				$r++;
+			}
 		}
-		
+		if($r>0){
+			//组装返回前端的数组
+			$categoryObArray = array(
+				status => 200,
+				msg => '父分类列表静态化成功',
+				result => $r
+			);
+		}
+		else{
+			//组装返回前端的数组
+			$categoryObArray = array(
+				status => 400,
+				msg => '父分类列表静态化失败',
+				result => ''
+			);						
+		}
+		//将array转为json返回给前端
+		$categoryObJson = json_encode($categoryObArray);
+		print_r($categoryObJson);
 	}
 	
-	//总分类页静态化
+	//总分类页静态化（这个为有分页列表）
 	function categoryArrayPageOb($fid){
 		if(!$fid){
 			//获取需要静态化的分类组合
@@ -684,8 +709,56 @@ class theArticleClass{
 			}	
 			//print_r($findAllAritcleArray);
 			
+		}			
+	}
+	
+	//总分类页静态化（这个为有分页列表）
+	function categoryArrayCollectOb($fid){
+		if(!$fid){
+			//获取需要静态化的分类组合
+			$theCategoryId = $_GET['theCategoryId'];				
 		}
+		else{
+			$theCategoryId = $fid;
+			
+			//查询该父类分类信息
+			$theCategoryFatherSql = "select * from category where cid = $theCategoryId";
+			$theCategoryFatherSql_db = mysql_query($theCategoryFatherSql);
+			$theCategoryFatherArray = array();
+			while($theCategoryFatherSql_db_array = mysql_fetch_assoc($theCategoryFatherSql_db)){
+				$theCategoryFatherArray = $theCategoryFatherSql_db_array;
+			}			
+			
+			//引入模板
+			include("../template/category-collect-template.php");
+			
+			//选择是否静态化
+			$theOb = $_GET['theOb'];
+			if($theOb == 'Ob'){
+				//设置存储路径
+				$rootPath = $_SERVER['DOCUMENT_ROOT'];
+				echo "路径：".$rootPath;				
+				$thePath = $rootPath . "/article/";
+				//传建文件夹
+				$theUtil = new util();
+				$theUtil->createFile($thePath,$theCategoryFatherArray['categoryyw']);
 				
+				//使用file_put_contents传建存储文件，ob_get_contents获取缓存内容
+				
+				//存储的文件名称
+				$savePath = $thePath . $theCategoryFatherArray['categoryyw'] . '/' . $theCategoryFatherArray['categoryyw'] .'-list.html';
+				
+				if(file_put_contents($savePath,ob_get_contents())){
+					ob_clean();
+					return true;
+				}
+				else{
+					ob_clean();
+					return false;				
+				}
+				 
+			}		
+		}
 	}
 	
 	

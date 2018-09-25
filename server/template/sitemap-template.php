@@ -187,7 +187,7 @@
 	
 	foreach($articleArray as $articleKey => $articleValue){
 		//组装文章链接
-		$locXmlArticleUrlPath = '/article/'.$articleValue['categoryyw'].'/'.$articleValue['aid'].'.html';
+		$locXmlArticleUrlPath = '/article/'.$articleValue['categoryyw'].'/show-'.$articleValue['aid'].'.html';
 		
 		$locXmlArticleUrl = returnPath($locXmlArticleUrlPath);		
 		

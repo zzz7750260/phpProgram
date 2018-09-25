@@ -2,30 +2,28 @@
 	//include_once('../system.mysql.int.php');
 	include_once('../system.article.php');
 	include_once('../system.util.php');
-	$commonUtil = new util();
-	
-	//查询网站的设置信息
-	$getIndexSql = "select * from web_info where 1 = 1";
-	$getIndexSql_db = mysql_query($getIndexSql);
-	$getIndexArray = array();
-	while($getIndexSql_db_array = mysql_fetch_assoc($getIndexSql_db)){
-		$getIndexArray[] =  $getIndexSql_db_array;
-	}	
+	$commonUtil = new util();	
+		
 	
 	//$a = getCategoryArticle(1);
 	//print_r($a);
 	
 	//调用文章类
 	$theArticleUtil = new articleUtil();
-
 	
-	//获取各父类信息
-	$fatherCategoryListSql = "select * from category where cpid = 0";
+	//$theCategoryFatherArray为父类传递过来的信息
+	$categoryInfoArray = $theCategoryFatherArray;
+	
+	$categoryChildId = $categoryInfoArray['cid'];
+	
+	//获取各子类信息
+	$fatherCategoryListSql = "select * from category where cpid = $categoryChildId";
 	$fatherCategoryListSql_db = mysql_query($fatherCategoryListSql);
 	$fatherCategoryListArray = array();
 	while($fatherCategoryListSql_db_array = mysql_fetch_assoc($fatherCategoryListSql_db)){
 		$fatherCategoryListArray[] = $fatherCategoryListSql_db_array; 
 	}
+	
 		
 ?>
 <!DOCTYPE html>
@@ -35,9 +33,9 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <!-- 上述3个meta标签*必须*放在最前面，任何其他内容都*必须*跟随其后！ -->
-    <title><?php echo $getIndexArray[0]['web_title'].'-'.$getIndexArray[0]['web_name'];?></title>
-	<meta name="keywords" content="<?php echo $getIndexArray[0]['web_keyword']?>" />
-	<meta name="description" content="<?php echo $getIndexArray[0]['web_short']?>" />
+    <title><?php echo '海量'.$categoryInfoArray['categoryname'].'视频在线观看-'.$categoryInfoArray['categoryname'].'列表-课间十分钟';?></title>
+	<meta name="keywords" content="<?php echo $categoryInfoArray['categoryname'].','.$categoryInfoArray['categoryname'].'视频,'.$categoryInfoArray['categoryname'].'列表,课间十分钟';?>" />
+	<meta name="description" content="<?php echo $categoryInfoArray['categoryms'];?>" />
 	<!--图标-->
 	<link rel="shortcut icon" href="favicon.ico"/>
 	<link rel="bookmark" href="favicon.ico"/>	
@@ -58,8 +56,8 @@
 		?>
 		<div class="jumbotron">
 			<div class="container">
-				<h1><?php echo  $getIndexArray[0]['web_name'];?></h1>
-				<p><?php echo $getIndexArray[0]['web_short']?></p>
+				<h2><?php echo $categoryInfoArray['categoryname'];?></h2>
+				<p><?php echo $categoryInfoArray['categoryms'];?></p>
 				<p>
 					<?php include('c-search.php');?>
 				</p>
@@ -83,7 +81,7 @@
 				<div class="hot-article-container col-md-12">
 					<div class="row">
 						<?php 
-							$hotArticleArray = $theArticleUtil->getCategoryArticle(0,8);
+							$hotArticleArray = $theArticleUtil->getCategoryArticle($categoryChildId,8);
 							//print_r($hotArticleArray);
 							//遍历数组，将数组组装成html
 							foreach($hotArticleArray as $key => $value){
@@ -100,15 +98,15 @@
 		<?php 
 			//引入分类的内容模板，这样做能保证控制内容的灵活性
 			//将获取到的父类分类信息赋值到内容模板中
-			$theCategorySelect = $fatherCategoryListArray[0];
+			//$theCategorySelectChild = $fatherCategoryListArray[0];
 			//引入内容模板
-			include('index-template-cantainer.php');
+			//include('category-collect-part-template.php');
 			
 			//遍历数组，将各类分类的内容放入主页中
-			//foreach($fatherCategoryListArray as $fatherCategoryListKey => $fatherCategoryListValue){
-			//	$theCategorySelect = $fatherCategoryListValue;	
-			//	include('index-template-cantainer.php');
-			//}
+			foreach($fatherCategoryListArray as $fatherCategoryListKey => $fatherCategoryListValue){
+				$theCategorySelect = $fatherCategoryListValue;	
+				include('index-template-cantainer.php');
+			}
 		?>
 		
 		<section>

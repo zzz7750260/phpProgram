@@ -675,6 +675,9 @@ function adminArticle(){
 				//平台选择
 				$("#video-platform").find('option[value="'+theData.video_platform+'"]').attr("selected",true);
 				$("#video-source").val(theData.video_source);
+				
+				//标签赋值
+				$("#article-tag").val(theData.article_tag)
 								
 				//百度富文本赋值
 				ue.addListener("ready", function () {
