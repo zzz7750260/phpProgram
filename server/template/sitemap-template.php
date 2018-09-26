@@ -69,7 +69,7 @@
 	//遍历数组循环输出节点
 	foreach($categoryArray as $categoryKey => $categoryValue){
 		//组装分类的链接
-		$locXmlCategoryUrlPath = '/article/'.$categoryValue['categoryyw'].'/'.$categoryValue['categoryyw'].'-list-1.html';
+		$locXmlCategoryUrlPath = '/article/'.$categoryValue['categoryyw'].'/'.$categoryValue['categoryyw'].'-list.html';
 		$locXmlCategoryUrl = returnPath($locXmlCategoryUrlPath);
 		$locXmlCategory .='<url>
 					<loc>'.$locXmlCategoryUrl.'</loc>

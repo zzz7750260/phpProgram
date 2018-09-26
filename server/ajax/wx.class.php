@@ -278,7 +278,7 @@
 							$template .= "<item><Title><![CDATA[".$theCheckSqlDuotuwenValue['title']."]]></Title>
 							<Description><![CDATA[".$theCheckSqlDuotuwenValue['article_short']."]]></Description>
 							<PicUrl><![CDATA[".$theUtil->wxPath('/upload/cover/').$theCheckSqlDuotuwenValue['article_img']."]]></PicUrl>
-							<Url><![CDATA[".$theUtil->wxPath('/article/').$theCheckSqlDuotuwenValue['categoryyw']."/".$theCheckSqlDuotuwenValue['aid'].".html]]></Url>
+							<Url><![CDATA[".$theUtil->wxPath('/article/').$theCheckSqlDuotuwenValue['categoryyw']."/show-".$theCheckSqlDuotuwenValue['aid'].".html]]></Url>
 							</item>";						
 						}
 						$template .= "</Articles></xml>";

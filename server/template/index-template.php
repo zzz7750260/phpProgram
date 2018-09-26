@@ -87,7 +87,7 @@
 							//print_r($hotArticleArray);
 							//遍历数组，将数组组装成html
 							foreach($hotArticleArray as $key => $value){
-								$theHtml .= '<div class="col-sm-6 col-md-3"><div class="thumbnail"><a href="'.$commonUtil->isHttpsCheckSelect().'//'.$_SERVER['HTTP_HOST'].'/article/'.$value['categoryyw'].'/show-'.$value['aid'].'.html"><img src="../../upload/cover/'.$value['article_img'].'" alt="'.$value['title'].'"><h5>'.$value['title'].'</h5></a><div class="hot-article-short">'.$value['short_title'].'</div><div class="hot-article-category"><span>分类:<a href="'.$commonUtil->isHttpsCheckSelect().'//'.$_SERVER['HTTP_HOST'].'/article/'.$value['categoryyw'].'/'.$value['categoryyw'].'-1.html">'.$value['categoryname'].'</a></span><span>来源:<a href="'.$commonUtil->isHttpsCheckSelect().'//'.$_SERVER['HTTP_HOST'].'/article/cover-page/'.$value['pid'].'.html">'.$value['article_cover'].'</a></span></div></div></div>';
+								$theHtml .= '<div class="col-sm-6 col-md-3"><div class="thumbnail img-k"><a href="'.$commonUtil->isHttpsCheckSelect().'//'.$_SERVER['HTTP_HOST'].'/article/'.$value['categoryyw'].'/show-'.$value['aid'].'.html"><img src="../../upload/cover/'.$value['article_img'].'" alt="'.$value['title'].'"><h5>'.$value['title'].'</h5></a><div class="hot-article-short">'.$value['short_title'].'</div><div class="hot-article-category"><span>分类:<a href="'.$commonUtil->isHttpsCheckSelect().'//'.$_SERVER['HTTP_HOST'].'/article/'.$value['categoryyw'].'/'.$value['categoryyw'].'-1.html">'.$value['categoryname'].'</a></span><span>来源:<a href="'.$commonUtil->isHttpsCheckSelect().'//'.$_SERVER['HTTP_HOST'].'/article/cover-page/'.$value['pid'].'.html">'.$value['article_cover'].'</a></span></div></div></div>';
 							}
 							echo $theHtml;
 						?>
@@ -95,6 +95,7 @@
 				</div>
 				<div class="clear"></div>
 			</div>	
+			
 		</section>
 		
 		<?php 
@@ -111,6 +112,11 @@
 			//}
 		?>
 		
+		<?php 
+			//加载边菜单
+			//include("c-side-menu.php");
+		?>
+		<div class="clear"></div>
 		<section>
 			<div class="container">
 				<div class="cover-title row">

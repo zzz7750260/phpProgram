@@ -85,7 +85,7 @@
 							//print_r($hotArticleArray);
 							//遍历数组，将数组组装成html
 							foreach($hotArticleArray as $key => $value){
-								$theHtml .= '<div class="col-sm-6 col-md-3"><div class="thumbnail"><a href="'.$commonUtil->isHttpsCheckSelect().'//'.$_SERVER['HTTP_HOST'].'/article/'.$value['categoryyw'].'/show-'.$value['aid'].'.html"><img src="../../upload/cover/'.$value['article_img'].'" alt="'.$value['title'].'"><h5>'.$value['title'].'</h5></a><div class="hot-article-short">'.$value['short_title'].'</div><div class="hot-article-category"><span>分类:<a href="'.$commonUtil->isHttpsCheckSelect().'//'.$_SERVER['HTTP_HOST'].'/article/'.$value['categoryyw'].'/'.$value['categoryyw'].'-1.html">'.$value['categoryname'].'</a></span><span>来源:<a href="'.$commonUtil->isHttpsCheckSelect().'//'.$_SERVER['HTTP_HOST'].'/article/cover-page/'.$value['pid'].'.html">'.$value['article_cover'].'</a></span></div></div></div>';
+								$theHtml .= '<div class="col-sm-6 col-md-3"><div class="thumbnail img-k"><a href="'.$commonUtil->isHttpsCheckSelect().'//'.$_SERVER['HTTP_HOST'].'/article/'.$value['categoryyw'].'/show-'.$value['aid'].'.html"><img src="../../upload/cover/'.$value['article_img'].'" alt="'.$value['title'].'"><h5>'.$value['title'].'</h5></a><div class="hot-article-short">'.$value['short_title'].'</div><div class="hot-article-category"><span>分类:<a href="'.$commonUtil->isHttpsCheckSelect().'//'.$_SERVER['HTTP_HOST'].'/article/'.$value['categoryyw'].'/'.$value['categoryyw'].'-1.html">'.$value['categoryname'].'</a></span><span>来源:<a href="'.$commonUtil->isHttpsCheckSelect().'//'.$_SERVER['HTTP_HOST'].'/article/cover-page/'.$value['pid'].'.html">'.$value['article_cover'].'</a></span></div></div></div>';
 							}
 							echo $theHtml;
 						?>
@@ -104,11 +104,15 @@
 			
 			//遍历数组，将各类分类的内容放入主页中
 			foreach($fatherCategoryListArray as $fatherCategoryListKey => $fatherCategoryListValue){
-				$theCategorySelect = $fatherCategoryListValue;	
-				include('index-template-cantainer.php');
+				$theCategorySelectChild = $fatherCategoryListValue;	
+				include('category-collect-part-template.php');
 			}
 		?>
 		
+		<?php 
+			//加载边菜单
+			//include("c-side-menu.php");
+		?>		
 		<section>
 			<div class="container">
 				<div class="cover-title row">
@@ -145,6 +149,6 @@
     <!-- 加载 Bootstrap 的所有 JavaScript 插件。你也可以根据需要只加载单个插件。 -->
     <script src="https://cdn.bootcss.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 	
-	<script src="./js/index.js"></script>
+	<script src="../../js/index.js"></script>
   </body>
 </html>

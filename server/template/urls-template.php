@@ -54,7 +54,7 @@
 	//遍历数组循环输出父分类链接
 	foreach($categoryArray as $categoryArrayKey => $categoryArrayValue){
 		//组成链接后缀
-		$categoryPathAfter = '/article/'.$categoryArrayValue['categoryyw'].'/' .$categoryArrayValue['categoryyw'].'-list-1.html';
+		$categoryPathAfter = '/article/'.$categoryArrayValue['categoryyw'].'/' .$categoryArrayValue['categoryyw'].'-list.html';
 		
 		$categoryPath .= returnPath($categoryPathAfter) .PHP_EOL;
 			

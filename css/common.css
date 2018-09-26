@@ -10,6 +10,15 @@ ul li{
 	/*list-style-type:none;*/
 }
 
+/*内容布局*/
+.cinema-article-title-right{
+	margin-top:22px;
+}
+
+.the-more{
+	float:right;
+}
+
 /*footer*/
 .about{
 	background:#000;

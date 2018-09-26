@@ -50,11 +50,14 @@ class articleUtil{
 	//$fCategory：分类的选择
 	//$num：查询文章的数量, 当为0时为无限数量
 	function getCategoryArticle($fCategory,$num = 6,$isRand="list"){
-		//获取对应的分类集
-		$getTheCaregoryArray = $this->findCategoryChilrenArray($fCategory,'article');
+		//获取对应的分类集(这个没包含父类)
+		//$getTheCaregoryArray = $this->findCategoryChilrenArray($fCategory,'article');
+		
+		//这个包含父类
+		$getTheCaregoryArray = $this->findCategoryFatherChilrenArray($fCategory,'article');
+		//查询相关的文章集
 		//print_r($getTheCaregoryArray);
 		
-		//查询相关的文章集
 		//$theCategorySql = "select * from article where category_id in (select cid from category where cpid = '$fCategory')";
 		
 		//将获取到的集合数组转成字符串
@@ -117,6 +120,31 @@ class articleUtil{
 		}
 		return $resultArray;
 	}	
+	
+	//公共类：查找包含父子类的分类返回
+	//$resultArray：查询的所有分类id集合
+	//$theType：为返回的类型，article用于返回文章所用，category用于返回分类所用
+	function findCategoryFatherChilrenArray($theCate,$theType,&$resultArray=''){
+		//获取所有的分类
+		$theCaregoryArray = $this->findAllCategory();	
+		//print_r($theCaregoryArray);
+		//遍历数组获取相关的数组
+		if($theType == 'article'){
+			$resultArray[] = $theCate;		
+		}
+		foreach($theCaregoryArray as $key => $value){
+			if($value['cpid'] == $theCate){
+
+				if($theType == 'category'){
+					$resultArray[] = $value;				
+				}
+				$this->findCategoryFatherChilrenArray($value['cid'],$theType,$resultArray);
+			}			
+		}
+		//print_r($resultArray);
+		return $resultArray;
+	}
+	
 	
 	//公共类：查询封面
 	//$theNum：查询的数量

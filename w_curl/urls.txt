@@ -1,12 +1,15 @@
 https://www.10-mins.com
-https://www.10-mins.com/article/cinema/cinema-list-1.html
-https://www.10-mins.com/article/live/live-list-1.html
-https://www.10-mins.com/article/food/food-list-1.html
+https://www.10-mins.com/article/cinema/cinema-list.html
+https://www.10-mins.com/article/live/live-list.html
+https://www.10-mins.com/article/food/food-list.html
+https://www.10-mins.com/article/creative/creative-list.html
 https://www.10-mins.com/article/cinema_commentary/cinema_commentary-1.html
 https://www.10-mins.com/article/micro-cinema/micro-cinema-1.html
 https://www.10-mins.com/article/live-knowledge/live-knowledge-1.html
 https://www.10-mins.com/article/live-way/live-way-1.html
 https://www.10-mins.com/article/food-cooking/food-cooking-1.html
+https://www.10-mins.com/article/food-baking/food-baking-1.html
+https://www.10-mins.com/article/creative-advertisement/creative-advertisement-1.html
 https://www.10-mins.com/article/cover-page/cover-list-1.html
 
 
@@ -15,12 +18,25 @@ https://www.10-mins.com/article/cover-page/13.html
 https://www.10-mins.com/article/cover-page/14.html
 https://www.10-mins.com/article/cover-page/15.html
 https://www.10-mins.com/article/cover-page/16.html
+https://www.10-mins.com/article/cover-page/17.html
+https://www.10-mins.com/article/cover-page/18.html
 
 
 https://www.10-mins.com/article/user-page/admin.html
 https://www.10-mins.com/article/user-page/bigsmile.html
+https://www.10-mins.com/article/user-page/changku.html
+https://www.10-mins.com/article/user-page/feidie.html
 
 
-https://www.10-mins.com/article/micro-cinema/41.html
-https://www.10-mins.com/article/cinema_commentary/40.html
-https://www.10-mins.com/article/cinema_commentary/39.html
+https://www.10-mins.com/article/live-way/show-50.html
+https://www.10-mins.com/article/live-knowledge/show-49.html
+https://www.10-mins.com/article/live-knowledge/show-48.html
+https://www.10-mins.com/article/live-knowledge/show-47.html
+https://www.10-mins.com/article/micro-cinema/show-46.html
+https://www.10-mins.com/article/micro-cinema/show-45.html
+https://www.10-mins.com/article/micro-cinema/show-44.html
+https://www.10-mins.com/article/micro-cinema/show-43.html
+https://www.10-mins.com/article/micro-cinema/show-42.html
+https://www.10-mins.com/article/micro-cinema/show-41.html
+https://www.10-mins.com/article/cinema_commentary/show-40.html
+https://www.10-mins.com/article/cinema_commentary/show-39.html

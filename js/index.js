@@ -684,10 +684,52 @@ function autoLoad(){
 			
 		},
 		
-						
+		//图片等高设置
+		setImageEqualHeight:function(fatherK,childK){
+			var theHeight=0;
+			//遍历子类获取最高的高度
+			$(fatherK).find(childK).each(function(key,item){
+				var childHeight = $(item).height();
+				//console.log("高度："+childHeight);
+				if(childHeight > theHeight){
+					theHeight = childHeight;
+				}
+			})
+			theHeight = theHeight + 18;
+			$(fatherK).find(childK).css("height",theHeight+"px");
+		},
+		
+		//设置生成边目录
+		createSideMenu:function(){
+			//遍历内容获取到相关
+			$(".cinema-article").each(function(key,item){
+				var theText = $(item).find("h3").text();
+				var theSideLiHtml = "<li>"+theText+"</li>";
+				//将li加载到对应的ul中
+				$(theSideLiHtml).appendTo(".side-menu");
+			})
+		}						
 	}
-	theLoad.commentLoad();
-	theLoad.articleViewAdd();
+	
+	
+	//调用
+	var theSelfControl = new selfControl();	
+	
+	//当为文章页时调用阅读量加一，加载评论页
+	if(theSelfControl.urlCheck('pathname','show')){
+		theLoad.commentLoad();
+		theLoad.articleViewAdd();
+	}
+		
+	//首页或者父类文章页
+	console.log(window.location.pathname);
+	if(window.location.pathname == "/" || theSelfControl.urlCheck('pathname','list')){
+		theLoad.setImageEqualHeight(".hot-article-container",".img-k");
+		theLoad.setImageEqualHeight(".cinema-article-container",".img-k");
+		//加载边菜单
+		//theLoad.createSideMenu();
+	}
+		
 }
 
 //按需控制
