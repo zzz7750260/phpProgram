@@ -95,21 +95,21 @@
 				</div>
 				<div class="clear"></div>
 			</div>	
-			
+			<div class="clear"></div>
 		</section>
 		
 		<?php 
 			//引入分类的内容模板，这样做能保证控制内容的灵活性
 			//将获取到的父类分类信息赋值到内容模板中
-			$theCategorySelect = $fatherCategoryListArray[0];
+			//$theCategorySelect = $fatherCategoryListArray[0];
 			//引入内容模板
-			include('index-template-cantainer.php');
+			//include('index-template-cantainer.php');
 			
 			//遍历数组，将各类分类的内容放入主页中
-			//foreach($fatherCategoryListArray as $fatherCategoryListKey => $fatherCategoryListValue){
-			//	$theCategorySelect = $fatherCategoryListValue;	
-			//	include('index-template-cantainer.php');
-			//}
+			foreach($fatherCategoryListArray as $fatherCategoryListKey => $fatherCategoryListValue){
+				$theCategorySelect = $fatherCategoryListValue;	
+				include('index-template-cantainer.php');
+			}
 		?>
 		
 		<?php 
@@ -124,7 +124,7 @@
 						<h3>封面列表</h3>
 					</div>
 					<div class="cover-title-right col-md-10">
-						<a href="<?php $thePagePath = ''.$commonUtil->isHttpsCheckSelect().'//'.$_SERVER['HTTP_HOST'].'/article/cover-page/cover-list-1.html'; echo $thePagePath;?>">更多封面</a>
+						<span class="cover-the-more"><a href="<?php $thePagePath = ''.$commonUtil->isHttpsCheckSelect().'//'.$_SERVER['HTTP_HOST'].'/article/cover-page/cover-list-1.html'; echo $thePagePath;?>">更多封面</a></span>
 					</div>
 				</div>
 				<ul class="row">

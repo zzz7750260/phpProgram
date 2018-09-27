@@ -251,7 +251,7 @@ class theCover{
 			
 			//组装对应的html
 			foreach($getCoverArray as $key => $value){
-				$coverArrayHtml .= '<li class="col-md-3"><a href="'.$commonUtil->isHttpsCheckSelect().'//'.$_SERVER['HTTP_HOST'].'/article/'.$value['categoryyw'].'/'.$value['aid'].'.html"><div class="cover-array-img"><img class="img-responsive" src="../../upload/cover/'.$value['article_img'].'"><div class="cover-array-img-title"><h5>'.$value['title'].'</h5></div></div></a></li>';						
+				$coverArrayHtml .= '<li class="col-md-3"><a href="'.$commonUtil->isHttpsCheckSelect().'//'.$_SERVER['HTTP_HOST'].'/article/'.$value['categoryyw'].'/show-'.$value['aid'].'.html"><div class="cover-array-img"><img class="img-responsive" src="../../upload/cover/'.$value['article_img'].'"><div class="cover-array-img-title"><h5>'.$value['title'].'</h5></div></div></a></li>';						
 			}
 			return $coverArrayHtml;
 		};
