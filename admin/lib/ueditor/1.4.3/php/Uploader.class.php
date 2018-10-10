@@ -313,7 +313,8 @@ class Uploader
 		//echo substr($fullname,3)."<br><hr>";
 		//echo $rootPath .'/program/'. substr($fullname,3);
 		//return $rootPath .'/program/'. substr($fullname,3);
-		return $rootPath . substr($fullname,3);
+		//return $rootPath . substr($fullname,3);
+		return $rootPath . $fullname;
     }
 
     /**

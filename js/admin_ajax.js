@@ -648,6 +648,10 @@ function adminArticle(){
 				console.log("=========外部获取的编辑文章信息===============");
 				console.log(getArticleInfo);
 				
+				//公共模块，根据id获取文章对应的video信息
+				var getArticleVideoInfoArray = theUtil.commAricle.getEditArticleVideo(getArticleId);
+				console.log("=========外部获取的编辑video信息===============");
+				console.log(getArticleVideoInfoArray);				
 				
 				//根据获取到的数值渲染到对应的表单中
 				var theData = getArticleInfo.result;			
@@ -686,6 +690,16 @@ function adminArticle(){
 
 			　　});
 			
+				//遍历video的数组，将值填入视频输入框中
+				$(".theVideo").empty();
+				getArticleVideoInfoArray.forEach(function(item,key){
+					var listHtml = '<div class="row video-k"><label class="form-label col-xs-4 col-sm-2 col-md-2">视频添加：</label><div class="video-put col-xs-8 col-sm-9 col-md-8"><div class="video-id video-value" name="video-id" data-videoid="'+item.vid+'">'+item.vid+'</div><input type="text" class="input-text video-value col-md-2 col-sm-2" value="'+item.video_name+'" placeholder="输入视频名称" name="video-name"><hr/><select name="video-platform" class="select select-video video-value col-md-2 col-sm-2" value="'+item.video_pt+'"><option value="none">全部栏目</option>								<option value="youkuHttps">├优酷</option>	<option value="bilibili">├哔哩哔哩</option><option value="baidu">├百度视频</option>					<option value="qq">├腾讯</option><option value="souhu">├搜狐</option><option value="iqiyi">├爱奇艺</option>						</select><hr/><input type="text" class="input-text video-value col-md-8 col-sm-8" value="'+item.video_link+'" placeholder="输入视频链接" name="video-link"><span class="video-btn-upload btn-upload form-group"><input id="video-file" class="input-text upload-url radius video-value the-video-file" type="text" name="video-pic"readonly value="'+item.video_img+'" placeholder="输入视频图片"><a href="javascript:void();" class="btn btn-primary radius "><i class="iconfont">&#xf0020;</i> 浏览文件</a><input type="file" id="video-fileList" multiple name="video-pic-file" class="video-input-filevideo-value input-file" data-imgbase>								 			</span>	<div class="video-img col-md-12"><div class="video-img-show col-md-4"><img src="../upload/video/'+item.video_img+'" class="img-responsive"></div>	<div style="clear:both"></div></div></div><div class="video-close col-md-1 col-sm-1">X</div><div style="clear:both"></div></div><div style="clear:both"></div>';
+									
+					$(listHtml).appendTo(".theVideo");
+					$(".select-video").eq(key).find("option[value="+item.video_pt+"]").attr("selected",true);
+					//$(listHtml).find(".select-video").val(item.video_pt);
+				})
+							
 				//将提交按钮换为编辑按钮
 				$(".article-put-group").css("display","none");
 				$(".article-edit-group").css("display","block");
@@ -788,6 +802,9 @@ function adminArticle(){
 						if(videoChildrenKey == "video-pic-file"){
 							videoChildrenValue = $(item).data("imgbase");
 						}
+						if(videoChildrenKey == "video-id"){
+							videoChildrenValue = $(item).data("videoid");							
+						}
 						videoChildrenArray[videoChildrenKey] = videoChildrenValue;
 						
 						//that.videoChildrenArray = videoChildrenArray;
@@ -883,7 +900,7 @@ function adminArticle(){
 			
 			
 			//封装获取视频信息
-			function getVideoInfoArray(articleId){
+			function getVideoInfoArray(articleId,articleType = 'add'){
 				var videoArray = {};			
 				var n = 0;
 				$(".theVideo").find(".video-k").each(function(keyFather,itemFather){
@@ -906,6 +923,10 @@ function adminArticle(){
 						if(videoChildrenKey == "video-pic-file"){
 							videoChildrenValue = $(item).data("imgbase");
 						}
+						if(videoChildrenKey == "video-id"){
+							videoChildrenValue = $(item).data("videoid");							
+						}						
+						
 						videoChildrenArray[videoChildrenKey] = videoChildrenValue;
 						
 						//that.videoChildrenArray = videoChildrenArray;
@@ -929,7 +950,7 @@ function adminArticle(){
 				//将获取到的数据提交到后台
 				$.ajax({
 					url:"../server/ajax/thevideo.php",
-					data:{turl:"addVideo",theVideoArray:that.videoArray,theArticleId:articleId},
+					data:{turl:"addVideo",theVideoArray:that.videoArray,theArticleId:articleId,theArticleType:articleType},
 					type:"post",
 					dataType:"json",
 					success:function(data){
@@ -1047,7 +1068,7 @@ function adminArticle(){
 						//在文章文章添加成功返回后，获取到对应的文章id，并向该id提交对应的视频
 						if(data.status == 200){
 							//获取文章的id,并调用video获取提交
-							getVideoInfoArray(data.result);
+							getVideoInfoArray(data.result,isEdit);
 							
 						}
 					}
@@ -2330,7 +2351,25 @@ function util(){
 			//console.log("==========aaa获取从后端返回的文章信息==============");
 			//console.log(that.articleInfo);
 			return that.articleInfo;
-		}		
+		},	
+
+		//根据文章id获取对应的视频信息
+		getEditArticleVideo:function(theArticleId){
+			//向后端发出请求
+			$.ajax({
+				url:"../server/ajax/thevideo.php",
+				data:{turl:"getArticleVideoArray",articleId:theArticleId},
+				type:'get',
+				dataType:'json',
+				async:false,//需要同步数据处理将得到的值传递给that.articleVideo
+				success:function(data){
+					console.log("===========后端返回的video列表=========");
+					console.log(data);
+					that.articleVideo = data.result;
+				}
+			})
+			return that.articleVideo;
+		}
 	}
 	
 	//获取用户类型返回
