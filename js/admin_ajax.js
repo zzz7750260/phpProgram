@@ -1704,6 +1704,16 @@ function coverControl(){
 			//组装html
 			$("input[name='cover-author']").val(theAllUserInfo.result.username);
 			
+			//通过公共模块获取分类列表，并进行html组装
+			var getCategoryListCover = theAllUtil.categoryUtil.getListCategory();
+			console.log("==================封面外部获取分类=================");
+			console.log(getCategoryListCover);
+			//遍历数组，将分类添加到封面的html中
+			getCategoryListCover.forEach(function(item,key){
+				var categoryHtmlCover = '<option value="'+item.cid+'">'+item.categoryname+'</option>';
+				$(categoryHtmlCover).appendTo("#cover-category");
+			})
+			
 			//获取是否有参数，如果有为编辑封面，没有为增加封面
 			var theCoverId = theAllUtil.theReg.getUrlParamsReg("coverId");
 			console.log("封面参数为："+ theCoverId)
@@ -1721,10 +1731,16 @@ function coverControl(){
 						console.log(data);
 						var coverInfo = data.result;
 						//根据返回的数据组建HTML
-						$("input[name='cover-title']").val(coverInfo.title);
+						$("input[name='cover-title']").val(coverInfo.ptitle);
+						$("input[name='cover-yw']").val(coverInfo.title_yw);
 						$(".cover-short").val(coverInfo.cover_introduction);
 						that.pictureInfoname = coverInfo.cover_img;
+						$("#cover-pic").attr("data-img",coverInfo.cover_img);
 						that.coverIdNum = coverInfo.pid;
+						//设置选中的分类
+						$("#cover-category").find("option[value='"+coverInfo.cover_category+"']").attr("selected",true);
+						
+						$(".show-picture").attr("src","../upload/user_cover/"+coverInfo.cover_img+"");
 					}
 					
 				})
@@ -1751,6 +1767,10 @@ function coverControl(){
 				reader.onload = function(e){
 					$(".show-picture").attr("src",this.result);
 					that.picBase = this.result //将base存到全局
+					//将base64的值传给show-picture
+					$(".show-picture").attr("data-base",that.picBase);
+					//将图片的name传给cover-pic
+					$("#cover-pic").attr("data-img",theFile);
 				}
 			})
 			
@@ -1769,8 +1789,9 @@ function coverControl(){
 						else{
 							cover_value = that.pictureInfo.name;	
 						}
-						
+						//cover_value = $(this).data('img');
 					}
+					
 					coverInfoArray[cover_name] = cover_value;
 				})		
 							

@@ -14,6 +14,7 @@ class theCover{
 		$theBaseImg = $_POST['baseImg'];//获取base地址链接
 		$theType = $_POST['set-type'];
 		$theCoverEditId = $_POST['editId'];
+		$theCoverCategory = $_POST['cover-category'];
 		
 		
 		//获取当前时间
@@ -24,10 +25,10 @@ class theCover{
 		
 		//根据$theType来识别是添加还是为编辑
 		if($theType == 'add'){
-			$coverSql = "insert into page (ptitle, title_yw, author, cover_img, cover_introduction, cover_time) values ('$theTitle', '$theTitleYw', '$theAuthor', '$theImg', '$theShort', '$theTime')";					
+			$coverSql = "insert into page (ptitle, title_yw, author, cover_img, cover_introduction, cover_time, cover_category) values ('$theTitle', '$theTitleYw', '$theAuthor', '$theImg', '$theShort', '$theTime', '$theCoverCategory')";					
 		}
 		if($theType == 'edit'){
-			$coverSql = "update page set ptitle = '$theTitle', author = '$theAuthor', cover_img = '$theImg' , cover_introduction = '$theShort' where pid = '$theCoverEditId'";
+			$coverSql = "update page set ptitle = '$theTitle', author = '$theAuthor', cover_img = '$theImg' , cover_introduction = '$theShort', cover_category = '$theCoverCategory' where pid = '$theCoverEditId'";
 		}
 		
 		$coverSql_db = mysql_query($coverSql);

@@ -25,8 +25,24 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <!-- 上述3个meta标签*必须*放在最前面，任何其他内容都*必须*跟随其后！ -->
-    <title><?php echo $value['title'] .'-'. $value['categoryname'] .'- 课间十分钟'?></title>
-	<meta name="keywords" content="<?php echo $value['article_key']?>" />
+    <title>
+	<?php
+		$theTitle = '';
+		if($value['short_title']){
+			$theTitle = $value['title'].'-'. $value['short_title'] . '-' . $value['categoryname'] .'-课间十分钟';
+		}
+		else{
+			$theTitle = $value['title'].'-'. $value['categoryname'] .'-课间十分钟';
+		}	
+		echo $theTitle; 		
+	?>
+	</title>
+	<meta name="keywords" content="<?php 
+		$theKeyWord = '';
+		$theKeyWord = $articleUtil->returnTheKeyWord($value['cpid'],$value['article_key']);
+		$theKeyWord = $theKeyWord .','.$value['categoryname'] . ',课间十分钟';
+		echo $theKeyWord;
+	?>" />
 	<meta name="description" content="<?php echo $value['article_short']?>" />
 	<!--图标-->
 	<link rel="shortcut icon" href="favicon.ico"/>

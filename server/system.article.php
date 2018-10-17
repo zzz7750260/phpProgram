@@ -148,11 +148,12 @@ class articleUtil{
 	
 	//公共类：查询封面
 	//$theNum：查询的数量
-	function findCoverListArray($theNum){
+	//$cat：查询对应的分类
+	function findCoverListArray($theNum,$cat){
 		//查询为随机查询
 		//多条查询会不适用
 		//$findCoverSql = "select t1.* from page as t1 join (select round(rand()*((select max(pid) from page)-(select min(pid) from page))+(select min(pid) from page)) as pid) as t2 where t1.pid >=t2.pid order by pid limit 0,$theNum";
-		$findCoverSql = "select * from page where pid >= ((select max(pid) from page)-(select min(pid) from page))*rand() + (select min(pid) from page) limit 0,$theNum";
+		$findCoverSql = "select * from page where pid >= ((select max(pid) from page)-(select min(pid) from page))*rand() + (select min(pid) from page) and if($cat = 0,1=1,cover_category = $cat) limit 0,$theNum ";
 		
 		$findCoverSql_db = mysql_query($findCoverSql);
 		$findCoverArray = array();
@@ -202,6 +203,24 @@ class articleUtil{
 		//将$theResult分割为数组进行返回
 		$theArray = explode(',',$theResult);
 		return $theArray;
+	}
+	
+	//文章公共类：根据父类返回关键词
+	//fid:为父类id
+	function returnTheKeyWord($fid,$keyWord){
+		//获取父类的相关信息
+		$theCategoryInfo = $this->categoryDetail($fid);
+		switch($theCategoryInfo['categoryname']){
+			case '电影':
+				$returnKeyWord = $keyWord.'影评,'.$keyWord.'剧情介绍,'.$keyWord.'解说';
+				break;
+			case '美食':
+				$returnKeyWord = $keyWord.'做法,'.$keyWord.'制作步骤,'.'怎么做'.$keyWord;
+				break;
+			default: 
+				$returnKeyWord = $keyWord;
+		}
+		return $returnKeyWord;
 	}
 }
 //$articleUtil = new articleUtil;
