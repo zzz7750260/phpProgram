@@ -2,11 +2,11 @@
 include_once('system.mysql.int.php');
 class articleUtil{	
 	//随机获取文章数
-	function getRandArticleList($categoryId,$limitNum,$isRand = 'rand'){
+	function getRandArticleList($categoryId=0,$limitNum,$isRand = 'rand'){
 		
 		//默认为获取随机，可进行设置
 		if($isRand = 'rand'){
-			$listSql = "select a.* from article as a join (select round(rand()*(select max(aid) from article)) as aid) as b on a.aid >= b.aid where category_id = '$categoryId' order by a.aid ASC limit 0,$limitNum";
+			$listSql = "select a.* from article as a join (select round(rand()*(select max(aid) from article)) as aid) as b on a.aid >= b.aid where if($categoryId = 0,1=1,category_id = '$categoryId') order by a.aid ASC limit 0,$limitNum";
 		}
 		if($isRand == 'common'){
 			$listSql = "select * from article where category_id = '$categoryId' order by ASC limit 0,$limitNum";
@@ -149,7 +149,7 @@ class articleUtil{
 	//公共类：查询封面
 	//$theNum：查询的数量
 	//$cat：查询对应的分类
-	function findCoverListArray($theNum,$cat){
+	function findCoverListArray($theNum,$cat=0){
 		//查询为随机查询
 		//多条查询会不适用
 		//$findCoverSql = "select t1.* from page as t1 join (select round(rand()*((select max(pid) from page)-(select min(pid) from page))+(select min(pid) from page)) as pid) as t2 where t1.pid >=t2.pid order by pid limit 0,$theNum";
@@ -222,6 +222,7 @@ class articleUtil{
 		}
 		return $returnKeyWord;
 	}
+	
 }
 //$articleUtil = new articleUtil;
 //$articleUtil->getRandArticleList(5,2);

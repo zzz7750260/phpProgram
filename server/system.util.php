@@ -11,16 +11,16 @@
 			//	chmod(APP_PATH."/article/".$name, 0777);
 			//}
 			if(mkdir(APP_PATH."/article/".$name, 0777 ,true)){
-				echo $name."传建文件夹成功";
+				//echo $name."传建文件夹成功";
 				
 			}
 			else{
-				echo $name."传建文件夹失败";
+				//echo $name."传建文件夹失败";
 			}
 			//return true;
 		}
 		else{
-			echo $name."该文件夹存在";
+			//echo $name."该文件夹存在";
 			//return false;
 		}	
 	}
@@ -34,10 +34,10 @@
 		if(!file_exists($thePath)){
 			//如果不存在就传建
 			mkdir($thePath,0777,true);
-			echo $name."传建成功";
+			//echo $name."传建成功";
 		}
 		else{
-			echo $name."传建失败";		
+			//echo $name."传建失败";		
 		}
 	}
 	
