@@ -29,7 +29,12 @@
 	</div>
 	<div class="about">
 		<div class="container">
-			<span>关于我们</span> | <span>关于我们</span>
+			<div class="about-info">
+				<span>关于我们</span> | <span>关于我们</span>
+			</div>
+			<div class="about-ba">
+				<a href="http://www.miitbeian.gov.cn" rel="nofollow">粤ICP备18050164号-1</a>
+			</div>
 		</div>
 	</div>	
 </footer>

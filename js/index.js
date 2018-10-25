@@ -612,6 +612,8 @@ function userControl(){
 //打开时自动加载的
 function autoLoad(){
 	that = this;
+	var theSelfControl = new selfControl();	
+	
 	var theLoad = {
 		//文章页面自动加载
 		commentLoad:function(){
@@ -708,12 +710,86 @@ function autoLoad(){
 				//将li加载到对应的ul中
 				$(theSideLiHtml).appendTo(".side-menu");
 			})
-		}						
+		},
+
+		//搜索页内容加载
+		searchValue:function(){
+			//根据关键字获取内容
+			var theParame = theSelfControl.getUrlParame('keyword');
+			var thePageNum = 10;
+			
+			//alert(theParame);
+			//将链接中的中文进行转码
+			var theKeyword = decodeURI(encodeURI(theParame));
+			alert(theKeyword);
+			
+			//查找结果显示
+			$(".show-keyword").text(theKeyword);
+			
+			//向后端发出请求
+			$.ajax({
+				url:"../server/ajax/thearticle.php",
+				data:{turl:'findArticleList',theKeyword:theParame,theNum:thePageNum},
+				type:'get',
+				dataType:'json',
+				success:function(data){
+					console.log("================后端返回的查找信息=========");
+					console.log(data);
+					
+					//循环数组
+					//组装渲染html
+					if(data.status == 200){
+						
+						if(data.pageNum > 0){
+							//渲染封面
+							data.pageResult.forEach(function(item,index){
+								var pageHtml = '<div class="media"> <div class="media-left"><img src="../upload/user_cover/'+item.cover_img+'" class="media-object" style="width:150px"></div><div class="media-body"><h3 class="media-heading">'+item.ptitle+'</h3><p>'+item.cover_introduction+'</p></div></div>';
+								$(pageHtml).appendTo(".search-container-left-page-k");								
+							})
+							
+							//渲染分页
+							var pageNumY = data.pageNum%thePageNum; //如果有余数时，说明不整除，页数需要查一页
+							var pageNumZ = data.pageNum/thePageNum;
+							//console.log(parseInt(pageNumZ));
+							if(pageNumY>0){
+								pageNumZ = pageNumZ+1;						
+							}
+							for(var i = 1; i<pageNumZ; i++){
+								var pageLiHtml = '<li><a date-vlaue='+i+' date-num='+thePageNum+'>'+i+'</a></li>';
+								$(pageLiHtml).appendTo(".search-page-ul");
+							}
+						}
+						
+						if(data.articleNum > 0){
+							//遍历数组，组装html
+							data.articleResult.forEach(function(item,index){
+								var articleHtml = '<div class="media"> <div class="media-left"><img src="../upload/cover/'+item.article_img+'" class="media-object" style="width:200px"></div><div class="media-body"><h3 class="media-heading">'+item.title+'</h3><p>'+item.article_short+'</p></div></div>';	
+								
+								$(articleHtml).appendTo(".search-container-left-article-k");
+							})
+						}
+					}										
+				}
+			})
+			
+			
+			//随机文章调用
+			var getRandArticle = theSelfControl.getRandArticle();
+			console.log(getRandArticle);
+			
+			if(getRandArticle.status == 200){
+				//遍历数组，渲染html
+				getRandArticle.result.forEach(function(item,index){
+					var randArticleHtml = '<div class="col-md-6"><div class="randArticleImg"><img class="img-responsive" src="../upload/cover/'+item.article_img+'" alt="'+item.title+'"></div><div class="randArticleTitle">'+item.title.substr(0,6)+'</div></div>';
+					
+					$(randArticleHtml).appendTo(".search-container-right")
+				})
+			}
+		}
 	}
 	
 	
 	//调用
-	var theSelfControl = new selfControl();	
 	
 	//当为文章页时调用阅读量加一，加载评论页
 	if(theSelfControl.urlCheck('pathname','show')){
@@ -729,7 +805,11 @@ function autoLoad(){
 		//加载边菜单
 		//theLoad.createSideMenu();
 	}
-		
+	
+	//搜索页调用
+	if(theSelfControl.urlCheck('pathname','search')){
+		theLoad.searchValue();		
+	}			
 }
 
 //按需控制
@@ -754,8 +834,24 @@ function selfControl(){
 			judge = false;
 		}
 		return judge;
-	}	
-	
+	},
+
+	//获取链接参数
+	this.getUrlParame = function(name){
+		//var theUrl = window.location.pathname;
+		//获取参数的正则
+		var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)"); //构造一个含有目标参数的正则表达式对象
+		var r = window.location.search.substr(1).match(reg);  //匹配目标参数
+        if (r != null) {
+			//console.log("r[2]:"+r[2]);
+			//console.log("unescape(r[2]):"+unescape(r[2]));
+			//console.log("decodeURI(r[2])==="+decodeURI(r[2]));
+			//将链接上的编码转换为中文
+            return decodeURI(r[2]); 
+        }
+        return null; //返回参数值
+	},
+
 	
 	//检测是否是pc端还是移动端
 	this.checkPhoneSide = function(){
@@ -776,4 +872,28 @@ function selfControl(){
 		}  
 	}
 	
+	//随机文章数据返回自动返回
+	this.getRandArticle = function(){
+		var setNum = 8; //设置返回文章的数量
+		var setCategory = 0;//设置选择的分类，0为所有
+		var getOutValue; //ajax传递到外部的元素
+		//向后端发出请求
+		$.ajax({
+			url:"../server/ajax/thearticle.php",
+			type:"get",
+			data:{turl:"webGetRandArticleList",theNum:setNum,theCategory:setCategory},
+			dataType:'json',
+			async:false,   //设置请求为同步
+			success:function(data){
+				console.log("===================后端返回的随机文章==================");
+				//console.log(data);
+				getOutValue = data;
+				
+			}
+		})
+		//console.log(getOutValue);
+		return getOutValue;
+	}
+	
 }
+

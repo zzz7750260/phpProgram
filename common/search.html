@@ -1,0 +1,96 @@
+<?php 
+	//include_once('../system.mysql.int.php');
+	include_once('../system.article.php');
+	include_once('../system.util.php');
+	$commonUtil = new util();
+	//查询网站的设置信息
+	$getIndexSql = "select * from web_info where 1 = 1";
+	$getIndexSql_db = mysql_query($getIndexSql);
+	$getIndexArray = array();
+	while($getIndexSql_db_array = mysql_fetch_assoc($getIndexSql_db)){
+		$getIndexArray[] =  $getIndexSql_db_array;
+	}	
+	
+	//$a = getCategoryArticle(1);
+	//print_r($a);
+	
+	//调用文章类
+	$theArticleUtil = new articleUtil();
+		
+	
+?>
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- 上述3个meta标签*必须*放在最前面，任何其他内容都*必须*跟随其后！ -->
+    <title><?php echo $getIndexArray[0]['web_title'];?></title>
+	<meta name="keywords" content="<?php echo $getIndexArray[0]['web_keyword']?>" />
+	<meta name="description" content="<?php echo $getIndexArray[0]['web_short']?>" />
+    <!-- Bootstrap -->
+    <link href="https://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
+    <link href="../css/common.css" rel="stylesheet">
+    <!-- HTML5 shim 和 Respond.js 是为了让 IE8 支持 HTML5 元素和媒体查询（media queries）功能 -->
+    <!-- 警告：通过 file:// 协议（就是直接将 html 页面拖拽到浏览器中）访问页面时 Respond.js 不起作用 -->
+    <!--[if lt IE 9]>
+      <script src="https://cdn.bootcss.com/html5shiv/3.7.3/html5shiv.min.js"></script>
+      <script src="https://cdn.bootcss.com/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+  </head>
+  <body>
+		<?php 
+			include_once('c-menu.php');
+			getMenu();
+		?>
+		<div class="jumbotron">
+			<div class="container">
+				<h1><?php echo  $getIndexArray[0]['web_name'];?></h1>
+				<p><strong class="show-keyword"></strong>查找结果</p>
+				<p><a class="btn btn-primary btn-lg" role="button" href="/">
+				 返回首页</a>
+				</p>
+			</div>
+		</div>
+		
+		<section>
+			<div class="search-container container">
+				<div class="search-container-left col-md-9">
+					<div class="search-container-left-page">
+						<div class="search-container-left-page-k">
+							
+						</div>
+						<div class="search-container-left-page-li">
+							<ul class="pagination search-page-ul">
+								
+							</ul>
+						</div>						
+					</div>
+
+					<div class="search-container-left-article">
+						<div class="search-container-left-article-k">
+							
+						</div>
+						<div class="search-container-left-page-li">
+						
+						</div>						
+					</div>						
+					
+				</div>
+				
+				<div class="search-container-right col-md-3">
+					<h3>推荐：</h3>
+				</div>
+			</div>
+		
+		</section>
+	</body>
+	
+	    <!-- jQuery (Bootstrap 的所有 JavaScript 插件都依赖 jQuery，所以必须放在前边) -->
+    <script src="https://cdn.bootcss.com/jquery/1.12.4/jquery.min.js"></script>
+    <!-- 加载 Bootstrap 的所有 JavaScript 插件。你也可以根据需要只加载单个插件。 -->
+    <script src="https://cdn.bootcss.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+	
+	<script src="../js/index.js"></script>
+</html>
