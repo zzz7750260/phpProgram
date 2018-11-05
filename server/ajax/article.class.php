@@ -880,9 +880,7 @@ class theArticleClass{
 		$returnFindArticleJson = json_encode($returnFindArticleArray);
 		print $returnFindArticleJson;
 	}
-	
-	
-	
+		
 	
 	
 			

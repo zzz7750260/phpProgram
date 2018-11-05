@@ -727,6 +727,10 @@ function adminArticle(){
 					$(".show-picture").attr("src",theImgSrc);
 					//将获取到的图片base64传递到外部对象
 					that.baseImgurl = theImgSrc;
+					
+					$("#article-fileList").attr("value",theImgSrc);
+					$("#article-file").attr("value",theFile['name']);
+					
 				}
 				//同时获取上传图片的名称
 				//this.GlobalVar.pictureName = theFile['name'];
@@ -1691,6 +1695,82 @@ function adminArticle(){
 	theArticle.articleHtml();
 	theArticle.curlArticle();
 	theArticle.curlPicture();	
+	
+	var theFM = {
+		addFmArticle:function(){
+			//获取FmArticle的相关信息
+			$("#article-FM-save").click(function(){
+				var fmArticleArray={},fmKey,fmValue;
+				$("#form-article-FM-add").find(".row").find(".value-v").each(function(item){
+					fmKey = $(this).attr("name");
+					fmValue = $(this).val();
+					if(fmKey =="article-FM" || fmKey =="article-FM-file" || fmKey =="article-pic-file" || fmKey =="article-pic"){
+						fmValue = $(this).attr("value");
+					}				
+					fmArticleArray[fmKey] = fmValue;			
+				})
+				
+				console.log("=============获取文章内容==============");
+				var ue = UE.getEditor('editor');
+				var str = ue.getContent();
+				
+				//组装提交数据				
+				fmArticleArray["fm-article"] = str;
+				fmArticleArray["turl"] = "addFmArticle";
+				console.log(fmArticleArray);
+								
+				//向后台提交信息
+				$.ajax({
+					url:"../server/ajax/thefm.php",
+					data:fmArticleArray,
+					type:"POST",
+					dataType:"json",
+					success:function(data){
+						console.log("================fm提交返回数据====================");
+						console.log(data);
+						//当返回值为插入成功时，添加ajax的文件上传
+						if(data.status == 200){
+							console.log("=======触发文件提交============");
+							var formData = new FormData();
+							formData.append('file', $('#article-FM-fileList')[0].files[0]);
+							$.ajax({
+								url: '../server/ajax/thefm.php?turl=getFmFile',
+								type: 'POST',
+								dataType:'json',
+								cache: false,
+								data: formData,
+								processData: false,
+								contentType: false,
+								success:function(data){
+									console.log("===========文件上传返回=============");
+									console.log(data);
+								}
+							})
+
+						}
+					}
+				})
+			})	
+
+			//上传FM的操作
+			$("#article-FM-fileList").change(function(){
+				var theFile = this.files[0];
+				var reader = new FileReader();
+				console.log(theFile);
+				var theFileName = theFile['name'];
+				reader.readAsDataURL(theFile);
+				reader.onload = function(e){
+					//获取fm的base64
+					$fmBaseUrl = this.result;
+					//console.log($fmBaseUrl);
+					$("#article-FM-play").attr("src",$fmBaseUrl);
+					$("#article-FM-fileList").attr("value",$fmBaseUrl);
+					$("#article-FM").attr("value",theFileName);
+				}
+			})
+		}
+	}
+	theFM.addFmArticle();
 }
 
 //封面管理
