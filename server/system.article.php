@@ -87,6 +87,45 @@ class articleUtil{
 		return $theCategoryArticle;
 	}
 	
+	
+	//公共类：获取fm的边栏目
+	//$categoryId:对应的分类id
+	//$num:为获取的数量，为0时取无限
+	//$type：查询的模式，是为顺序还是为随机
+	function getCategoryFmArray($categoryId, $num=6, $type='list'){
+		//获取包含该分类下的子分类
+		$getTheCaregoryArray = $this->findCategoryFatherChilrenArray($categoryId,'article');
+		
+		//将获取到的集合数组转成字符串
+		$getTheCaregoryString = implode(',' , $getTheCaregoryArray);
+		
+		//var_dump($getTheCaregoryArray);
+		
+		if($type=='list'){
+			if($num != 0){
+				$theCategorySql = "select a.*,b.* from fm as a left join category as b on a.fm_category = b.cid where a.fm_category in ($getTheCaregoryString) order by a.fid DESC limit 0, $num";
+			}
+			else{
+				$theCategorySql = "select a.*,b.* from fm as a left join category as b on a.fm_category = b.cid where a.fm_category in ($getTheCaregoryString) order by a.fid DESC";
+			}						
+		}
+		if($type=='random'){
+			$theCategorySql = "select a.*,b.* from fm as a left join category as b on a.fm_category = b.cid where a.fid >= ((select max(a.fid) from fm)-(select min(a.fid) from fm)) * rand() + (select min(a.fid) from fm) and a.fm_category in ($getTheCaregoryString) order by a.fid DESC limit 0, $num";	
+		
+			if($num == 0){
+				$theCategorySql = "select a.*,b.* from fm as a left join category as b on a.fm_category = b.cid where a.fid >= ((select max(a.fid) from fm)-(select min(a.fid) from fm)) * rand() + (select min(a.fid) from fm) and a.fm_category in ($getTheCaregoryString) order by a.fid DESC";				
+			}	
+		}
+		
+		$theCategorySql_db = mysql_query($theCategorySql);
+		$theCategorySqlArray = array();
+		while($theCategorySql_db_array = mysql_fetch_assoc($theCategorySql_db)){
+			$theCategorySqlArray[] = $theCategorySql_db_array;		
+		}
+		return $theCategorySqlArray;
+		
+	}
+	
 	//公共类函数：返回所以分类值
 	function findAllCategory(){
 		$findCategorySql = "select * from category where 1 = 1";

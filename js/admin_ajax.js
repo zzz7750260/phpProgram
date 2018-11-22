@@ -1187,19 +1187,46 @@ function adminArticle(){
 		//根据分类页面静态化请求
 		articleHtml:function(){
 			//向后端请求取得分类列表
-			
+			//获取文章的分类
 			var data = theUtil.commAricle.getArticleCategoryJson();	
-					
+			console.log("===========外部获取的category-json=========");
+			console.log(data);
+				
+			//获取fm的分类
+			var fmData = theUtil.commAricle.getArticleCategoryJson('fm');	
+			console.log("===========外部获取的fm-category=========");
+			console.log(fmData);
+			
 			//html渲染
 			data.forEach(function(item){
 				var itemHtml = '<option value='+item.cid+'>'+item.categoryname+'</option>';
 				$(itemHtml).appendTo("#ob-select-category-s");
 				$(itemHtml).appendTo("#ob-select-category-lb");
 			})
-					
-				
-				
 			
+			//html渲染fm-category
+			fmData.forEach(function(item){
+				var itemHtml = '<option value='+item.cid+'>'+item.categoryname+'</option>';
+				$(itemHtml).appendTo("#ob-select-category-fm");
+				$(itemHtml).appendTo("#ob-select-fm-lb");			
+			})
+					
+			//静态化fm页面
+			$("#get-ob-fm").click(function(){
+				//获取选中的分类
+				var theCategory = $("#ob-select-category-fm").val();			
+				//向后端发出静态化请求
+				$.ajax({
+					url:"../server/ajax/thefm.php",
+					data:{turl:'getFmArticleOb','fm-article-category':theCategory},
+					type:'get',
+					dataType:'json',
+					success:function(data){
+						console.log("===============fm静态化请求返回值=================");
+						console.log(data);
+					}
+				})
+			})
 			
 			//选择选择框，根据选中的值来进行查询
 			//获取选中值
@@ -1265,6 +1292,47 @@ function adminArticle(){
 							
 						}
 					})					
+				}
+			})
+			
+			//fm列表静态化
+			$("#get-fm-lb-ob").click(function(){
+				//获取列表的选中值
+				var getFmCategory = $("#ob-select-fm-lb").val();
+				console.log("选中值："+ getFmCategory);
+				if(getFmCategory == 0){
+					//为0为全选
+					$("#ob-select-fm-lb").find("option").each(function(index,item){
+						//获取选项对应的value
+						console.log(item);
+						var fmCategoryValue = $(item).val();
+						console.log("选择:"+ fmCategoryValue);
+						if(fmCategoryValue !=0){
+							//不为0时向后台提交fm分类静态化请求
+							$.ajax({
+								url:"../server/ajax/thefm.php",
+								data:{turl:'fmCategoryList',getOb:'ob','get-category-id':fmCategoryValue},
+								type:'get',
+								dataType:'json',
+								success:function(data){
+									console.log("===========后端返回fm列表的静态化结果===========");
+									console.log(data);
+								}
+							})
+						}						
+					})				
+				}
+				else{
+					$.ajax({
+						url:"../server/ajax/thefm.php",
+						data:{turl:'fmCategoryList',getOb:'ob','get-category-id':getFmCategory},
+						type:'get',
+						dataType:'json',
+						success:function(data){
+							console.log("===========后端返回fm列表的静态化结果===========");
+							console.log(data);
+						}
+					})				
 				}
 			})
 			
@@ -2418,11 +2486,11 @@ function util(){
 	//获取文章类型的数据返回
 	this.commAricle = {
 		//获取分类列表
-		getArticleCategoryJson:function(){
+		getArticleCategoryJson:function(selectType='article'){
 			$.ajax({
 				url:"../server/ajax/thecategory.php",
 				type:"get",
-				data:{turl:"listCategory"},
+				data:{turl:"listCategory",'the-category-type':selectType},
 				dataType:"json",
 				async:false,//需要同步数据处理将得到的值传递给that.categoryJson
 				success:function(data){
@@ -2534,12 +2602,15 @@ function util(){
 	
 	//获取分类类型返回
 	this.categoryUtil = {	
-		getListCategory:function(){
+		//selectType:选择返回的分类类型(默认为article)
+		//
+		getListCategory:function(selectType='article'){
 			$.ajax({
 				url:"../server/ajax/thecategory.php",
 				type:'get',
 				data:{
-					turl:"listCategory",		
+					turl:"listCategory",
+					'the-category-type':selectType,
 				},
 				dataType:"json",
 				async:false,

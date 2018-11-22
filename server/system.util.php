@@ -141,7 +141,8 @@
 		//获取根目录
 		$rootPath = $_SERVER['HTTP_HOST'];
 		if($afterPath){
-			$rootPath = $this->isHttpsCheckSelect .'//'.$rootPath .$afterPath; 
+			//echo "前缀".$this->isHttpsCheckSelect();
+			$rootPath = $this->isHttpsCheckSelect() .'//'.$rootPath .$afterPath; 
 		}
 		return $rootPath;
 	}
@@ -162,6 +163,7 @@
 		$http_type = ((isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] == 'on') || (isset($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO'] == 'https')) ? 'https:' : 'http:';
 		//echo $http_type .'//'. $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI']."==========<br/>";
 		//echo $http_type;
+		//echo "内部前缀:".$http_type;
 		return $http_type;
 	}
 }

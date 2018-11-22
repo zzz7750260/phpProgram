@@ -20,6 +20,9 @@ class theSql{
 			mysql_query("set names utf8");
 			//设置header也为utf-8
 			 header("Content-type: text/html; charset=utf-8");
+			 
+			 //设置区时（重庆）
+			 date_default_timezone_set('Asia/Chongqing');
 			if($cont_db){
 				//echo "数据库连接成功";				
 			}								

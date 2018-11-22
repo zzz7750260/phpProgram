@@ -5,14 +5,20 @@
 	//根据当前的id获取对应的分类信息
 	
 	$theArticleUtil = new articleUtil();
-	$theCategoryInfoBreadcrumb = $theArticleUtil->categoryDetail($value['category_id']);	
+	/*article的Breadcrumb*/
+	if($value['category_id']){
+		$theCategoryInfoBreadcrumb = $theArticleUtil->categoryDetail($value['category_id']);		
+	}
+	else{
+		$theCategoryInfoBreadcrumb = $theArticleUtil->categoryDetail($value['fm_category']);	
+	}	
 	
 	//根据文章的信息来获取父类对应的信息
 	
 	//echo $value['category_id'];
 	
 	//print_r($theCategoryInfoBreadcrumb);
-	$theBreadcrumbArray = $theArticleUtil->getCategoryInfoArray($value['category_id']);
+	$theBreadcrumbArray = $theArticleUtil->getCategoryInfoArray($value['fm_category']);
 	//对数组进行顺序调整
 	sort($theBreadcrumbArray);
 	//print_r($theBreadcrumbArray);
@@ -65,6 +71,14 @@
 		//为了防止重复，在输出完后最好赋予空值
 		echo $breadcrumbLiHtml;
 	?>
-	<li><?php echo $value['title']?></li>;
+	<li><?php 
+		if($value['title']){
+			$showTitle = $value['title'];
+		}
+		else if($value['f_title']){
+			$showTitle = $value['f_title'];
+		}
+		echo $showTitle;
+	?></li>;
 
 	</ol>

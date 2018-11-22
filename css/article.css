@@ -15,6 +15,27 @@
 	width:100%;
 }
 
+/*FM控制*/
+.FM-dmwall{
+	position:relative;
+	width:100%;
+}
+
+.FM-dmtext{
+	position:absolute;
+}
+
+.FM-zz{
+	position:relative;
+	height:55px;
+	width:300px;
+	z-index:100
+}
+
+#theFm{
+	position:relative;
+	margin-top:-55px;
+}
 
 /*文章边列表*/
 .theSide>ul>li{

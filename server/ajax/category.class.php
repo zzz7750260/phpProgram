@@ -1,8 +1,11 @@
 <?php 
 class theCategory{
 	function listCategory(){
+		//添加分类的选择类型
+		$theCategoryType = $_GET['the-category-type'];
+		
 		//这里不用递归的方法循环调用数据库，而是通过数组的方法一次
-		$listCategorySql = "select * from category";
+		$listCategorySql = "select * from category where categorytype = '$theCategoryType'";
 		$listCategorySql_db = mysql_query($listCategorySql);
 		$listCategoryArray = array();
 		while($listCategorySql_db_array = mysql_fetch_assoc($listCategorySql_db)){			

@@ -627,7 +627,7 @@ function userControl(){
 		fmControl:function(){
 			//获取fm的总时间
 			var theTime,sheTime,danTime;
-			var totalTime = $("#audio")[0].duration;
+			var totalTime = $("#theFm")[0].duration;
 			var dmArray = {};
 			var fmWidth,fmHeight,randomWidth,randomHeight;
 			var textHtml;
@@ -692,7 +692,7 @@ function userControl(){
 			
 			console.log(dmArray);
 					
-			$("#audio").on("timeupdate",function(){
+			$("#theFm").on("timeupdate",function(){
 				//console.log("触发");
 				//$(this)[0]表示$("#theFm")这个dom
 				theTime = $(this)[0].currentTime;

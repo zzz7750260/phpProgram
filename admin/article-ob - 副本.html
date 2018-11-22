@@ -272,110 +272,71 @@
 		<a class="btn btn-success radius r" style="line-height:1.6em;margin-top:3px" href="javascript:location.replace(location.href);" title="刷新" ><i class="Hui-iconfont">&#xe68f;</i></a>
 	</nav>
 	<div class="Hui-articles">
-		<article class="cl pd-20">
-			<div class="col-md-6">
-				<div class="ob-select-category">
-					<h4>文章类静态化</h4>
-					<br/>
-					<span>选择需要静态化的分类：</span>
-					<span>
-						<select class="ob-select-category-s" id="ob-select-category-s">
-							<option value="0" select = "selected">全选</option>
-						</select>
-					</span>
-				</div>
-				<div>
-					<input class="btn btn-default" type="button" value="静态化" id="get-ob">
-				</div>
-			</div>
-		
-			<div class="col-md-6">
-				<div class="ob-select-category">
-					<h4>FM类静态化</h4>
-					<br/>
-					<span>选择需要静态化的分类：</span>
-					<span>
-						<select class="ob-select-category-s" id="ob-select-category-fm">
-							<option value="0" select = "selected">全选</option>
-						</select>
-					</span>
-				</div>
-				<div>
-					<input class="btn btn-default" type="button" value="静态化" id="get-ob-fm">
-				</div>
-			</div>
-			
-			<div class="clear"></div>
-			<hr/>
-			
-			<div class="col-md-6">
-				<div class="ob-select-category">
-					<h4>列表类静态化</h4>
-					<br/>
-					<span>选择需要静态化的分类：</span>
-					<span>
-						<select class="ob-select-category-lb" id="ob-select-category-lb">
-							<option value="0" select = "selected">全选</option>
-						</select>
-					</span>
-				</div>
-				
-				<div>
-					<input class="btn btn-default" type="button" value="静态化" id="get-lb-ob">
-				</div>
-			</div>
-
-			<div class="col-md-6">
-				<div class="ob-select-category">
-					<h4>FM列表类静态化</h4>
-					<br/>
-					<span>选择需要静态化的分类：</span>
-					<span>
-						<select class="ob-select-fm-lb" id="ob-select-fm-lb">
-							<option value="0" select = "selected">全选</option>
-						</select>
-					</span>
-				</div>
-				
-				<div>
-					<input class="btn btn-default" type="button" value="静态化" id="get-fm-lb-ob">
-				</div>
-			</div>
-			
-			<div class="clear"></div>
-			
-			<hr/>
-
-			<div class="ob-fselect-category">
-				<h4>父类列表静态化</h4>
-				<br/>
-				<span>请选择需要静态化的父类列表</span>
-			
-			</div>
-			
-			<div>
-				<input class="btn btn-default" type="button" value="父类列表静态化" id="get-father-category-ob">
-				<input class="btn btn-default" type="button" value="用户列表静态化" id="get-userPage-ob">
-				<input class="btn btn-default" type="button" value="封面静态化" id="get-coverPage-ob">
-				<input class="btn btn-default" type="button" value="封面列表静态化" id="get-coverList-ob">
-			</div>
-			<hr/>	
-		
-			<div class="ob-select-category">
-				<h4>首页静态化</h4>
-				
-			</div>
-			
-			<div>
-				<input class="btn btn-default" type="button" value="静态化" id="get-index-ob">
-				<input class="btn btn-default" type="button" value="sitemap静态化" id="get-sitemap-ob">
-				<input class="btn btn-default" type="button" value="url静态化" id="get-url-ob">
-			</div>
-			<hr/>						
+		<div class="ob-select-category">
+			<h4>文章类静态化</h4>
+			<br/>
+			<span>选择需要静态化的分类：</span>
+			<span>
+				<select class="ob-select-category-s" id="ob-select-category-s">
+					<option value="0" select = "selected">全选</option>
+				</select>
+			</span>
 		</div>
+		
+		<div>
+			<input class="btn btn-default" type="button" value="静态化" id="get-ob">
+		</div>
+		<hr/>
 	</div>
 	
+	<div class="Hui-articles">
+		<div class="ob-select-category">
+			<h4>列表类静态化</h4>
+			<br/>
+			<span>选择需要静态化的分类：</span>
+			<span>
+				<select class="ob-select-category-lb" id="ob-select-category-lb">
+					<option value="0" select = "selected">全选</option>
+				</select>
+			</span>
+		</div>
+		
+		<div>
+			<input class="btn btn-default" type="button" value="静态化" id="get-lb-ob">
+		</div>
+		<hr/>
+	</div>
+
+	<div class="Hui-articles">
+		<div class="ob-fselect-category">
+			<h4>父类列表静态化</h4>
+			<br/>
+			<span>请选择需要静态化的父类列表</span>
+		
+		</div>
+		
+		<div>
+			<input class="btn btn-default" type="button" value="父类列表静态化" id="get-father-category-ob">
+			<input class="btn btn-default" type="button" value="用户列表静态化" id="get-userPage-ob">
+			<input class="btn btn-default" type="button" value="封面静态化" id="get-coverPage-ob">
+			<input class="btn btn-default" type="button" value="封面列表静态化" id="get-coverList-ob">
+		</div>
+		<hr/>
+	</div>		
 	
+	<div class="Hui-articles">
+		<div class="ob-select-category">
+			<h4>首页静态化</h4>
+			
+		</div>
+		
+		<div>
+			<input class="btn btn-default" type="button" value="静态化" id="get-index-ob">
+			<input class="btn btn-default" type="button" value="sitemap静态化" id="get-sitemap-ob">
+			<input class="btn btn-default" type="button" value="url静态化" id="get-url-ob">
+		</div>
+		<hr/>
+	</div>		
 	
 	
 </section>
