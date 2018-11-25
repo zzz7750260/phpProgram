@@ -12,7 +12,7 @@ define('LISTPATH',dirname(dirname(dirname(__FILE__))));
 function getMenu(){
 	$commonUtil = new util();
 	//echo '内部的:'.LISTPATH;
-	$menuSql = "select * from category where 1 = 1";
+	$menuSql = "select * from category where categorytype = 'article' or categorytype = 'fm'";
 	$menuSql_db = mysql_query($menuSql);
 	$menuArray = array();
 	while($menuSql_db_array = mysql_fetch_assoc($menuSql_db)){
@@ -21,7 +21,7 @@ function getMenu(){
 	//print_r($menuArray);
 	//遍历数组找出父类分类,并进行html组装
 	$menuHtml .= '<nav class="navbar navbar-default" role="navigation"><div class="container-fluid"><div class="navbar-header"><button type="button" class="navbar-toggle" data-toggle="collapse"
-data-target="#example-navbar-collapse"><span class="sr-only">切换导航</span><span class="icon-bar"></span><span class="icon-bar"></span><span class="icon-bar"></span></button><a class="navbar-brand" href="'.$commonUtil->isHttpsCheckSelect().'//'.$_SERVER['HTTP_HOST'].'">课间十分钟</a></div><div class="collapse navbar-collapse" id="example-navbar-collapse"><ul class="nav navbar-nav">'; 
+data-target="#example-navbar-collapse"><span class="sr-only">切换导航</span><span class="icon-bar"></span><span class="icon-bar"></span><span class="icon-bar"></span></button><a class="navbar-brand" href="'.$commonUtil->isHttpsCheckSelect().'//'.$_SERVER['HTTP_HOST'].'">课间十分钟</a></div><div class="collapse navbar-collapse" id="example-navbar-collapse"><ul class="nav navbar-nav navbar-left">'; 
 	foreach($menuArray as $key => $value){
 		if($value['cpid'] == 0){
 			$childH = getChildMenu($menuArray,$value['cid']);
@@ -29,7 +29,7 @@ data-target="#example-navbar-collapse"><span class="sr-only">切换导航</span>
 				//$menuHtml .= '<li><a href="../../article/'.$value['categoryyw'].'/'.$value['categoryyw'].'-0.html" >'.$value['categoryname'].'</a></li>';					
 		}
 	}
-	$menuHtml .="</div></ul></nav>";
+	$menuHtml .='</ul><ul class="nav navbar-nav navbar-right"><li class="navbar-nav-user"></li></ul></nav></div>';
 	echo $menuHtml;
 }
 

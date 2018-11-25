@@ -10,6 +10,12 @@ ul li{
 	/*list-style-type:none;*/
 }
 
+/*导航*/
+.navbar-nav-user{
+	padding-top:15px;
+	padding-right:225px;
+}
+
 /*内容布局*/
 .cinema-article-title-right{
 	margin-top:22px;

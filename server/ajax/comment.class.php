@@ -11,8 +11,11 @@
 			$theComment = $_POST['theComment'];					
 			//echo $theName;
 			
+			//获取评论的时间
+			$theCmDate = date("Y-m-d h:i:sa");
+			
 			//设置sql
-			$insertSql = "insert into comment(cmpid, cmtid, cm_name, cm_email, cm_web, cm_comment)values('$theCPid','$articleId','$theName','$theEmail','$theWeb','$theComment')";
+			$insertSql = "insert into comment(cmpid, cmtid, cm_name, cm_email, cm_web, cm_comment, cm_time)values('$theCPid','$articleId','$theName','$theEmail','$theWeb','$theComment', '$theCmDate')";
 			
 			$insertSql_db = mysql_query($insertSql);
 			

@@ -162,6 +162,25 @@ class theLogin{
 		//print_r($menuList);
 		return $menuList;		
 	}
+	
+	
+	//用户登出
+	function loginOut(){
+		//$_SESSION['username'] == '';
+		//$_SESSION['password'] == '';
+		//$_SESSION['session_token'] == '';
+		$_SESSION = array();
+		//组装返回前端数组
+		$returnLoginArray = array(
+			status => 200,
+			msg => '用户退出成功',
+			result => ''
+		);
+		
+		$returnLoginJson = json_encode($returnLoginArray);
+		print($returnLoginJson);
+	}
+	
 		
 	//根据传进来的页面参数调用
 	function theReturn($theUrl){
@@ -189,6 +208,9 @@ class theLogin{
 		}
 		if($theUrl == 'userNameGetInfo'){
 			$this->userNameGetInfo();		
+		}
+		if($theUrl == 'loginOut'){
+			$this->loginOut();			
 		}
 	}
 }

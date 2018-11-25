@@ -77,13 +77,13 @@
 		<section>
 			<div class="container hot-article">
 				<div class="hot-article-header">
-					<div class="hot-article-title">
+					<div class="hot-article-title col-md-2">
 						<h3>最新视频</h3>
 					</div>
-					<div class="hot-article-menu">
+					<div class="hot-article-menu col-md-10">
 						<?php 
 							//获取对应的菜单
-							$getMenuArraySql = "select * from category where cpid=0 and categorytype = 'article";
+							$getMenuArraySql = "select * from category where cpid=0 and categorytype = 'article'";
 							$getMenuArraySql_db = mysql_query($getMenuArraySql);
 							$getMenuArray = array();
 							while($getMenuArraySql_db_array = mysql_fetch_assoc($getMenuArraySql_db)){
@@ -92,7 +92,7 @@
 							//渲染html
 							
 							$getUrlAfter = '/article/' .$getMenuArray['categoryyw']. '/' .$getMenuArray['categoryyw']. '-list.html';  
-							$getMenuHtml = '<span style="margin:5px"><a href="'.$commonUtil->wxPath($getUrlAfter).'">'.$getMenuValue['categoryyw'].'</a></span>';								
+							$getMenuHtml = '<span style="margin:5px"><a href="'.$commonUtil->wxPath($getUrlAfter).'">更多</a></span>';								
 							echo $getMenuHtml;
 						?>
 					</div>				
@@ -135,6 +135,42 @@
 			//include("c-side-menu.php");
 		?>
 		<div class="clear"></div>
+		
+		<section>
+			<div class="container fm-channel">
+				<div class="row">
+					<?php 
+						//引入fm的模板，获取fm的父类id
+						$getFmfatherInfoSql = "select * from category where cpid=0 and categorytype = 'fm'";
+						$getFmfatherInfoSql_db = mysql_query($getFmfatherInfoSql);
+						$getFmfatherInfoSql_db_array = mysql_fetch_assoc($getFmfatherInfoSql_db);
+						$theChildCategoryArray = array();
+						$theChildCategoryArray = $getFmfatherInfoSql_db_array;
+						
+						//设置公共类：获取对应的文章
+						function getFmCategoryArticle($categoryId,$numB,$numE){
+							//获取该父分类下的所以子分类
+							$theArticleUtil = new articleUtil();
+							$childCategoryArray = $theArticleUtil->findCategoryChilrenArray($categoryId,'article');
+							//将数组转换为字符串
+							$childCategoryString = implode(',',$childCategoryArray);
+							//echo "字符串：".$childCategoryString;
+							
+							$theCategoryArticleSql = "select a.*,b.* from fm as a left join category as b on a.fm_category = b.cid where a.fm_category in($childCategoryString) order by fid DESC limit $numB, $numE";
+							$theCategoryArticleSql_db = mysql_query($theCategoryArticleSql);
+							$theCategoryArticleArray = array();		
+							while($theCategoryArticleSql_db_array = mysql_fetch_assoc($theCategoryArticleSql_db)){
+								$theCategoryArticleArray[] = $theCategoryArticleSql_db_array;
+							}
+							return $theCategoryArticleArray;
+						}	
+						include('fm-category-collect-template-part.php');
+						
+					?>					
+				</div>				
+			</div>
+		</section>
+		
 		<section>
 			<div class="container">
 				<div class="cover-title row">

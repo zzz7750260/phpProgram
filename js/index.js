@@ -279,7 +279,7 @@ function userControl(){
 				
 				//将获取到的信息提交到后台
 				$.ajax({
-					url:'/program/server/ajax/thecomment.php',
+					url:'../../server/ajax/thecomment.php',
 					type:'post',
 					data:commentArray,
 					dataType:'json',
@@ -337,6 +337,13 @@ function userControl(){
 					})
 				})				
 			})						
+			
+			//关闭回复框窗口
+			$(".commit-close").click(function(){
+				$(".the-reply").css({
+					"display":"none",
+				})			
+			})
 			
 		},
 		
@@ -793,7 +800,7 @@ function autoLoad(){
 							data.result.forEach(function(item){
 								//data-commentid 存储评论的对应id
 								//data-articleid 存储评论的对应的文章的id
-								var listHtml = '<li class="article-comment-list-k-li" data-commentid="'+item['cmid']+'" data-articleid="'+item['cmtid']+'"><div class="">'+item['cm_comment']+'</div><input type="button" value="回复" class="article-comment-list-k-li-put"><br/><ul>'+childComment(item['childComment'])+'</ul><hr/></li>';
+								var listHtml = '<li class="article-comment-list-k-li" data-commentid="'+item['cmid']+'" data-articleid="'+item['cmtid']+'"><div class=""><div class="article-comment-list-k-li-info"><span style="margin:5px">用户:'+item['cm_name']+'</span><span style="margin:5px">时间：'+item['cm_time']+'</span></div><div class="article-comment-list-k-li-detail">'+item['cm_comment']+'</div></div><input type="button" value="回复" class="article-comment-list-k-li-put btn btn-primary" style="float:right"><br/><ul>'+childComment(item['childComment'])+'</ul><hr/></li>';
 								$(listHtml).appendTo(".article-comment-list-k");
 								
 								//console.log(childComment(item['childComment']));
@@ -815,7 +822,7 @@ function autoLoad(){
 						//console.log(typeof(item));
 						if(typeof(item) != "undefined"){
 							//console.log(item);
-							childHtml += '<li class="article-child-comment-list-k-li" data-commentid="'+item['cmid']+'" data-articleid="'+item['cmtid']+'"><div class="">'+item['cm_comment']+'</div><input type="button" value="回复" class="article-comment-list-k-li-put"><br/><hr/></li>';														
+							childHtml += '<li class="article-child-comment-list-k-li" data-commentid="'+item['cmid']+'" data-articleid="'+item['cmtid']+'"><div class=""><div class="article-comment-list-k-li-info"><span style="margin:5px">用户:'+item['cm_name']+'</span><span style="margin:5px">时间：'+item['cm_time']+'</span></div><div class="article-comment-list-k-li-detail">'+item['cm_comment']+'</div></div><input type="button" value="回复" class="article-comment-list-k-li-put  btn btn-primary" style="float:right"><br/><hr/></li>';														
 						}
 
 					})	
@@ -942,11 +949,74 @@ function autoLoad(){
 					$(randArticleHtml).appendTo(".search-container-right")
 				})
 			}
+		},
+		
+		//登录检测,如果检测到已经登录后，返回对应的登录信息
+		loginCheck:function(){
+			//向后台发送是否已经登录的信息
+			//获取根目录
+			var rootPath = window.location.host;
+			//获取协议
+			pathPro = location.protocol;
+			var getPath = pathPro +'//'+rootPath + '/server/ajax/thelogin.php';
+			console.log("请求路径："+getPath);
+			$.ajax({
+				url:""+getPath+"",
+				data:{turl:"loginYz"},
+				type:"get",
+				dataType:"json",
+				success:function(data){
+					console.log("=============后端返回的用户检测信息===========");
+					console.log(data);
+					
+					//组装html
+					if(data.status == 200){
+						var loginPath = pathPro +'//'+rootPath + '/admin';
+						var userLoginHtml = '<span>用户名:<a href="'+loginPath+'">'+data.result.username+'</a></span><span><a href="#" class="loginOut">退出</a></span>';
+						$(userLoginHtml).appendTo(".navbar-nav-user");						
+						
+						//文章页
+						$(".userInput").val(data.result.username);
+						$(".emailInput").val(data.result.email);
+						
+					}
+					else{
+						var loginPathUrl = pathPro +'//'+rootPath + '/login.php';
+						var registerUrl = pathPro +'//'+rootPath + '/register.php'
+						userLoginHtml = '<span><a href="'+loginPathUrl+'" target="_blank">登录</a></span><span><a href="'+registerUrl+'" target="_blank">注册</a></span>';
+						$(userLoginHtml).appendTo(".navbar-nav-user");							
+					}
+				}			
+			})
+
+			//登出操作
+			$(document).on("click",".loginOut",function(){
+				//设置后端路径请求
+				var loginOutPath = pathPro +'//'+rootPath + '/server/ajax/thelogin.php';
+				//向后端发出登出请求
+				$.ajax({
+					url:loginOutPath,
+					data:{turl:"loginOut"},
+					type:"get",
+					dataType:"json",
+					success:function(data){
+						console.log("===================登出操作返回的后端操作===============");
+						console.log(data);
+						if(data.status == 200){
+							window.location.reload();
+						}
+					}
+				})
+				
+			})			
 		}
 	}
 	
 	
 	//调用
+	//全局调用
+	theLoad.loginCheck();
+	
 	
 	//当为文章页时调用阅读量加一，加载评论页
 	if(theSelfControl.urlCheck('pathname','show')){

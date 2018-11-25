@@ -1,6 +1,7 @@
 <?php 
 	//获取fm的字category的id
-	$theChildCategoryId = $theChildCategoryArray['cid'];	
+	$theChildCategoryId = $theChildCategoryArray['cid'];
+	//echo '获取的id'.$theChildCategoryId;
 ?>
 
 <section class="fm-part">

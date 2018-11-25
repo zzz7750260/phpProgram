@@ -194,6 +194,26 @@
 							}
 						?>
 					</div>
+					
+					<div>		
+						<div class="article-comment-input">
+						<?php 
+							if($value['commit_status'] == "true"){
+								include('c-comment-input.php');					
+							}
+							else{
+								echo '<div data-article="">该文章不支持评论</div>';				
+							}
+									
+						?>
+						</div>
+						<div class="article-comment-list">
+							<ul class="article-comment-list-k">
+							
+							</ul>
+						</div>		
+					</div>
+					
 				</article>
 				
 				<aside class="col-md-3 theSide">
@@ -219,25 +239,6 @@
 			</div>
 		</section>
 		
-		<section>
-			
-			<div class="article-comment-input">
-			<?php 
-				if($value['commit_status'] == "true"){
-					include('c-comment-input.php');					
-				}
-				else{
-					echo '<div data-article="">该文章不支持评论</div>';				
-				}
-						
-			?>
-			</div>
-			<div class="article-comment-list">
-				<ul class="article-comment-list-k">
-				
-				</ul>
-			</div>		
-		</section>
 		
 	</div>	
 	<?php 

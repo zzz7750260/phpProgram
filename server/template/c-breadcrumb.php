@@ -18,7 +18,7 @@
 	//echo $value['category_id'];
 	
 	//print_r($theCategoryInfoBreadcrumb);
-	$theBreadcrumbArray = $theArticleUtil->getCategoryInfoArray($value['fm_category']);
+	$theBreadcrumbArray = $theArticleUtil->getCategoryInfoArray($value['category_id']);
 	//对数组进行顺序调整
 	sort($theBreadcrumbArray);
 	//print_r($theBreadcrumbArray);

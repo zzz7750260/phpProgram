@@ -26,7 +26,7 @@
   </head>
   <body>
 	<nav class="navbar navbar-default" role="navigation"><div class="container-fluid"><div class="navbar-header"><button type="button" class="navbar-toggle" data-toggle="collapse"
-data-target="#example-navbar-collapse"><span class="sr-only">切换导航</span><span class="icon-bar"></span><span class="icon-bar"></span><span class="icon-bar"></span></button><a class="navbar-brand" href="http://www.10mins.com">课间十分钟</a></div><div class="collapse navbar-collapse" id="example-navbar-collapse"><ul class="nav navbar-nav"><li><a href="http://www.10mins.com/article/music/music-0.html" class="dropdown-toggle" data-toggle="dropdown">音乐<b class="caret"></b><ul class="dropdown-menu"><li><a href="http://www.10mins.com/article/oldmusic/oldmusic-1.html">古典音乐</a></li><li><a href="http://www.10mins.com/article/lxmusic/lxmusic-1.html">流行音乐</a></li></ul></a></li><li><a href="http://www.10mins.com/article/article/article-0.html" class="dropdown-toggle" data-toggle="dropdown">文章<b class="caret"></b><ul class="dropdown-menu"></ul></a></li></div></ul></nav>	<div class="container">
+data-target="#example-navbar-collapse"><span class="sr-only">切换导航</span><span class="icon-bar"></span><span class="icon-bar"></span><span class="icon-bar"></span></button><a class="navbar-brand" href="http://www.10mins.com">课间十分钟</a></div><div class="collapse navbar-collapse" id="example-navbar-collapse"><ul class="nav navbar-nav navbar-left"><li><a href="http://www.10mins.com/article/music/music-0.html" class="dropdown-toggle" data-toggle="dropdown">音乐<b class="caret"></b><ul class="dropdown-menu"><li><a href="http://www.10mins.com/article/oldmusic/oldmusic-1.html">古典音乐</a></li><li><a href="http://www.10mins.com/article/lxmusic/lxmusic-1.html">流行音乐</a></li></ul></a></li><li><a href="http://www.10mins.com/article/article/article-0.html" class="dropdown-toggle" data-toggle="dropdown">文章<b class="caret"></b><ul class="dropdown-menu"></ul></a></li><li><a href="http://www.10mins.com/article/fm-channal/fm-channal-0.html" class="dropdown-toggle" data-toggle="dropdown">FM测试<b class="caret"></b><ul class="dropdown-menu"><li><a href="http://www.10mins.com/article/fm-happy/fm-happy-1.html">欢快</a></li></ul></a></li><li><a href="http://www.10mins.com/article/vision/vision-0.html" class="dropdown-toggle" data-toggle="dropdown">视频<b class="caret"></b><ul class="dropdown-menu"></ul></a></li></ul><ul class="nav navbar-nav navbar-right"><li class="navbar-nav-user"></li></ul></nav></div>	<div class="container">
 		<div>
 			<!--引入面包屑-->
 			
@@ -107,6 +107,61 @@ data-target="#example-navbar-collapse"><span class="sr-only">切换导航</span>
 					
 					<div class="theArticle-tag">
 											</div>
+					
+					<div>		
+						<div class="article-comment-input">
+						<div class="the-comment">
+	<div class="the-comment-set" data-article='23'>
+		<div class="row">
+			<span class="col-md-4 col-sm-4 col-xs-4"><input class="comment-v form-control userInput" type="text" name="theName" autocomplete="on"placeholder="请输入用户名"></span>
+			<span class="col-md-4 col-sm-4 col-xs-4"><input class="comment-v form-control emailInput" type="text" name="theEmail" autocomplete="on"placeholder="请输入邮箱"></span>
+			<span class="col-md-4 col-sm-4 col-xs-4"><input class="comment-v form-control webInput" type="text" name="theWeb" autocomplete="on" placeholder="请输入网站"></span>
+			<br/>
+			<br/>	
+			<div class="clear"></div>
+		</div>
+		<div>
+			<textarea class="comment-v form-control" rows="6"  name="theComment" autocomplete="on" placeholder="请输入回复内容">
+				
+			</textarea>	
+			<br/>	
+		</div>
+		<div class="">
+			<input type="button" class="btn btn-primary" value="提交评论" id="comment-push">
+		</div>
+	</div>
+	<!--回复框，只有点击评论回复的时候才会出现-->
+	<div class="the-reply" style="display:none">
+		<div class="col-md-12">
+			<button type="button" class="close commit-close" aria-hidden="true" >
+				&times;
+			</button>
+		</div>
+		<div class="row">		
+			<span class="col-md-4 col-sm-4 col-xs-4"><input class="reply-v form-control userInput" type="text" name="theName" autocomplete="on" placeholder="请输入用户名"></span>
+			<span class="col-md-4 col-sm-4 col-xs-4"><input class="reply-v form-control emailInput" type="text" name="theEmail" autocomplete="on" placeholder="请输入邮箱"></span>
+			<span class="col-md-4 col-sm-4 col-xs-4"><input class="reply-v form-control webInput" type="text" name="theWeb" autocomplete="on" placeholder="请输入网站"></span>
+			<div class="clear"></div>
+			<br/>	
+		</div>
+		<div>
+			<textarea class="reply-v form-control" rows="6"  name="theComment" autocomplete="on" placeholder="请输入回复内容">
+				
+			</textarea>
+			<br/>			
+		</div>
+		<div class="">
+			<input type="button" class="btn btn-primary" value="提交评论" id="reply-push">
+		</div>
+	</div>
+</div>						</div>
+						<div class="article-comment-list">
+							<ul class="article-comment-list-k">
+							
+							</ul>
+						</div>		
+					</div>
+					
 				</article>
 				
 				<aside class="col-md-3 theSide">
@@ -118,56 +173,6 @@ data-target="#example-navbar-collapse"><span class="sr-only">切换导航</span>
 			</div>
 		</section>
 		
-		<section>
-			
-			<div class="article-comment-input">
-			<div class="the-comment">
-	<div class="the-comment-set" data-article='23'>
-		<div>
-			<span>名称：<input class="comment-v" type="text" name="theName" autocomplete="on"></span>
-			<span>邮箱：<input class="comment-v" type="text" name="theEmail" autocomplete="on"></span>
-			<span>网站：<input class="comment-v" type="text" name="theWeb" autocomplete="on"></span>
-			<br/>
-			<br/>		
-		</div>
-		<div>
-			<textarea class="comment-v" rows="8" cols="80" name="theComment" autocomplete="on">
-				
-			</textarea>
-			<br/>
-			<br/>	
-		</div>
-		<div class="">
-			<input type="button" value="提交评论" id="comment-push">
-		</div>
-	</div>
-	<!--回复框，只有点击评论回复的时候才会出现-->
-	<div class="the-reply" style="display:none">
-		<div>
-			<span>名称：<input class="reply-v" type="text" name="theName" autocomplete="on"></span>
-			<span>邮箱：<input class="reply-v" type="text" name="theEmail" autocomplete="on"></span>
-			<span>网站：<input class="reply-v" type="text" name="theWeb" autocomplete="on"></span>
-			<br/>
-			<br/>		
-		</div>
-		<div>
-			<textarea class="reply-v" rows="8" cols="80" name="theComment" autocomplete="on">
-				
-			</textarea>
-			<br/>
-			<br/>	
-		</div>
-		<div class="">
-			<input type="button" value="提交评论" id="reply-push">
-		</div>
-	</div>
-</div>			</div>
-			<div class="article-comment-list">
-				<ul class="article-comment-list-k">
-				
-				</ul>
-			</div>		
-		</section>
 		
 	</div>	
 	<footer>
@@ -180,7 +185,12 @@ data-target="#example-navbar-collapse"><span class="sr-only">切换导航</span>
 	</div>
 	<div class="about">
 		<div class="container">
-			<span>关于我们</span> | <span>关于我们</span>
+			<div class="about-info">
+				<span>关于我们</span> | <span>关于我们</span>
+			</div>
+			<div class="about-ba">
+				<a href="http://www.miitbeian.gov.cn" rel="nofollow">粤ICP备18050164号-1</a>
+			</div>
 		</div>
 	</div>	
 </footer>
