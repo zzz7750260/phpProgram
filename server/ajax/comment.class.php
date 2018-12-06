@@ -89,12 +89,42 @@
 			return $listChildArray;
 		}
 		
+		//删除评论
+		function delComment(){
+			//获取comment的id
+			$theCommentId = $_GET['comment-id'];
+			$delCommentSql = "delete from comment where cmid = '$theCommentId'";
+			$delCommentSql_db = mysql_query($delCommentSql);
+			//组装返回数组
+			if($delCommentSql_db){
+				$returnDelCommentArray = array(
+					status => 200,
+					msg => '评论删除成功',
+					result => ''
+				);			
+			}
+			else{
+				$returnDelCommentArray = array(
+					status => 400,
+					msg => '评论删除失败',
+					result => ''
+				);					
+			}
+			
+			//将数组转为json返回给前端
+			$returnDelCommentJson = json_encode($returnDelCommentArray);			
+			print_r($returnDelCommentJson);
+		}
+		
 		function returnComment($turl){
 			if($turl == "insertComment"){
 				$this->insertComment();				
 			}
 			if($turl == "listComment"){
 				$this->listComment();
+			}
+			if($turl == 'delComment'){
+				$this->delComment();
 			}
 		}
 	}

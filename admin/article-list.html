@@ -59,17 +59,12 @@
 			</nav>
 			<nav id="Hui-userbar" class="nav navbar-nav navbar-userbar hidden-xs">
 				<ul class="cl">
-					<li>超级管理员</li>
-					<li class="dropDown dropDown_hover">
-						<a href="#" class="dropDown_A">admin <i class="Hui-iconfont">&#xe6d5;</i></a>
+					<li class="roleZh">超级管理员</li>
+					<li class="dropDown dropDown_hover"> <a href="#" class="dropDown_A roleName">admin <i class="Hui-iconfont">&#xe6d5;</i></a>
 						<ul class="dropDown-menu menu radius box-shadow">
 							<li><a href="javascript:;" onClick="myselfinfo()">个人信息</a></li>
-							<li>
-								<a href="#">切换账户</a>
-							</li>
-							<li>
-								<a href="#">退出</a>
-							</li>
+							<li><a href="#">切换账户</a></li>
+							<li><a href="#">退出</a></li>
 						</ul>
 					</li>
 					<li id="Hui-msg">
@@ -109,6 +104,7 @@
 <aside class="Hui-aside">
 	
 	<div class="menu_dropdown bk_2">
+		<!--
 		<dl id="menu-article">
 			<dt class="selected"><i class="Hui-iconfont">&#xe616;</i> 资讯管理<i class="Hui-iconfont menu_dropdown-arrow">&#xe6d5;</i></dt>
 			<dd style="display:block">
@@ -251,7 +247,7 @@
 					</li>
 				</ul>
 			</dd>
-		</dl>
+		</dl>-->
 	</div>
 </aside>
 <div class="dislpayArrow hidden-xs">
@@ -314,7 +310,7 @@
 						</tr>
 					</thead>
 					<tbody class="article-body">
-						<tr class="text-c">
+						<!--<tr class="text-c">
 							<td><input type="checkbox" value="" name=""></td>
 							<td>10001</td>
 							<td class="text-l"><u style="cursor:pointer" class="text-primary" onClick="article_edit('查看','article-zhang.html','10001')" title="查看">资讯标题</u></td>
@@ -341,7 +337,7 @@
 							<td class="f-14 td-manage"><a style="text-decoration:none" onClick="article_shenhe(this,'10001')" href="javascript:;" title="审核">审核</a>
 								<a style="text-decoration:none" class="ml-5" onClick="article_edit('资讯编辑','article-add.html','10001')" href="javascript:;" title="编辑"><i class="Hui-iconfont">&#xe6df;</i></a>
 								<a style="text-decoration:none" class="ml-5" onClick="article_del(this,'10001')" href="javascript:;" title="删除"><i class="Hui-iconfont">&#xe6e2;</i></a></td>
-						</tr>
+						</tr>-->
 					</tbody>
 				</table>
 			</div>
@@ -364,6 +360,121 @@
 
 
 <script type="text/javascript">
+	//向后端请求参数
+	var userInfo,articleList;
+	
+	//获取用户的详细信息
+	$.ajax({
+		url:"../server/ajax/thelogin.php",
+		type:"get",
+		data:{turl:'theUser'},
+		dataType:"json",
+		async:false,
+		success:function(data){
+			console.log("==========前端用户信息================");
+			console.log(data)
+			theData = data;
+			var theDataArray = theData;
+			userInfo = theDataArray;
+		}
+	})
+	
+	//获取列表信息
+	function getArticleList(articleStatus = ''){
+		//console.log("=============内=============");
+		//console.log(userInfo);
+		$.ajax({
+			url:"../server/ajax/thearticle.php",
+			data:{'turl':'userArticleList','theAuthor':userInfo['username'],'theRole':userInfo['role'],'theStatus':articleStatus},
+			type:'get',
+			dataType:'json',
+			async:false,
+			success:function(data){
+				console.log("===============后端传递过来的文章列表==============");
+				console.log(data);
+				articleList = data.result;
+								
+				//组装列表
+				$('.table-sort').dataTable({
+					data:articleList,
+					columns: [
+						{ 	data: null,
+							render: function(data, type, row, meta) {
+								return '<input type="checkbox" name="checklist" value="' + row.aid + '" />';
+							}	
+						},
+						{ data: 'aid' },
+						{ data: 'title' },
+						{ data: 'categoryname' },
+						{ data: 'article_source' },
+						{ data: 'article_time' },
+						{ data: 'article_view' },
+						{ 	
+							data: 'article_status',
+							render:function(data, type, row, meta){
+								var returnStatus;
+								if(data == "public"){
+									returnStatus = '公开';
+								}
+								if(data == "draft"){
+									returnStatus = '草稿';
+								}
+								return returnStatus;
+							}
+						},
+						{ 
+							data: 'article_sh',
+							render:function(data, type, row, meta){
+								var returnStatus;
+								if(data == 1){
+									returnStatus = '已审核';
+								}
+								if(data == 0){
+									returnStatus = '未审核';
+								}
+								return returnStatus;
+							}
+						},
+						{ 	data: null, 
+							render:function(data, type, row, meta) {
+								if(userInfo['role'] == 'admin'){
+									return '<a style="text-decoration:none" onClick="article_stop(this,\'10001\')" href="javascript:;" title="静态化"><i class="Hui-iconfont">&#xe6de;</i></a><a style="text-decoration:none" class="ml-5" onClick="article_edit(\'article-add.html\',\''+row.aid+'\')" href="javascript:;" title="编辑"><i class="Hui-iconfont">&#xe6df;</i></a><a style="text-decoration:none" class="ml-5" onClick="article_del(this,\'10001\')" href="javascript:;" title="删除"><i class="Hui-iconfont">&#xe6e2;</i></a>';								
+								
+								}
+								else{
+									return '<a style="text-decoration:none" class="ml-5" onClick="article_edit(\'资讯编辑\',\'article-add.html\',\'10001\')" href="javascript:;" title="编辑"><i class="Hui-iconfont">&#xe6df;</i></a><a style="text-decoration:none" class="ml-5" onClick="article_del(this,\'10001\')" href="javascript:;" title="删除"><i class="Hui-iconfont">&#xe6e2;</i></a>';							
+								}
+							}	
+						},
+					],
+					"aaSorting": [[ 1, "desc" ]],//默认第几个排序
+					//"bStateSave": true,//状态保存
+					"aoColumnDefs": [
+						//{"bVisible": false, "aTargets": [ 3 ]} //控制列的隐藏显示
+						{"orderable":false,"aTargets":[0,9]}// 不参与排序的列
+					]
+				});
+			}
+		})	
+	}
+
+	//加载列表
+	 getArticleList();
+	
+	//点击加载公开文章
+	$("#check_article").click(function(){
+		$(".table-sort").dataTable().fnDestroy()
+		 getArticleList("public");
+	})
+	
+	//点击加载草稿文章
+		//点击加载公开文章
+	$("#check_draft").click(function(){
+		$(".table-sort").dataTable().fnDestroy()
+		 getArticleList("draft");
+	})
+	
+/*	
 $('.table-sort').dataTable({
 	"aaSorting": [[ 1, "desc" ]],//默认第几个排序
 	"bStateSave": true,//状态保存
@@ -372,6 +483,7 @@ $('.table-sort').dataTable({
 		{"orderable":false,"aTargets":[0,8]}// 不参与排序的列
 	]
 });
+*/
 
 /*资讯-添加*/
 function article_add(title,url,w,h){
@@ -393,6 +505,7 @@ function article_edit(title,url,id,w,h){
 }
 /*资讯-删除*/
 function article_del(obj,id){
+	
 	layer.confirm('确认要删除吗？',function(index){
 		$.ajax({
 			type: 'POST',

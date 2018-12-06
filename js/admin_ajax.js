@@ -1,18 +1,45 @@
 $(document).ready(function(){
-	adminMenuAjax();
-	adminRoleAjax();
-	adminCategory();
-	adminArticle();
-	systemControl();
-	memberControl();
-	coverControl();
-	friendLinkControl();
-	emailControl();
+	init_load();
+	//adminMenuAjax();
+	//adminRoleAjax();
+	//adminCategory();
+	//adminArticle();
+	//systemControl();
+	//memberControl();
+	//coverControl();
+	//friendLinkControl();
+	//emailControl();
+	//userIndexPage();
+	//fmControl();
 })
 
 //公共模块获取用户信息,初始化全局变量
 var theAllUtil = new util();
 var theAllUserInfo = theAllUtil.memberUtil.theMemberYz();
+
+//页面加载（核心）
+function init_load(){
+	//获取加载参数
+	var loadParams;
+	var urlParams = window.location.pathname;
+	//alert("链接aaa:"+ urlParams);
+	
+	//公共加载
+	adminMenuAjax();
+	
+	//首页加载
+	if(window.location.pathname == '/admin/' || window.location.pathname == '/admin/index-user.html' ){
+		userIndexPage();
+	}
+	
+	//资讯加载
+	//loadParams = theAllUtil.theReg.selfControl('pathname','article');
+	//console.log("资讯参数:"+loadParams);
+	if(theAllUtil.theReg.selfControl('pathname','article')){
+		adminArticle();
+	}
+}
+
 
 //在进入后台后的直接操作
 //获取后台栏目菜单的ajax
@@ -24,8 +51,8 @@ function adminMenuAjax(){
 	var theAdmin = {
 		theYzLogin:function(){
 			var userInfoData = theUtil.memberUtil.theMemberYz();
-			console.log("获取用户验证信息");
-			console.log(userInfoData);
+			//console.log("获取用户验证信息");
+			//console.log(userInfoData);
 			//根据返回的信息对链接进行跳转
 			//如果返回的status不是200，都为非法登录，均跳转到错误页面
 			if(userInfoData.status != 200){
@@ -80,10 +107,14 @@ function adminMenuAjax(){
 				async:false,
 				success:function(data){
 					//alert(data);
-					console.log("============用户返回信息=============");
-					console.log(data)
+					//console.log("============用户返回信息=============");
+					//console.log(data)
 					theData = data;
 					var theDataArray = theData;
+					
+					//组装框架html 
+					$(".roleZh").text(theData.rolename);
+					$(".roleName").text(theData.username);
 				}
 			})
 		},
@@ -102,25 +133,42 @@ function adminMenuAjax(){
 					var menuData = data;
 					
 					$.each(menuData,function(index,item){
-						console.log("============获取的分类信息===========");
-						console.log(item);	
+						//console.log("============获取的分类信息===========");
+						//console.log(item);	
 						var theHtml = '<dl id="menu-article"><dt><i class="Hui-iconfont">&#xe616;</i> '+item.menuname+'<i class="Hui-iconfont menu_dropdown-arrow">&#xe6d5;</i></dt><dd><ul class="Hui-iconfont-'+item.mid+'"></ul></dd></dl>';
-						alert(theHtml)
+						//alert(theHtml)
 						$(theHtml).appendTo(".menu_dropdown");
-						console.log("=============这个是item.child的值===========")
-						console.log(item.child);						
+						//console.log("=============这个是item.child的值===========")
+						//console.log(item.child);						
 						if(item.child !=null){
 							$.each(item.child,function(index,items){																								
-								console.log("===============分类信息内的信息==============");
-								console.log(items);	
+								//console.log("===============分类信息内的信息==============");
+								//console.log(items);	
 								var theHtml2 = '<li><a href="article-list.html" title="'+items.menuname+'">'+items.menuname+'</a></li>';
-								alert(theHtml2);
+								//alert(theHtml2);
 								$(theHtml2).appendTo(".Hui-iconfont-"+item.mid+"");
 							})
 						}
 					})
 				}
-			})								
+			})
+			
+			//点击菜单栏
+			$(document).on("click",".menu_dropdown dl",function(){
+				$(".menu_dropdown dl").find('dt').removeClass('selected');
+				$(".menu_dropdown dl").find('dd').css({
+					"display":"none",
+				});
+				$(this).find('dt').addClass('selected');
+				$(this).find('dd').css({
+					"display":"block",
+				});
+			})
+			//$(".menu_dropdown").find('dl').click(function(){
+
+			//})
+			
+			
 		}
 		
 	}
@@ -1758,14 +1806,55 @@ function adminArticle(){
 		}								
 	}
 	theArticle.addArticle();
-	theArticle.articleList();
+	//theArticle.articleList();
 	theArticle.checkArticle();
 	theArticle.articleHtml();
 	theArticle.curlArticle();
-	theArticle.curlPicture();	
+	theArticle.curlPicture();		
+}
+
+//FM文章管理
+function fmControl(){
+	var ue = UE.getEditor('editor');
 	
 	var theFM = {
-		addFmArticle:function(){
+		addFmArticle:function(){		
+			//检测是否存在fm的id，如果没有为添加，如果有为编辑
+			var theEditFmId = theAllUtil.theReg.getUrlParamsReg('editFmId');
+			if(theEditFmId){
+				//向后台发出该文章信息的请求
+				$.ajax({
+					url:"../server/ajax/thefm.php",
+					data:{'turl':'getFmArticle','the-fm-id':theEditFmId},
+					type:'get',
+					dataType:'json',
+					success:function(data){
+						console.log("==============后端传递过来编辑fm的数据=================");
+						console.log(data);
+						var fmInfo = data.result;
+						//组装html
+						$("#FM-title").val(fmInfo.f_title);
+						$("#ob-select-category-fm").val(fmInfo.fm_category);
+						$("#FM-keyword").val(fmInfo.f_keyword);
+						$("#FM-short").val(fmInfo.f_short);
+						$("#FM-author").val(fmInfo.f_admin);
+						$("#article-file").val(fmInfo.f_img);
+						$("#article-file").attr("value",fmInfo.f_img);
+						$(".show-picture").attr("src",'../upload/fm/'+fmInfo.f_img+'');
+						$("#article-FM").val(fmInfo.f_fm);
+						$("#article-FM").attr("value",fmInfo.f_fm);		
+						$("#article-FM-play").attr("src",fmInfo.mpurl);
+						
+						//百度富文本赋值
+						ue.addListener("ready", function () {
+					　　　　// editor准备好之后才可以使用
+					　　　ue.setContent(fmInfo.f_container);				
+						});
+					}
+					
+				})
+			}			
+			
 			//获取FmArticle的相关信息
 			$("#article-FM-save").click(function(){
 				var fmArticleArray={},fmKey,fmValue;
@@ -1779,14 +1868,19 @@ function adminArticle(){
 				})
 				
 				console.log("=============获取文章内容==============");
-				var ue = UE.getEditor('editor');
+				
 				var str = ue.getContent();
 				
 				//组装提交数据				
 				fmArticleArray["fm-article"] = str;
 				fmArticleArray["turl"] = "addFmArticle";
 				console.log(fmArticleArray);
-								
+				
+				if(theEditFmId){
+					fmArticleArray["turl"] = "editFmArticle";
+					fmArticleArray["fm-editid"] = theEditFmId;
+				}
+				
 				//向后台提交信息
 				$.ajax({
 					url:"../server/ajax/thefm.php",
@@ -1838,7 +1932,7 @@ function adminArticle(){
 			})
 		}
 	}
-	theFM.addFmArticle();
+	theFM.addFmArticle();		
 }
 
 //封面管理
@@ -2382,12 +2476,353 @@ function emailControl(){
 	theEmail.emailAdd();
 }
 
+//用户主页模块
+function userIndexPage(){
+	//that = this;
+	var theUserInfo;
+	this.userDate = {
+		getUserDate:function(){
+			//后端请求获取用户数据
+			$.ajax({
+				url:"../server/ajax/thelogin.php",
+				data:{"turl":"indexUserInfo"},
+				type:"get",
+				dataType:"json",
+				async:false,
+				success:function(data){
+					console.log("============后端返回的用户信息==============");
+					console.log(data);	
+					theUserInfo = data;
+					//console.log("==========内========");
+					//console.log(that.theUserInfo);
+				}
+			})
+			//return theUserInfo;
+		},
+		creatInfo:function(){
+			userDate.getUserDate();
+			console.log("================主页用户信息传递================");
+			console.log(theUserInfo);
+			//显示用户信息
+			$(".loginUser").text(theUserInfo.result.userInfo.username);
+			$(".loginIp").text(theUserInfo.result.userInfo.login_ip);
+			$(".loginTime").text(theUserInfo.result.userInfo.login_time);
+			//显示表格
+			//console.log("=======表格============");
+			//console.log(theUserInfo.result.userNum.total);
+			$.each(theUserInfo.result.userNum.total,function(index,item){
+				//组装成html
+				var tdHtml = '<td class="'+index+'">'+item+'</td>';
+				//console.log("组成:"+tdHtml);
+				$(tdHtml).appendTo(".user-total");				
+			})
+			if(theUserInfo.result.userInfo.role == 'admin'){
+				$.each(theUserInfo.result.userNum.today,function(index,item){
+					var tdHtml = '<td class="'+index+'">'+item+'</td>';
+					//console.log("组成:"+tdHtml);
+					$(tdHtml).appendTo(".user-today");								
+				})
+			}
+
+			
+			//组装文章列表
+			if(theUserInfo.result.articleArray.length == 0){
+				var liHtml = "<div>暂无新文章</div>";
+				$(liHtml).appendTo(".new-article-list-ul");
+			}
+			else{
+				//$.each(theUserInfo.result.articleArray,function(index,item){				
+				//	var liHtml = '<li><div class="article-img col-md-2"><img class="img-responsive" src="../upload/cover/'+item.article_img+'"></div><div class="article-info col-md-8"><h4>'+item.title+'</h4><div class="article-info-detail">'+item.article_short+'</div></div><div class="article-control col-md-2"></div></li>';	
+				//	$(liHtml).appendTo(".new-article-list-ul");
+				//})		
+				
+				//使用Datatables
+				var tableHtml = '<table id="table_article" class="display"><thead><tr><th>文章id</th><th>文章标题</th><th>文章描述</th><th>日期</th><th>浏览量</th><th>操作</th></tr></thead></table>';
+				$(tableHtml).appendTo(".new-article-list-ul");
+				
+				 $('#table_article').DataTable({
+					  data: theUserInfo.result.articleArray,
+						columns: [
+							{ data: 'aid' },
+							{ data: 'title' },
+							{ data: 'article_short' },
+							{ data: 'article_time' },
+							{ data: 'article_view' },
+							{ data : null},
+						],
+						 columnDefs: [{
+							//   指定第最后一列
+
+							targets: -1,
+							render: function(data, type, row, meta) {
+								return '<input type="button" data-artileid="'+row.aid+'" value="删除" class="articleDel"><input type="button" data-artileid="'+row.aid+'" class="articleEdit" value="编辑"><input type="button" data-artileid="'+row.aid+'" value="静态化" class="articleOb">';
+							}
+						}]					
+				 });
+				 /*删除操作*/
+				 $(".articleDel").click(function(){
+					 var abs = this;
+					 var theArticleId = $(this).data('artileid');
+					 layer.confirm('确认要删除吗？',function(index){
+						//此处请求后台程序，下方是成功后的前台处理……
+						//console.log(abs);
+						//$(item).parent().parents("tr").remove();
+						//向后台提出删除请求
+						$.ajax({
+							url:'../server/ajax/thearticle.php',
+							data:{'turl':'delArticle','article-id':theArticleId},
+							type:'get',
+							async:false,
+							dataType:'json',
+							success:function(data){
+								if(data.status == 200){
+									$(abs).parents("tr").remove();
+									layer.msg('已删除!',{icon:1,time:1000});
+								}
+								else{
+									layer.msg('删除失败!',{icon:1,time:1000});								
+								}
+							}
+						})
+					});
+					 
+				 })
+				 
+				 //编辑按钮
+				 $(".articleEdit").click(function(){
+					var theArticleId = $(this).data('artileid')
+					window.open('article-add.html?editArticleId='+theArticleId);
+					 
+				 })
+				 
+				 //静态化按钮
+				 $(".articleOb").click(function(){
+					var theArticleId = $(this).data('artileid');
+					//向后端发出静态化请求
+					$.ajax({
+						url:"../server/ajax/thearticle.php",
+						data:{'turl':'oBarticle','article_id':theArticleId,'getOb':'ob'},
+						type:'get',
+						dataType:'json',
+						success:function(data){
+							console.log("==============单篇静态化后端请求返回数据==============");
+							console.log(data);
+							if(data.status == 200){
+								alert("页面静态化成功");
+							}
+							else{
+								alert("页面静态化失败");							
+							}
+						}					
+					})
+				 })
+			}
+			
+			//组装FM列表
+			if(theUserInfo.result.fmArray.length == 0){
+				var liHtml = "<div>暂无新文章</div>";
+				$(liHtml).appendTo(".new-fm-list-ul");				
+			}
+			else{
+				//使用Datatables
+				var tableHtml = '<table id="table_fm" class="display"><thead><tr><th>fmid</th><th>fm标题</th><th>fm描述</th><th>日期</th><th>操作</th></tr></thead></table>';
+				$(tableHtml).appendTo(".new-fm-list-ul");
+				
+				//设置datatable
+				$('#table_fm').DataTable({
+					data: theUserInfo.result.fmArray,
+					columns: [
+						{ data: 'fid' },
+						{ data: 'f_title' },
+						{ data: 'f_short' },
+						{ data: 'f_time' },
+						{ data : null},
+					],
+					columnDefs: [{
+						//   指定第最后一列
+						targets: -1,
+						render: function(data, type, row, meta) {
+							return '<input type="button" data-fmid="'+row.fid+'" value="删除" class="fmDel"><input type="button" data-fmid="'+row.fid+'" class="fmEdit" value="编辑">';
+						}
+					}]					
+				});				
+				
+				//点击删除
+				$(".fmDel").click(function(){
+					//获取参数
+					var fmId = $(this).data('fmid');
+					var abs = this;
+					//var theArticleId = $(this).data('artileid');
+					layer.confirm('确认要删除吗？',function(index){
+					//向后端发出删除请求
+						$.ajax({
+							url:'../server/ajax/thefm.php',
+							data:{'turl':'delFm','the-fm-id':fmId},
+							type:"get",
+							dataType:"json",
+							success:function(data){
+								console.log("==========删除fm返回后端数据============");
+								console.log(data);
+								if(data.status == 200){
+									$(abs).parents("tr").remove();
+									layer.msg('已删除!',{icon:1,time:1000});
+								}
+								else{
+									layer.msg('删除失败!',{icon:1,time:1000});
+								}
+							}
+						})
+					})
+				})
+				
+				//点击编辑
+				$(".fmEdit").click(function(){
+					//获取该fm的id
+					var fmId = $(this).data('fmid');
+					//打开编辑窗口
+					window.open('article-add-FM.html?editFmId='+theArticleId);				
+				})
+			}
+			
+			//组装评论列表
+			if(theUserInfo.result.commentArray.length == 0){
+				var liHtml = "<div>暂无新评论</div>";
+				$(liHtml).appendTo(".new-comment-list-ul");				
+			}
+			else{
+				//使用Datatables
+				var tableHtml = '<table id="table_comment" class="display"><thead><tr><th>评论id</th><th>评论文章</th><th>评论内容</th><th>评论用户</th><th>日期</th><th>操作</th></tr></thead></table>';
+				$(tableHtml).appendTo(".new-commit-list-ul");
+				
+				//组装Datatables
+				//设置datatable
+				$('#table_comment').DataTable({
+					data: theUserInfo.result.commentArray,
+					columns: [
+						{ data: 'cmid' },
+						{ data: 'title' },
+						{ data: 'cm_comment' },
+						{ data: 'cm_name' },
+						{ data: 'cm_time' },
+						{ data : null},
+					],
+					columnDefs: [{
+						//   指定第最后一列
+						targets: -1,
+						render: function(data, type, row, meta) {
+							return '<input type="button" data-commentid="'+row.cmid+'" value="删除" class="commnetDel">';
+						}
+					}]					
+				});					
+				
+				//删除评论
+				$(".commnetDel").click(function(){
+					//获取需删除的评论id
+					var commentid = $(this).data('commentid');
+					//获取参数
+					//var fmId = $(this).data('fmid');
+					var abs = this;
+					//var theArticleId = $(this).data('artileid');
+					layer.confirm('确认要删除吗？',function(index){
+					//向后端发出删除请求
+						$.ajax({
+							url:'../server/ajax/thecomment.php',
+							data:{'turl':'delComment','comment-id':commentid},
+							type:"get",
+							dataType:"json",
+							success:function(data){
+								console.log("==========删除fm返回后端数据============");
+								console.log(data);
+								if(data.status == 200){
+									$(abs).parents("tr").remove();
+									layer.msg('已删除!',{icon:1,time:1000});
+								}
+								else{
+									layer.msg('删除失败!',{icon:1,time:1000});
+								}
+							}
+						})
+					})
+				})
+			}
+			
+			if(theUserInfo.result.userInfo.role == 'admin'){
+				//组装用户列表
+				if(theUserInfo.result.memberArray.length == 0){
+					var liHtml = "<div>暂无新用户</div>";
+					$(liHtml).appendTo(".new-member-list-ul");				
+				}
+				else{
+					//使用Datatables
+					var tableHtml = '<table id="table_member" class="display"><thead><tr><th>用户id</th><th>用户名</th><th>中文名</th><th>性别</th><th>email</th><th>电话</th><th>城市</th><th>操作</th></tr></thead></table>';
+					$(tableHtml).appendTo(".new-member-list-ul");
+					//组装Datatables
+					//设置datatable
+					$('#table_member').DataTable({
+						data: theUserInfo.result.memberArray,
+						columns: [
+							{ data: 'iid' },
+							{ data: 'username' },
+							{ data: 'the_name' },
+							{ data: 'sex' },
+							{ data: 'email' },
+							{ data: 'tel' },
+							{ data: 'city' },
+							{ data : null},
+						],
+						columnDefs: [{
+							//   指定第最后一列
+							targets: -1,
+							render: function(data, type, row, meta) {
+								return '<input type="button" data-memberid="'+row.iid+'" value="删除" class="memberDel">';
+							}
+						}]					
+					});	
+
+					//删除用户操作
+					$(".memberDel").click(function(){
+						//获取需删除的评论id
+						var memberid = $(this).data('memberid');
+						//获取参数
+						//var fmId = $(this).data('fmid');
+						var abs = this;
+						//var theArticleId = $(this).data('artileid');
+						layer.confirm('确认要删除吗？',function(index){
+						//向后端发出删除请求
+							$.ajax({
+								url:'../server/ajax/themember.php',
+								data:{'turl':'memberDel','memberId':memberid},
+								type:"get",
+								dataType:"json",
+								success:function(data){
+									console.log("==========删除fm返回后端数据============");
+									console.log(data);
+									if(data.status == 200){
+										$(abs).parents("tr").remove();
+										layer.msg('已删除!',{icon:1,time:1000});
+									}
+									else{
+										layer.msg('删除失败!',{icon:1,time:1000});
+									}
+								}
+							})
+						})
+					})		
+				}				
+			}		
+		}		
+	}
+		
+	userDate.creatInfo();
+}
+
+
 //正则表达式分类
 function util(){	
 	var that = this;
 	this.theReg = {
 		//获取链接参数的正则表达式
-			getUrlParamsReg:function(name){
+		getUrlParamsReg:function(name){
 			//正则表达式
 			reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)","i");
 			//window.location.search 获取链接的参数并进行相关的匹配
@@ -2396,9 +2831,30 @@ function util(){
 				return unescape(r[2])
 			}
 			return null;
-		}		
+		},
+
+		//获取相关的参数，按需进行调用
+		selfControl:function(type ='all',name){
+			var theUrl,judge;
+			if(type == 'all'){
+				theUrl =  window.location.href;		
+			}
+			if(type == 'pathname'){
+				theUrl = window.location.pathname;
+			}
+			//return theUrl;
+			//判断是否存在某个字段
+			if(theUrl.indexOf(name)>-1){
+				judge = true;
+			}else{
+				judge = false;
+			}
+			return judge;
+				
+		}
 	}
 	//theReg.getUrlParamsReg(name);
+	//theReg.selfControl('pathname')
 	
 	//综合通用
 	this.commUtil = {
@@ -2443,6 +2899,8 @@ function util(){
 		
 	}
 	
+	
+		
 	//网络查询类
 	//获取用户信息
 	this.commUser = {

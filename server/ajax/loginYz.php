@@ -43,8 +43,15 @@ else{
 	//将session_token存入$_SESSION中
 	$_SESSION['session_token'] = $theRandNum;
 	
+	//获取最后登录的时间
+	$loginTime = date("Y-m-d h:i:sa");			
+	
+	//获取登录的ip
+	$theUtil = new util();
+	$loginIp = $theUtil->getUserIp();
+	
 	//将随机码存入数据库以及以及存入cookie中
-	$loginSessionSql = "update member set session_token = '$theRandNum' where username = '$theUserName' and password = '$thePassWord'";
+	$loginSessionSql = "update member set session_token = '$theRandNum',login_ip = '$loginIp',login_time = '$loginTime' where username = '$theUserName' and password = '$thePassWord'";
 	
 	$loginSessionSql_db = mysql_query($loginSessionSql);
 	

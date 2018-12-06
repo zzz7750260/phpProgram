@@ -10,12 +10,16 @@ function loginYZ(){
 	//失焦时
 	var usernameYzValue,
 		passwordYzValue;
+		
+	var rootPath = window.location.host;
+	var proPath = window.location.protocol;
 	
 	$(".tusername").blur(function(){
 		var tusernameVal = $(".tusername").val();
 		//alert(tusernameVal);
 		$.ajax({
-			url:'./server/ajax/thelogin.php',
+			//url:'./server/ajax/thelogin.php',//这个为login.php
+			url:'../server/ajax/thelogin.php',//这个为login.html
 			type:"get",
 			dataType:'text',
 			data:{username:tusernameVal,turl:'loginusername'},
@@ -61,6 +65,32 @@ function loginYZ(){
 		$(".passwordis").text("");		
 	})	
 
+	//向后端提交登录信息
+	$(".tlogin").click(function(){
+		var theUserName = $(".tusername").val();
+		var thePassWord = $(".tpassword").val();
+		
+		$.ajax({
+			url:'../server/ajax/thelogin.php',
+			data:{"turl":"loginYzBack","theUserName":theUserName,"thePassword":thePassWord},
+			type:"post",
+			dataType:"json",
+			success:function(data){
+				console.log("===============后端返回的登录信息==============");
+				console.log(data);
+				if(data.status == 200){
+					if(data.result.role == 'admin'){
+						window.location.href = proPath + "//" + rootPath + '/admin/'; 	
+					}
+					else{
+						window.location.href = proPath + "//" + rootPath + '/admin/index-user.html'; 	
+					}
+				}
+			}
+			
+		})
+		
+	})
 }
 
 //注册相关的操作
@@ -962,7 +992,7 @@ function autoLoad(){
 			console.log("请求路径："+getPath);
 			$.ajax({
 				url:""+getPath+"",
-				data:{turl:"loginYz"},
+				data:{turl:"webUserInfo"},
 				type:"get",
 				dataType:"json",
 				success:function(data){

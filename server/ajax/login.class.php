@@ -93,13 +93,59 @@ class theLogin{
 		print_r($loginYzReturnJson);
 	}
 	
+	//后端验证登录（ajax）
+	function loginYzBack(){
+		$theUserName = $_POST['theUserName'];
+		$thePassword = $_POST['thePassword'];
+		
+		//检测用户用户名和密码是否有对应的存在
+		$isHaveUserSql = "select * from member where username = '$theUserName' and password = '$thePassword'";
+		$isHaveUserSql_db = mysql_query($isHaveUserSql);
+		$isHaveUserSql_db_num = mysql_num_rows($isHaveUserSql_db);
+		if($isHaveUserSql_db_num>0){
+			$_SESSION['username'] = $theUserName;
+			$_SESSION['password'] = $thePassword;
+			$theUtil = new util();
+			$theToken = $theUtil->setSessionToken(8);
+			
+			//获取最后登录的时间
+			$loginTime = date("Y-m-d h:i:sa");			
+			
+			//获取登录的ip
+			$theUtil = new util();
+			$loginIp = $theUtil->getUserIp();
+			
+			
+			//更改数据库
+			$updataUserToken = "update member set session_token = '$theToken',login_ip = '$loginIp',login_time = '$loginTime' where username = '$theUserName' and password = '$thePassword'";
+			$updataUserToken_db = mysql_query($updataUserToken);
+			
+			if($updataUserToken_db){
+				$_SESSION['session_token'] = $theToken;
+			}
+			
+			//进行用户名验证
+			$this->loginYz();
+		}
+		else{
+			$loginYzReturnArray = array(
+				status => 600,
+				msg => '用户账户或密码不正确',
+				result => ''
+			);				
+			$loginYzReturnJson = json_encode($loginYzReturnArray);
+			print_r($loginYzReturnJson);
+		}
+	}
+	
+	
 	//获取用户的信息
 	function getUserInfo(){
 		$theUserNames = $_SESSION['username'];
 		$thePassWords = $_SESSION['password'];
 		$userInfoArray = array();
 		//echo $theUserNames;
-		$user_sql = "select * from member where username = '$theUserNames' and password = '$thePassWords'";
+		$user_sql = "select a.*,b.* from member as a left join role as b on a.role = b.roleyw where a.username = '$theUserNames' and a.password = '$thePassWords'";
 		$user_sql_db = mysql_query($user_sql);
 		while($user_sql_db_array = mysql_fetch_assoc($user_sql_db)){
 			$userInfoArray = $user_sql_db_array;	
@@ -180,8 +226,182 @@ class theLogin{
 		$returnLoginJson = json_encode($returnLoginArray);
 		print($returnLoginJson);
 	}
-	
 		
+	//前端页面用户的返回信息
+	function webUserInfo(){
+		$theToken = $_SESSION['session_token'];
+		//根据token获取相关的用户信息
+		$getUserInfoSql = "select username,the_name,sex,email,tel,join_time,user_head,user_introduction from member where session_token = '$theToken'";
+		$getUserInfoSql_db = mysql_query($getUserInfoSql);
+		if($getUserInfoSql_db){
+			$getUserInfoSql_db_array = mysql_fetch_assoc($getUserInfoSql_db);
+			//组装返回前端用户信息
+			$returnUserInfoArray = array(
+				status => 200,
+				msg => '用户信息返回成功',
+				result => $getUserInfoSql_db_array
+			);
+		}
+		else{
+			//组装返回前端用户信息
+			$returnUserInfoArray = array(
+				status => 400,
+				msg => '用户信息返回失败',
+				result => ''
+			);			
+		}
+		$returnUserInfoJson = json_encode($returnUserInfoArray);
+		print_r($returnUserInfoJson);		
+	}
+	
+	
+	//后端获取用户主页返回的信息
+	function indexUserInfo(){
+		$theToken = $_SESSION['session_token'];
+		//根据token获取用户信息
+		$theUserInfoSql = "select * from member where session_token ='$theToken'";
+		$theUserInfoSql_db = mysql_query($theUserInfoSql);
+		$theUserInfoSql_db_info = mysql_fetch_assoc($theUserInfoSql_db);		
+		
+		$userInfo = array();
+	
+		$theDate = date("Y-m-d");
+						
+		if($theUserInfoSql_db_info['role'] == 'admin'){
+			$theUserInfoRole = $theUserInfoSql_db_info['role'];
+			$theUserInfoArticleArray = array();
+			$theUserInfoArticleSql = "select * from article where article_time like '%$theDate%'";
+			$theUserInfoArticleSql_db = mysql_query($theUserInfoArticleSql);
+			while($theUserInfoArticleSql_db_array = mysql_fetch_assoc($theUserInfoArticleSql_db)){
+				$theUserInfoArticleArray[] = $theUserInfoArticleSql_db_array;	
+			}
+			
+			$theUserFmArray = array();
+			$theUserFmArraySql = "select * from fm where f_time like '%$theDate%'";
+			$theUserFmArraySql_db = mysql_query($theUserFmArraySql);
+			while($theUserFmArraySql_db_array = mysql_fetch_assoc($theUserFmArraySql_db)){
+				$theUserFmArray[] = $theUserFmArraySql_db_array;	
+			}
+			
+			$theArticleComment = array();		
+			$theArticleCommentSql = "select a.title,b.* from article as a left join comment as b on a.aid = b.cmtid where b.cm_time like '%$theDate%'";
+			$theArticleCommentSql_db = mysql_query($theArticleCommentSql);
+			while($theArticleCommentSql_db_array = mysql_fetch_assoc($theArticleCommentSql_db)){
+				$theArticleComment[] = $theArticleCommentSql_db_array;
+			}
+			
+			$theMemberArray = array();
+			$theMemberArraySql = "select * from member where join_time like '%$theDate%'";
+			$theMemberArraySql_db = mysql_query($theMemberArraySql);
+			while($theMemberArraySql_db_array = mysql_fetch_assoc($theMemberArraySql_db)){
+				$theMemberArray[] = $theMemberArraySql_db_array;
+			}
+			
+			$userInfo = array(
+				status => 200,
+				msg => '用户信息返回成功',
+				result => array(
+					'userNum' => array(
+						'total' => array(
+							'video' => $this->userTotalNum('article'),
+							'fm' => $this->userTotalNum('fm'),
+							'comment' => $this->userTotalNum('comment'),
+							'member' => $this->userTotalNum('member'),
+						),
+						'today' => array(
+							'video' => $this->todayNum('article','article_time',$theDate),
+							'fm' => $this->todayNum('fm','f_time',$theDate),
+							'comment' => $this->todayNum('comment','cm_time',$theDate),
+							'member' => $this->todayNum('member','join_time',$theDate),
+						),
+					),
+					'userInfo' => $theUserInfoSql_db_info,
+					'articleArray' => $theUserInfoArticleArray,
+					'fmArray' => $theUserFmArray,
+					'commentArray' => $theArticleComment,
+					'memberArray' => $theMemberArray,
+				),
+			);
+		}
+		else{
+			$theUserInfoName = $theUserInfoSql_db_info['username'];
+			$theUserInfoArticleArray = array();
+			$theUserInfoArticleSql = "select * from article where article_author = '$theUserInfoName' order by aid DESC";
+			$theUserInfoArticleSql_db = mysql_query($theUserInfoArticleSql);
+			while($theUserInfoArticleSql_db_array = mysql_fetch_assoc($theUserInfoArticleSql_db)){
+				$theUserInfoArticleArray[] = $theUserInfoArticleSql_db_array;	
+			}			
+			
+			$theUserFmArray = array();
+			$theUserFmArraySql = "select * from fm where f_admin = '$theUserInfoName' order by fid DESC";
+			$theUserFmArraySql_db = mysql_query($theUserInfoArticleSql);
+			while($theUserFmArraySql_db_array = mysql_fetch_assoc($theUserInfoArticleSql_db)){
+				$theUserFmArray[] = $theUserFmArraySql_db_array;	
+			}
+			
+			//查询相关评论
+			$theArticleComment  = array();
+			$theArticleCommenSql = "select a.title,b.* from article as a left join comment as b on a.aid = b.cmtid where a.article_author = '$theUserInfoName' order by b.cmid DESC";		
+			$theArticleCommenSql_db = mysql_query($theArticleCommenSql);
+			
+			while($theArticleCommenSql_db_array = mysql_fetch_assoc($theArticleCommenSql_db)){
+				$theArticleComment[] = $theArticleCommenSql_db_array;
+			}
+			
+			$userInfo = array(
+				status => 200,
+				msg => '用户信息返回成功',
+				result => array(
+					'userInfo' => $theUserInfoSql_db_info,
+					'articleArray' => $theUserInfoArticleArray,
+					'fmArray' => $theUserFmArray,
+					'commentArray' => $theArticleComment,
+					'userNum' => array(
+						'total' => array(
+							'video' => $this->userMemberTotalNum('article','article_author',$theUserInfoRole),
+							'fm' => $this->userMemberTotalNum('fm','f_admin',$theUserInfoRole),
+							//'comment' => $this->userMemberTotalNum('comment',''),						
+						),
+					)
+				),
+			);
+		}
+		//将数组转为json返回给前端
+		$userInfoJson = json_encode($userInfo);
+		print_r($userInfoJson);
+	}
+	
+	//公共类：查询相关的返回总数量
+	//$selectDb:选择查询的数据库
+	function userTotalNum($selectDb){
+		$totalNumSql = "select * from $selectDb where 1 =1";
+		$totalNumSql_db = mysql_query($totalNumSql);
+		$totalNum = mysql_num_rows($totalNumSql_db);
+		return $totalNum;
+	}
+	
+	//公共类：查询用户的返回总数量
+	//$selectDb:选择查询的数据库
+	//$dbKey:选择查询的字段
+	//$userName:选择需查询的用户名
+	function userMemberTotalNum($selectDb,$dbKey,$userName){
+		$totalNumSql = "select * from $selectDb where $dbKey = '$userName'";
+		$totalNumSql_db = mysql_query($totalNumSql);
+		$totalNum = mysql_num_rows($totalNumSql_db);
+		return $totalNum;
+	}
+
+	//公共类：查询当天新增的数量
+	//$theDate:查询的时间
+	//$selectDb:选择查询的数据库
+	//$dbData:数据库的时间字段
+	function todayNum($selectDb,$dbData,$theDate){
+		$todayNumSql = "select * from $selectDb where $dbData like '%$theDate%'";
+		$todayNumSql_db = mysql_query($todayNumSql);
+		$todayNums = mysql_num_rows($todayNumSql_db);
+		return $todayNums;
+	}
+			
 	//根据传进来的页面参数调用
 	function theReturn($theUrl){
 		if($theUrl =='loginusername'){
@@ -211,6 +431,15 @@ class theLogin{
 		}
 		if($theUrl == 'loginOut'){
 			$this->loginOut();			
+		}
+		if($theUrl == 'loginYzBack'){
+			$this->loginYzBack();
+		}
+		if($theUrl == 'indexUserInfo'){
+			$this->indexUserInfo();
+		}
+		if($theUrl == 'webUserInfo'){
+			$this->webUserInfo();
 		}
 	}
 }

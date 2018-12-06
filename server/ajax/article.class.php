@@ -212,8 +212,12 @@ class theArticleClass{
 	//后端展示文章列表
 	function articleList(){
 		//获取文章是否查询的文章状态，是查询草稿还是查询公开的，或者是查询所有
-		$theStatus = $_GET['status']; 
+		$theStatus = $_GET['status'];   
 		$theAuthor = $_GET['author'];
+		
+		//获取用户的权限是否为admin的权限	
+		$theRole = $_GET['role'];
+		
 		//$articleListSql = "select a.*,b.* from article as a left outer join category as b on a.category_id = b.cid where 1 = 1 and if('$theStatus' is NULL, 0 = 0, a.article_status like CONCAT('%$theStatus%'))";
 		
 		//根据用户名来查询结果
@@ -236,6 +240,49 @@ class theArticleClass{
 		print_r($atheJson);
 	}
 	
+	
+	//后端展示列表（根据不同用户展示不同结果）
+	function userArticleList(){
+		$getAuthor = $_GET['theAuthor']; //获取作者
+		$getRole = $_GET['theRole'];  //获取权限		
+		$getStatus = $_GET['theStatus']; //获取文章状态
+		
+		$articleListArray = array();
+		//当用户为admin时，获取所有的文章
+		if($getRole == 'admin'){
+			//$articleListArraySql = "select a.*,b.* from article as a left join category as b on a.category_id = b.cid where 1 = 1 and if('$getShenHe' = null,0=0,article_sh = '$getShenHe') order by a.aid DESC";		
+			$articleListArraySql = "select a.*,b.* from article as a left join category as b on a.category_id = b.cid where 1 = 1 order by a.aid DESC";	
+		}
+		else{
+			//当权限不是admin时，根据用户名来获取其已经被审核的文章
+			$articleListArraySql = "select a.*,b.* from article as a left join category as b on a.category_id = b.cid where a.article_author = '$getAuthor' and if('$getStatus' = '',0 = 0,a.article_status  = '$getStatus') order by a.aid DESC";						
+		}
+		$articleListArraySql_db = mysql_query($articleListArraySql);
+		if($articleListArraySql_db){
+			while($articleListArraySql_db_array = mysql_fetch_assoc($articleListArraySql_db)){
+				$articleListArray[] = $articleListArraySql_db_array;
+			}
+			
+			//组装返回前端数据
+			$returnArticleListArray = array(
+				status => 200,
+				msg => '文章列表返回成功',
+				result => $articleListArray,
+			);
+		}
+		else{
+			//组装返回前端数据
+			$returnArticleListArray = array(
+				status => 400,
+				msg => '文章列表返回失败',
+				result => '',
+			);			
+		}	
+		//将数组转为json返回给前端
+		$returnArticleListJson = json_encode($returnArticleListArray);
+		print($returnArticleListJson);
+	}
+		
 	//查看文章接口
 	function checkArticle(){
 		$theArticleId = $_GET['article_Id'];
@@ -263,6 +310,32 @@ class theArticleClass{
 		//将获取到的数组转成json并进行返回
 		$theJson = json_encode($arr);
 		return $theJson;
+	}
+	
+	//删除文章
+	function delArticle(){
+		//获取文章的id
+		$articleId = $_GET['article-id'];
+		$delArticleSql = "delete from article where aid = '$articleId'";
+		$delArticleSql_db = mysql_query($delArticleSql);
+		if($delArticleSql_db){
+			//组装返回前端数组
+			$returnArticleDelArray = array(
+				status => 200,
+				msg => '文章删除成功',
+				result => ''
+			);
+		}
+		else{
+			$returnArticleDelArray = array(
+				status => 400,
+				msg => '文章删除失败',
+				result => ''
+			);			
+		}
+		//将数组转换为json返回给前端
+		$returnArticleDelJson = json_encode($returnArticleDelArray);
+		print_r($returnArticleDelJson);
 	}
 	
 	//单文章静态化
@@ -307,13 +380,13 @@ class theArticleClass{
 
 		//获取当前的路径
 		define('APP_PATH',dirname(dirname(__FILE__)));
-		echo "当前目录下的文件路径".APP_PATH;
+		//echo "当前目录下的文件路径".APP_PATH;
 
 		//文件静态化
 		//读取缓存区的内容
-		$out1 = ob_get_clean();
+		$out1 = ob_get_contents();
 
-		echo $out1;
+		//echo $out1;
 
 		//判断是否存在参数，存在参数就实现页面静态化
 		$theOb = $_GET['getOb'];
@@ -322,11 +395,39 @@ class theArticleClass{
 		{
 			//将内容静态化输出
 			if(file_put_contents(APP_PATH.'/article/'.$articleArray['categoryyw'].'/show-'.$articleArray['aid'].'.html',$out1)){
-				echo "输出成功";
+				//echo "输出成功";
+				//组装返回前端数组
+				ob_end_clean();
+				
+				//当静态化成功后，将文章状态改为已审核
+				$updateShenheSql = "update article set article_sh = 1 where aid = '$theAid'";
+				$updateShenheSql_db = mysql_query($updateShenheSql);
+				if($updateShenheSql_db){
+					$judgeShenHe = "审核通过";				
+				}
+				else{
+					$judgeShenHe = "审核失败";
+				}
+				
+				$returnObArticle = array(
+					status => 200,
+					msg => '静态化返回成功',
+					result => '',
+					shenhe => $judgeShenHe,
+				);
 			}
 			else{
-				echo "输出失败";
+				//echo "输出失败";
+				$returnObArticle = array(
+					status => 400,
+					msg => '静态化返回失败',
+					result => '',
+					shenhe => '',
+				);
 			}
+			
+			$returnObArticleJson = json_encode($returnObArticle);
+			print_r($returnObArticleJson);
 		}		
 	}
 	
@@ -367,7 +468,10 @@ class theArticleClass{
 		$theOb = $_GET['getOb'];
 		if($theOb == 'obMore'){
 			//设置已经静态化的数量
-			$n = 0;
+			$n = 0; 
+			
+			//设置已经审核通过的数量
+			$s = 0;
 			
 			//循环数组，并输出静态文件
 			foreach($theCategoryArray as $key => $value){
@@ -384,6 +488,12 @@ class theArticleClass{
 					echo $value['aid']."输出成功";							
 					//清除缓冲区,防止内容重复输出;
 					$n++;
+					$theAid = $value['aid'];
+					$updateShenheSql = "update article set article_sh = 1 where aid = '$theAid'";
+					$updateShenheSql_db = mysql_query($updateShenheSql);
+					if($updateShenheSql_db){
+						$s++;				
+					}					
 					ob_clean();
 				}
 				else{
@@ -395,7 +505,8 @@ class theArticleClass{
 			$returnObMoreArray = array(
 				status => 200,
 				msg => "文章静态化返回成功",
-				result => $n
+				result => $n,
+				shenhe => $s,
 			);
 			
 			//将数组转成json返回前端
@@ -930,6 +1041,12 @@ class theArticleClass{
 		}
 		if($turl =='findArticleList'){
 			$this->findArticleList();
+		}
+		if($turl =='delArticle'){
+			$this->delArticle();
+		}
+		if($turl == 'userArticleList'){
+			$this->userArticleList();
 		}
 	}
 }

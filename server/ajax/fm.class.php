@@ -168,7 +168,7 @@ class theFm{
 	
 	//获取对应的弹幕组(get)
 	function getFmDmArray(){
-		$theFmArticleId = $_GET['the-fm-id'];
+		$theFmArticleId = $_GET['fm-editid'];
 		$getDmArraySql = "select * from fm_dm where d_article = $theFmArticleId";
 		$getDmArraySql_db = mysql_query($getDmArraySql);
 		$getDmArray = array();
@@ -195,6 +195,130 @@ class theFm{
 		$returnFmDmJson = json_encode($returnFmDmArray);
 		print($returnFmDmJson);
 	}
+	
+	//根据id来返回对于的fm文章的信息
+	function getFmArticle(){
+		$theFmArticleId = $_GET['the-fm-id'];
+		$selectFmArticleSql = "select * from fm where fid = '$theFmArticleId'";
+		$selectFmArticleSql_db = mysql_query($selectFmArticleSql);
+		if($selectFmArticleSql_db){
+			$selectFmArticleSql_db_array = mysql_fetch_assoc($selectFmArticleSql_db);
+			//设置返回fm为七牛的cdn
+			$qiniuUtil = new qiniuUtil();
+			$qiniuUtil->setQiniuUse('qiniu');		
+			$theRootPath = $qiniuUtil->useQiniuCdnWeb();		
+			$selectFmArticleSql_db_array['mpurl'] = $theRootPath . '/mp3/' . $selectFmArticleSql_db_array['f_fm'];
+			//组装返回前端的fm信息
+			$returnFmInfoArray = array(
+				status => 200,
+				msg => '返回fm文章信息成功',
+				result => $selectFmArticleSql_db_array,
+			);
+			
+		}
+		else{
+			$returnFmInfoArray = array(
+				status => 400,
+				msg => '返回fm文章信息失败',
+				result => '',
+			);
+		}
+		$returnFmInfoJson = json_encode($returnFmInfoArray);
+		print_r($returnFmInfoJson);
+	}
+	
+	//更新fm的article
+	function editFmArticle(){
+		//获取fm的对于id
+		$theFmId = $_POST['fm-editid'];
+		//获取传递过来的fm信息
+		$fmAuther = $_POST['FM-author'];
+		$fmKeyword = $_POST['FM-keyword'];
+		$fmShort = $_POST['FM-short'];
+		$fmShortTitle = $_POST['FM-short-title'];
+		$fmTitle = $_POST['FM-title'];
+		$articleFm = $_POST['article-FM'];
+		$articleFmFile = $_POST['article-FM-file'];
+		$articlePic = $_POST['article-pic'];
+		$articlePicFile = $_POST['article-pic-file'];
+		$categorySelect = $_POST['category_select'];
+		$fmArticle = $_POST['fm-article'];
+		
+		$theUtil = new util();
+		
+		//生成日期
+		$theDate = date("Y-m-d h:i:s");		
+		//获取对应的fm信息
+		$getFmArticleSql = "select * from fm where fid = '$theFmId'";
+		$getFmArticleSql_db = mysql_query($getFmArticleSql);
+		$getFmArticleSql_db_array = mysql_fetch_assoc($getFmArticleSql_db);
+		
+		if($articleFm == $getFmArticleSql_db_array['f_fm']){
+			//如果fm不更新，就只更新一下数据
+			$updataFmArticleSql = "update fm set fm_category = '$categorySelect', f_title = '$fmTitle', f_keyword = '$fmKeyword', f_img = '$articlePic', f_admin = '$fmAuther', f_short = '$fmShort', f_time = '$theDate', f_container = '$fmArticle' where fid = '$theFmId'";
+			$updataFmArticleSql_db = mysql_query($updataFmArticleSql); 
+			if($updataFmArticleSql_db){
+				//如果有新的图片base传递过来，就存储图片
+				if($articlePicFile){
+					//设置存储图片路径
+					$setImgPath = "/upload/fm/";
+					$thePath = $theUtil->physicalPath($setImgPath);
+					$returnImgInfo = $theUtil->fileUpload($thePath,$articlePic,$articlePicFile);				
+				}	
+				//组装返回前端信息
+				$returnFmUpdateArray = array(
+					status => 250,
+					msg => 'fm更新成功',
+					result => '',
+					imgresult => $returnImgInfo, 
+				);
+			}
+			else{
+				//组装返回前端信息
+				$returnFmUpdateArray = array(
+					status => 400,
+					msg => 'fm更新失败',
+					result => '',
+					imgresult => $returnImgInfo, 
+				);				
+				
+			}
+			
+		}
+		else{
+			//fm不同时，需要重新上传fm到七牛中
+			$updataFmArticleSql = "update fm set fm_category = '$categorySelect', f_title = '$fmTitle', f_keyword = '$fmKeyword', f_img = '$articlePic', f_admin = '$fmAuther', f_short = '$fmShort', f_time = '$theDate', f_container = '$fmArticle', f_fm = '$articleFm' where fid = '$theFmId'";		
+			$updataFmArticleSql_db = mysql_query($updataFmArticleSql);
+			if($updataFmArticleSql_db){
+				//如果有新的图片base传递过来，就存储图片
+				if($articlePicFile){
+					//设置存储图片路径
+					$setImgPath = "/upload/fm/";
+					$thePath = $theUtil->physicalPath($setImgPath);
+					$returnImgInfo = $theUtil->fileUpload($thePath,$articlePic,$articlePicFile);				
+				}	
+				//组装返回前端信息
+				$returnFmUpdateArray = array(
+					status => 200,
+					msg => 'fm更新成功',
+					result => '',
+					imgresult => $returnImgInfo, 
+				);				
+			}
+			else{
+				//组装返回前端信息
+				$returnFmUpdateArray = array(
+					status => 400,
+					msg => 'fm更新失败',
+					result => '',
+					imgresult => $returnImgInfo, 
+				);						
+			}
+		}
+		//将数组转换为json，返回给前端
+		$returnFmUpdateJson = json_encode($returnFmUpdateArray);
+		print_r($returnFmUpdateJson);
+	}	
 	
 	//根据fm的id来获取对应的返回fm的路径
 	function getFmUrl(){
@@ -233,6 +357,29 @@ class theFm{
 		print($returnFmInfoJson);
 	}		
 	
+	//根据id删除对于的fm
+	function delFm(){
+		$theFmId = $_GET['the-fm-id'];
+		$delFmSql = "delete from fm where fid = $theFmId";
+		$delFmSql_db = mysql_query($delFmSql);
+		if($delFmSql_db){
+			$returnFmDelArray = array(
+				status => 200,
+				msg => "fm删除成功",
+				result => ''
+			);
+		}
+		else{
+			$returnFmDelArray = array(
+				status => 400,
+				msg => "fm删除失败",
+				result => ''
+			);					
+		}
+		$returnFmDelJson = json_encode($returnFmDelArray);
+		printf($returnFmDelJson);
+	}
+			
 	//fm文章页静态化
 	function getFmArticleOb(){
 		//获取需要静态化的分类	
@@ -446,14 +593,23 @@ class theFm{
 		if($turl == 'addFmArticle'){
 			$this->addFmArticle();
 		}
+		if($turl == 'editFmArticle'){
+			$this->editFmArticle();		
+		}
 		if($turl == 'getFmFile'){
 			$this->getFmFile();
 		}
 		if($turl == 'insertFmDm'){
 			$this->insertFmDm();
 		}
+		if($turl == 'getFmArticle'){
+			$this->getFmArticle();
+		}
 		if($turl == 'getFmDmArray'){
 			$this->getFmDmArray();
+		}
+		if($turl == 'delFm'){
+			$this->delFm();
 		}
 		if($turl == 'getFmArticleOb'){
 			$this->getFmArticleOb();
