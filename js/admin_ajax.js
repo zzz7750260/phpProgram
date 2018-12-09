@@ -37,6 +37,7 @@ function init_load(){
 	//console.log("资讯参数:"+loadParams);
 	if(theAllUtil.theReg.selfControl('pathname','article')){
 		adminArticle();
+		fmControl();
 	}
 }
 
@@ -49,8 +50,10 @@ function adminMenuAjax(){
 	that = this;
 	var theData;
 	var theAdmin = {
-		theYzLogin:function(){
-			var userInfoData = theUtil.memberUtil.theMemberYz();
+		theYzLogin:function(){		
+			var userInfoData = theAllUserInfo;
+			
+			//var userInfoData = theUtil.memberUtil.theMemberYz();
 			//console.log("获取用户验证信息");
 			//console.log(userInfoData);
 			//根据返回的信息对链接进行跳转
@@ -111,10 +114,14 @@ function adminMenuAjax(){
 					//console.log(data)
 					theData = data;
 					var theDataArray = theData;
-					
-					//组装框架html 
+									
+					//组装框架html() 
 					$(".roleZh").text(theData.rolename);
 					$(".roleName").text(theData.username);
+					if(theData.role == 'admin'){
+						var menuListHtml = '<li><a href="javascript:;" onclick="member_add(\'添加用户\',\'member-add.html\',\'\',\'510\')"><i class="Hui-iconfont">&#xe60d;</i> 用户</a></li>';
+						$(menuListHtml).appendTo(".user-info-add");						
+					}									
 				}
 			})
 		},
@@ -654,7 +661,9 @@ function adminArticle(){
 		//},
 		addArticle:function(){
 			//通过公共模块获取用户信息
-			var getMemberInfo = theUtil.memberUtil.theMemberYz();
+			var getMemberInfo = theAllUserInfo;
+			
+			//var getMemberInfo = theUtil.memberUtil.theMemberYz();
 			
 			//通过公共模块确认是否存在参数，如果存在参数，就为编辑，没有为添加
 			var getArticleId = theUtil.theReg.getUrlParamsReg("editArticleId");
@@ -1805,20 +1814,43 @@ function adminArticle(){
 			
 		}								
 	}
-	theArticle.addArticle();
+	
+	//添加文章，fm等信息
+	if(theAllUtil.theReg.selfControl('pathname','article-add')){
+		theArticle.addArticle();
+	}
+	
 	//theArticle.articleList();
-	theArticle.checkArticle();
-	theArticle.articleHtml();
-	theArticle.curlArticle();
-	theArticle.curlPicture();		
+	//theArticle.checkArticle();
+	
+	//静态化处理
+	if(theAllUtil.theReg.selfControl('pathname','article-ob')){
+		theArticle.articleHtml();
+	}
+		
+	
+	//theArticle.curlArticle();
+	//theArticle.curlPicture();		
 }
 
 //FM文章管理
-function fmControl(){
-	var ue = UE.getEditor('editor');
-	
+function fmControl(){	
 	var theFM = {
-		addFmArticle:function(){		
+		addFmArticle:function(){
+			var ue = UE.getEditor('editor');
+			//通过公共模块获取分类列表，并进行html组装
+			var getFmCategoryList = theAllUtil.categoryUtil.getListCategory('fm');
+			//遍历对象，组装html
+			getFmCategoryList.forEach(function(item){
+				var FmCategoryHtml = '<option value="'+item.cid+'">'+item.categoryname+'</option>';		
+				$(FmCategoryHtml).appendTo("#ob-select-category-fm");
+				
+			})
+			
+			//组装作者
+			$("#FM-author").val(theAllUserInfo.result.username);
+			
+			
 			//检测是否存在fm的id，如果没有为添加，如果有为编辑
 			var theEditFmId = theAllUtil.theReg.getUrlParamsReg('editFmId');
 			if(theEditFmId){
@@ -1857,6 +1889,16 @@ function fmControl(){
 			
 			//获取FmArticle的相关信息
 			$("#article-FM-save").click(function(){
+				getFmInfo(status = 'public')
+			})	
+			
+			$("#article-FM-draft").click(function(){
+				getFmInfo(status = 'draft');
+			})	
+			
+			//公共方法，获取fm上传内容
+			//status：为上传的信息是公开还是存储草稿
+			function getFmInfo(status = 'public'){
 				var fmArticleArray={},fmKey,fmValue;
 				$("#form-article-FM-add").find(".row").find(".value-v").each(function(item){
 					fmKey = $(this).attr("name");
@@ -1867,8 +1909,7 @@ function fmControl(){
 					fmArticleArray[fmKey] = fmValue;			
 				})
 				
-				console.log("=============获取文章内容==============");
-				
+				console.log("=============获取文章内容==============");				
 				var str = ue.getContent();
 				
 				//组装提交数据				
@@ -1881,6 +1922,11 @@ function fmControl(){
 					fmArticleArray["fm-editid"] = theEditFmId;
 				}
 				
+				//组装是fm的存储状态：存草稿还是公开
+				//if(status == 'public'){
+				fmArticleArray["fm-status"] = status;
+				//}
+								
 				//向后台提交信息
 				$.ajax({
 					url:"../server/ajax/thefm.php",
@@ -1911,8 +1957,8 @@ function fmControl(){
 
 						}
 					}
-				})
-			})	
+				})			
+			}
 
 			//上传FM的操作
 			$("#article-FM-fileList").change(function(){
@@ -1932,8 +1978,14 @@ function fmControl(){
 			})
 		}
 	}
-	theFM.addFmArticle();		
+	
+	//当链接存在article-add时调用
+	if(theAllUtil.theReg.selfControl('pathname','article-add')){
+		theFM.addFmArticle();	
+	}
+		
 }
+
 
 //封面管理
 function coverControl(){
@@ -2555,7 +2607,12 @@ function userIndexPage(){
 
 							targets: -1,
 							render: function(data, type, row, meta) {
-								return '<input type="button" data-artileid="'+row.aid+'" value="删除" class="articleDel"><input type="button" data-artileid="'+row.aid+'" class="articleEdit" value="编辑"><input type="button" data-artileid="'+row.aid+'" value="静态化" class="articleOb">';
+								if(theUserInfo.result.userInfo.role == 'admin'){
+									return '<input type="button" data-artileid="'+row.aid+'" value="删除" class="articleDel"><input type="button" data-artileid="'+row.aid+'" class="articleEdit" value="编辑"><input type="button" data-artileid="'+row.aid+'" value="静态化" class="articleOb">';
+								}
+								else{
+									return '<input type="button" data-artileid="'+row.aid+'" value="删除" class="articleDel"><input type="button" data-artileid="'+row.aid+'" class="articleEdit" value="编辑">';
+								}
 							}
 						}]					
 				 });

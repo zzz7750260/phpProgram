@@ -1,7 +1,8 @@
 <?php 
 include_once(dirname(dirname(__FILE__))."/system.qiniu.php");
 include_once(dirname(dirname(__FILE__))."/system.util.php");
-
+//开启静态化
+ob_start();
 class theFm{
 	function addFmArticle(){
 		$fmAuther = $_POST['FM-author'];
@@ -15,14 +16,15 @@ class theFm{
 		$articlePicFile = $_POST['article-pic-file'];
 		$categorySelect = $_POST['category_select'];
 		$fmArticle = $_POST['fm-article'];
-		
+		$fmStatus = $_POST['fm-status'];
+			
 		$theUtil = new util();
 		
 		//生成日期
 		$theDate = date("Y-m-d h:i:s");
 		//插入数据库
 		//echo $theDate;
-		$insertFmArticleSql = "insert into fm (fm_category, f_title, f_keyword, f_img, f_admin, f_short, f_time, f_container, f_fm) values ('$categorySelect', '$fmTitle', '$fmKeyword', '$articlePic', '$fmAuther', '$fmShort', '$theDate', '$fmArticle', '$articleFm')";	
+		$insertFmArticleSql = "insert into fm (fm_category, f_title, f_short_title, f_keyword, f_img, f_admin, f_short, f_time, f_container, f_fm, f_fm_status) values ('$categorySelect', '$fmTitle', '$fmShortTitle', '$fmKeyword', '$articlePic', '$fmAuther', '$fmShort', '$theDate', '$fmArticle', '$articleFm', '$fmStatus')";	
 		$insertFmArticleSql_db = mysql_query($insertFmArticleSql);
 		if($insertFmArticleSql_db){
 			//当数据插入成功时，将图片base64转为图片
@@ -380,13 +382,78 @@ class theFm{
 		printf($returnFmDelJson);
 	}
 			
+	//fm单篇文章静态化
+	function oneFmArticleOb(){
+		$getFmId = $_GET['theFmId'];
+		$getOb = $_GET['get-ob'];  //获取是否需要静态化
+		
+		$theFmListArraySql = "select a.*,b.* from fm as a left join category as b on a.fm_category = b.cid where a.fid = '$getFmId'";
+		$theFmListArraySql_db = mysql_query($theFmListArraySql);
+		$theFmListArraySql_db_array  = mysql_fetch_assoc($theFmListArraySql_db);
+		
+		//引入fm模板
+		$getFmArticleArray = $theFmListArraySql_db_array;
+		$value = $theFmListArraySql_db_array;
+		include("../template/fm-article-template-v.php");	
+			
+		if($getOb == 'ob'){
+			//传建对应的分类文件夹
+			//传建对应的文件夹
+			$theUtil = new util();	
+			$thePath = $theUtil->physicalPath('/fm/');
+			$theUtil->createFile($thePath,$theFmListArraySql_db_array['categoryyw']);
+			$fmPath = $thePath . $theFmListArraySql_db_array['categoryyw'] . '/fm-' . $theFmListArraySql_db_array['fid'] . '.html';			
+			$n = 0;
+			
+			//echo "路径aaaaaaaaaa:".$fmPath;
+			
+			//进行静态化
+			if(file_put_contents($fmPath,ob_get_contents())){
+				$n++;
+				$theFmId = $theFmListArraySql_db_array['fid'];
+				//将审核的状态改为已审核
+				$setStatusSql = "update fm set f_fm_sh = 1 where fid = '$theFmId'";
+				$setStatusSql_db = mysql_query($setStatusSql);		
+				ob_clean();
+			}
+
+			if($n > 0){
+				$returnOneObArray = array(
+					status => 200,
+					msg => '单篇文章静态化成功',
+					result => ''
+				);
+			}
+			else{
+				$returnOneObArray = array(
+					status => 400,
+					msg => '单篇文章静态化失败',
+					result => ''
+				);							
+			}
+			
+		}
+		else{
+			$returnOneObArray = array(
+				status => 500,
+				msg => '静态化失败',
+				result => ''
+			);			
+		}
+		
+		$returnOneObJson = json_encode($returnOneObArray);
+		
+		print_r($returnOneObJson);
+
+	}
+			
 	//fm文章页静态化
 	function getFmArticleOb(){
 		//获取需要静态化的分类	
 		$theFmCategory = $_GET['fm-article-category'];
 		$getOb = $_GET['get-ob'];  //获取是否需要静态化
 		
-		$selectCategorySql = "select a.*,b.*from fm as a left join category as b on a.fm_category = b.cid where if($theFmCategory = 0,1 = 1, fm_category = $theFmCategory)";
+		$selectCategorySql = "select a.*,b.*from fm as a left join category as b on a.fm_category = b.cid where if($theFmCategory = 0,1 = 1, fm_category = $theFmCategory) and a.f_fm_status = 'public'";
 		$selectCategorySql_db = mysql_query($selectCategorySql);
 		$selectCategoryArray = array();
 		while($selectCategorySql_db_array = mysql_fetch_assoc($selectCategorySql_db)){
@@ -397,8 +464,10 @@ class theFm{
 		
 		//开取静态化
 		ob_start();
-		$n = 0;
-		
+		$n = 0;		
+		//设置已审核数
+		$s = 0;
+					
 		//var_dump($selectCategoryArray);
 		//遍历数组，进行静态化
 		foreach($selectCategoryArray as $fmArticleKey => $fmArticleValue){
@@ -415,6 +484,14 @@ class theFm{
 				//文件静态化
 				if(file_put_contents($fmPath,ob_get_contents())){
 					$n = $n+1;
+					//更改fm的审核状态为审核
+					$shFmId = $fmArticleValue['fid'];
+					$updateFmShenheSql = "update fm set f_fm_sh = 1 where fid = '$shFmId'";
+					$updateFmShenheSql_db = mysql_query($updateFmShenheSql);
+					if($updateFmShenheSql_db){
+						$s = $s+1;					
+					}
+					
 					ob_clean();   
 					
 				}
@@ -426,14 +503,16 @@ class theFm{
 			$returnFmResult = array(
 				status => 200,
 				msg => 'fm文章页面静态化成功',
-				result => $n
+				result => $n,
+				shenhe => $s,
 			);			
 		}
 		else{
 			$returnFmResult = array(
 				status => 400,
 				msg => 'fm文章页面静态化失败',
-				result => ''
+				result => '',
+				shenhe => '',
 			);			
 		}
 		
@@ -589,6 +668,41 @@ class theFm{
 		print($returnFmListObJson);
 	}	
 	
+	//根据不同用户返回fm列表
+	function getUserFmList(){
+		$getAuthor = $_GET['theAuthor'];
+		$getStatus = $_GET['theStatus'];
+		$getRole = $_GET['theRole'];
+		
+		if($getRole == 'admin'){
+			$theFmListSql = "select a.*,b.* from fm as a left join category as b on a.fm_category = b.cid where if('$getStatus' = '',0 = 0,f_fm_status = '$getStatus') order by a.fid DESC";
+		}
+		else{
+			$theFmListSql = "select a.*,b.* from fm as a left join category as b on a.fm_category = b.cid where if('$getStatus' = '',0 = 0,f_fm_status = '$getStatus') and f_admin = '$getAuthor' order by a.fid DESC";
+		}
+		$theFmListSql_db = mysql_query($theFmListSql);
+		if($theFmListSql_db){
+			$fmListArray =  array();
+			while($theFmListSql_db_array = mysql_fetch_assoc($theFmListSql_db)){
+				$fmListArray[] = $theFmListSql_db_array;		
+			}
+			$returnFmInfoArray = array(
+				status => 200,
+				msg => 'fm列表信息返回成功',
+				result => $fmListArray
+			);			
+		}
+		else{
+			$returnFmInfoArray = array(
+				status => 400,
+				msg => 'fm列表信息返回失败',
+				result => ''
+			);				
+		}
+		$returnFmInfoJson = json_encode($returnFmInfoArray);
+		print($returnFmInfoJson);
+	}
+	
 	function theReturn($turl){
 		if($turl == 'addFmArticle'){
 			$this->addFmArticle();
@@ -611,6 +725,9 @@ class theFm{
 		if($turl == 'delFm'){
 			$this->delFm();
 		}
+		if($turl == 'oneFmArticleOb'){
+			$this->oneFmArticleOb();		
+		}	
 		if($turl == 'getFmArticleOb'){
 			$this->getFmArticleOb();
 		}
@@ -622,6 +739,9 @@ class theFm{
 		}
 		if($turl == 'fmCategoryList'){
 			$this->fmCategoryList();
+		}
+		if($turl == 'getUserFmList'){
+			$this->getUserFmList();
 		}
 	}	
 }

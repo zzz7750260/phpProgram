@@ -251,7 +251,7 @@ class theArticleClass{
 		//当用户为admin时，获取所有的文章
 		if($getRole == 'admin'){
 			//$articleListArraySql = "select a.*,b.* from article as a left join category as b on a.category_id = b.cid where 1 = 1 and if('$getShenHe' = null,0=0,article_sh = '$getShenHe') order by a.aid DESC";		
-			$articleListArraySql = "select a.*,b.* from article as a left join category as b on a.category_id = b.cid where 1 = 1 order by a.aid DESC";	
+			$articleListArraySql = "select a.*,b.* from article as a left join category as b on a.category_id = b.cid where 1 = 1 and if('$getStatus' = '',0 = 0 , article_status = '$getStatus') order by a.aid DESC";	
 		}
 		else{
 			//当权限不是admin时，根据用户名来获取其已经被审核的文章
@@ -435,7 +435,7 @@ class theArticleClass{
 		$theCategory = $_GET['categoryNum'];
 		//查询数据库
 
-		$theCategorySql = "select a.*,b.*,c.* from article as a join category as b on a.category_id = b.cid join page as c on a.article_cover = c.ptitle where 1 = 1 and IF('$theCategory' = 0,0 = 0, a.category_id = '$theCategory')";
+		$theCategorySql = "select a.*,b.*,c.* from article as a join category as b on a.category_id = b.cid join page as c on a.article_cover = c.ptitle where IF('$theCategory' = 0,0 = 0, a.category_id = '$theCategory') and a.article_status = 'public'";
 		$theCategorySql_db = mysql_query($theCategorySql);
 
 		$theCategoryArray = array();
