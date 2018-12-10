@@ -92,7 +92,7 @@ class theMember{
 	
 	//获取用户列表
 	function memberList(){
-		$listSql = "select * from member where 1 = 1";
+		$listSql = "select a.*,b.* from member as a left join role as b on a.role = b.roleyw where 1 = 1";
 		$listSql_db = mysql_query($listSql);
 		$listArray = array();
 		
@@ -139,6 +139,56 @@ class theMember{
 		print_r($delMemberJson);
 	}
 	
+	//更新用户信息
+	function updateUserInfo(){
+		//获取用户信息
+		$getUsername = $_POST['user-username'];
+		$getName = $_POST['user-name'];
+		$getEmail = $_POST['user-email'];
+		$getHeaderFile = $_POST['user-header-file'];
+		$getHeaderFileBase = $_POST['user-header-file-base'];
+		$getSex = $_POST['user-sex'];
+		$getShort = $_POST['user-short'];
+		$getTel = $_POST['user-tel'];
+		
+		//更新用户信息
+		$updateUserInfoSql = "update member set the_name = '$getName', sex = '$getSex', email = '$getEmail', tel = '$getTel', user_head = '$getHeaderFile', user_introduction = '$getShort' where username = '$getUsername'" ;
+		$updateUserInfoSql_db = mysql_query($updateUserInfoSql);
+		if($updateUserInfoSql_db){
+			//在插入数据成功后，上传图片
+			//获取文件的路径
+			if($getHeaderFileBase){
+				$rootPath = $_SERVER['DOCUMENT_ROOT'];
+				//echo $rootPath;
+				
+				$thePath = $rootPath .'/upload/head/';
+				
+				$theUtil = new util();
+				//图片上传base64引入
+				$imgArray = $theUtil->fileUpload($thePath,$getHeaderFile,$getHeaderFileBase);
+				//print_r($imgArray); 
+			}
+				
+			
+			$returnUpdateInfoArray = array(
+				status => 200,
+				msg => '用户信息更新成功',
+				result => '',
+				imgResult => $imgArray
+			);			
+		}
+		else{
+			$returnUpdateInfoArray = array(
+				status => 400,
+				msg => '用户信息更新失败',
+				result => '',
+				imgResult => ''
+			);		
+		}
+		$returnUpdateInfoJson = json_encode($returnUpdateInfoArray);	
+		print($returnUpdateInfoJson);
+	}
+	
 	function theReturn($turl){
 		if($turl == 'registerAdd'){
 			$this->registerAdd();
@@ -148,6 +198,9 @@ class theMember{
 		}
 		if($turl == 'memberDel'){
 			$this->memberDel();		
+		}
+		if($turl == 'updateUserInfo'){
+			$this->updateUserInfo();			
 		}
 	}	
 }

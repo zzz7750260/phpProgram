@@ -39,6 +39,12 @@ function init_load(){
 		adminArticle();
 		fmControl();
 	}
+	if(theAllUtil.theReg.selfControl('pathname','system')){
+		systemControl();		
+	}
+	if(theAllUtil.theReg.selfControl('pathname','member')){
+		memberControl();	
+	}
 }
 
 
@@ -2173,9 +2179,91 @@ function systemControl(){
 			})
 
 			
-		}		
+		},	
+		setUserInfo:function(){
+			//获取全局的user信息
+			theAllUserInfo = theAllUserInfo.result
+			console.log("==============全局的用户信息===============");
+			console.log(theAllUserInfo);
+			//组装html
+			$(".user-info-header").find("img").attr("src",'../upload/head/'+theAllUserInfo.user_head);
+			$("#user-name").val(theAllUserInfo.the_name);
+			$("input:radio[value='"+theAllUserInfo.sex+"']").attr('checked','true');
+			$("#user-email").val(theAllUserInfo.email);		
+			$("#user-tel").val(theAllUserInfo.tel);	
+			$(".user-short").val(theAllUserInfo.user_introduction);
+			$("#user-header-file").val(theAllUserInfo.user_head);
+			$("#user-header-file").attr("value",theAllUserInfo.user_head);
+			
+			//如果图片上传框发生变化时，进行对应的图片赋值
+			$("#user-header-file-base").change(function(){
+				var theFile = this.files[0];
+				var reader = new FileReader();
+				reader.readAsDataURL(theFile);
+				reader.onload = function(e){
+					console.log("========获取图片信息==============");
+					console.log(theFile);
+					$("#user-header-file").val(theFile['name']);
+					$("#user-header-file").attr("value",theFile['name']);
+					//如果上传文件的名字跟之前不想等时，重新上传base
+					if(theAllUserInfo.user_head != theFile['name']){
+						$(".user-short").attr("value",this.result);
+						$(".user-info-header").find("img").attr("src",this.result);
+						$("#user-header-file-base").attr("value",this.result);
+					}
+				}
+			})
+			
+			
+			//获取对于的值
+			$("#system-user-save").click(function(){
+				var userInfArray = {};
+				//获取用户列表上的信息
+				$("#form-userInfo-add").find(".value-v").each(function(item){
+					var userKey = $(this).attr('name');
+					var userVal = $(this).val();
+					if(userKey == 'user-header-file' || userKey == 'user-header-file-base'){
+						userVal = $(this).attr("value");
+					}
+					userInfArray[userKey] = userVal;
+				})
+				//获取性别
+				var userSexInfo = $("input[name='sex']:checked").val();
+				userInfArray['user-sex'] = userSexInfo;
+				
+				//获取提交地址
+				userInfArray['turl'] = "updateUserInfo";
+				
+				//获取提交用户
+				userInfArray['user-username'] = theAllUserInfo.username;
+				
+				console.log("=============获取用户提交信息=================");
+				console.log(userInfArray);		
+				
+				//向后台提交信息
+				$.ajax({
+					url:'../server/ajax/themember.php',
+					data:userInfArray,
+					type:'post',
+					dataType:'json',
+					success:function(data){
+						console.log("===============更新用户信息返回数据==============");
+						console.log(data);
+					}
+				})
+			})
+			
+		}
 	}
-	theSystem.setIndex();
+	
+	//按需加载
+	if(theAllUtil.theReg.selfControl('pathname','system-index')){
+		theSystem.setIndex();
+	}
+	if(theAllUtil.theReg.selfControl('pathname','system-user')){
+		theSystem.setUserInfo();		
+	}
+		
 }
 
 //会员管理系统
@@ -2201,7 +2289,7 @@ function memberControl(){
 					//组装html：返回用户列表				
 					
 					data.result.forEach(function(item){					
-						var memberListHtml = '<tr class="text-c"><td><input type="checkbox" value="1" name=""></td><td>1</td><td><u style="cursor:pointer" class="text-primary" onclick="member_show(\'张三\',\'member-add.html?memberName='+item['username']+'\',\'10001\',\'360\',\'400\')">'+item['username']+'</u></td><td>'+item['sex']+'</td><td>'+item['tel']+'</td><td>'+item['email']+'</td><td class="text-l">'+item['city']+'</td><td>'+item['join_time']+'</td><td class="td-status"><span class="label label-success radius">已启用</span></td><td class="td-manage"><a style="text-decoration:none" onClick="member_stop(this,\'10001\')" href="javascript:;" title="停用"><i class="Hui-iconfont">&#xe631;</i></a> <a title="编辑" href="javascript:;" onclick="member_edit(\'编辑\',\'member-add.html\',\'4\',\'\',\'510\')" class="ml-5" style="text-decoration:none"><i class="Hui-iconfont">&#xe6df;</i></a> <a style="text-decoration:none" class="ml-5"onClick="change_password(\'修改密码\',\'change-password.html\',\'10001\',\'600\',\'270\')" href="javascript:;" title="修改密码"><i class="Hui-iconfont">&#xe63f;</i></a> <a title="删除" href="javascript:;" onclick="member_del(this,\''+item['iid']+'\')" class="ml-5" style="text-decoration:none"><i class="Hui-iconfont">&#xe6e2;</i></a></td></tr>';
+						var memberListHtml = '<tr class="text-c"><td><input type="checkbox" value="1" name=""></td><td>1</td><td><u style="cursor:pointer" class="text-primary" onclick="member_show(\'张三\',\'member-add.html?memberName='+item['username']+'\',\'10001\',\'360\',\'400\')">'+item['username']+'</u></td><td>'+item['sex']+'</td><td>'+item['tel']+'</td><td>'+item['email']+'</td><td class="text-l">'+item['city']+'</td><td>'+item['join_time']+'</td><td class="td-status"><span class="label label-success radius">'+item['rolename']+'</span></td><td class="td-manage"><a style="text-decoration:none" onClick="member_stop(this,\'10001\')" href="javascript:;" title="停用"><i class="Hui-iconfont">&#xe631;</i></a> <a title="编辑" href="javascript:;" onclick="member_edit(\'编辑\',\'member-add.html\',\'4\',\'\',\'510\')" class="ml-5" style="text-decoration:none"><i class="Hui-iconfont">&#xe6df;</i></a> <a style="text-decoration:none" class="ml-5"onClick="change_password(\'修改密码\',\'change-password.html\',\'10001\',\'600\',\'270\')" href="javascript:;" title="修改密码"><i class="Hui-iconfont">&#xe63f;</i></a> <a title="删除" href="javascript:;" onclick="member_del(this,\''+item['iid']+'\')" class="ml-5" style="text-decoration:none"><i class="Hui-iconfont">&#xe6e2;</i></a></td></tr>';
 					
 						$(memberListHtml).appendTo(".member-list");
 						
