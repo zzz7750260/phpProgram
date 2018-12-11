@@ -109,7 +109,8 @@ function registerControl(){
 		else{
 			//当存在时，发送后台检测该用户名是否存在
 			$.ajax({
-				url:'./server/ajax/thelogin.php',
+				//url:'./server/ajax/thelogin.php',  register.php的请求地址
+				url:'../server/ajax/thelogin.php',
 				data:{turl:"loginusername",username:rUsernameVal},
 				type:"get",
 				dataType:"text",
@@ -248,16 +249,37 @@ function registerControl(){
 		
 		//组装对应的数组
 		theRegisterArray['turl'] = "registerAdd";	
+		theRegisterArray['select'] = "add";	
+		
 		console.log(theRegisterArray);
 		
 		$.ajax({
-			url:"./server/ajax/themember.php",
+			//url:"./server/ajax/themember.php",  register.php的请求地址
+			url:"../server/ajax/themember.php",
 			data:theRegisterArray,
 			type:'post',
 			dataType:'json',
 			success:function(data){
-				console.log("后端返回的注册提示");
+				console.log("==========后端返回的注册提示===============");
 				console.log(data);
+				//当插入成功时，自动发送邮件验证
+				if(data.status == 200){
+					//获取用户名称
+					var emailUserName = $(".rUsername").val();
+					var theEmail = $(".rEmail").val();
+					
+					//想后端提交发邮件的请求
+					$.ajax({
+						url:"../server/ajax/theemail.php",
+						data:{turl:'addSendMail','the-email':theEmail,'the-user':emailUserName},
+						type:'post',
+						dataType:'json',
+						success:function(data){
+							console.log("===============邮箱发送返回信息================");
+							console.log(data);
+						}						
+					})
+				}			
 			}
 		})
 	})
