@@ -140,10 +140,10 @@
 	function webPath($afterPath = ''){
 		//获取根目录
 		$rootPath = $_SERVER['HTTP_HOST'];
-		if($afterPath){
+		//if($afterPath){
 			//echo "前缀".$this->isHttpsCheckSelect();
 			$rootPath = $this->isHttpsCheckSelect() .'//'.$rootPath .$afterPath; 
-		}
+		//}
 		return $rootPath;
 	}
 	
@@ -157,7 +157,6 @@
 		return $rootPath;
 	}
 	
-
 	//判断请求是http还是https，并选择当前的请求
 	function isHttpsCheckSelect(){
 		$http_type = ((isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] == 'on') || (isset($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO'] == 'https')) ? 'https:' : 'http:';

@@ -39,11 +39,17 @@ function init_load(){
 		adminArticle();
 		fmControl();
 	}
+	
+	//系统操作加载
 	if(theAllUtil.theReg.selfControl('pathname','system')){
 		systemControl();		
 	}
+	
+	//用户操作加载
 	if(theAllUtil.theReg.selfControl('pathname','member')){
-		memberControl();	
+		memberControl();
+		//邮箱验证
+		emailControl()
 	}
 }
 
@@ -2303,6 +2309,21 @@ function memberControl(){
 			//获取链接传递过来的参数
 			var theRegUrl = theUtil.theReg.getUrlParamsReg('memberName');
 			alert("链接参数为:"+theRegUrl);
+			
+			//获取用户的权限列表
+			var theRoleList = theUtil.memberUtil.getMemberRole();
+			
+			//console.log("=========外部权限列表==============");
+			//console.log(theRoleList);
+			
+			//遍历数组，组装选择的选择
+			//由于theRoleList为json，不能进行遍历，需要通过JSON.parse()转换为javascript的对象
+			JSON.parse(theRoleList).forEach(function(item,index){
+				//console.log(item);
+				var roleListHtml = '<option value="'+item['roleyw']+'">'+item['rolename']+'</option>';
+				$(roleListHtml).appendTo(".role-select");
+			})
+				
 			//如果参数为不存在的时候，为增加用户,如果存在时为编辑用户			
 			if(!theRegUrl){
 				//
@@ -2313,7 +2334,9 @@ function memberControl(){
 			else{
 				//当参数存在时，根据参数获取用户的相关信息，并组装对应的html
 				//根据公用模块获取用户数据
-				var theMemberInfo = theUtil.memberUtil.getMemberInfo(theRegUrl);
+				var theMemberInfo = theUtil.memberUtil.getMemberInfo(theRegUrl);				
+								
+				
 				//将图片名称存为全局变量
 				that.header = theMemberInfo.result.user_head;
 				console.log("内头像："+that.header);
@@ -2330,7 +2353,7 @@ function memberControl(){
 				//$(".select").find("option[value="++"]").attr("selected",true);
 				$(".introduction").val(theMemberInfoVal.user_introduction);
 				$(".city-select").find("option[value='"+theMemberInfoVal.city+"']").attr("selected","selected");
-				
+				$(".role-select").find("option[value='"+theMemberInfoVal.role+"']").attr("selected","selected");
 				
 				$(".user-put").on("click",function(){
 					theUserInfoTableValue('edit');
@@ -2408,8 +2431,12 @@ function memberControl(){
 		}	
 		
 	}
-	theMember.getMemberList();
-	theMember.memberAdd()
+	if(theAllUtil.theReg.selfControl('pathname','member-list')){
+		theMember.getMemberList();	
+	}
+	if(theAllUtil.theReg.selfControl('pathname','member-add')){	
+		theMember.memberAdd()
+	}
 }
 
 //友情链接管理控制
@@ -2579,6 +2606,8 @@ function emailControl(){
 			//获取用户信息
 			console.log("============邮箱中的用户信息============");
 			console.log(theAllUserInfo);
+			//组装邮箱
+			$("#the-email").val(theAllUserInfo.result.email);
 			
 			$('.email-put').click(function(){
 				//获取email的相关信息
@@ -2635,6 +2664,20 @@ function userIndexPage(){
 					theUserInfo = data;
 					//console.log("==========内========");
 					//console.log(that.theUserInfo);
+										
+					//判断用户信息是否为游客，如果为游客，需要到邮箱进行验证					
+					if(theUserInfo.result.userInfo.role == 'visitor'){
+						layer.confirm('你还没进行用户验证，需要进行验证吗？',
+						{
+							btn: ['进行','不进行'] //按钮
+						},
+						 function(index){
+							window.open("./member-email.html");			 
+						 }),
+						 function(){
+							 layer.msg('下次再验证');
+						 }
+					}
 				}
 			})
 			//return theUserInfo;
@@ -3200,7 +3243,25 @@ function util(){
 			})
 			
 			return that.CoverInfo;
-		}
+		},
+		
+		//获取用户的权限列表
+		getMemberRole:function(){
+			//向后端提出请求
+			$.ajax({
+				url:"../server/ajax/therole.php",
+				data:{turl:"listRole"},
+				type:'get',
+				dateType:'json',
+				async:false,
+				success:function(data){
+					console.log("============获取用户权限列表===============");
+					console.log(data);
+					that.roleArray = data;
+				}
+			})	
+			return that.roleArray;
+		}			
 	}
 	
 	//获取分类类型返回

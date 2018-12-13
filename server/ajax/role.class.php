@@ -22,6 +22,7 @@
 			$jsonListRoleArray = json_encode($listRoleArray);
 			print_r($jsonListRoleArray);
 		}
+		
 
 		function delRole($theId){
 			//echo "获取的id为".$theId;
