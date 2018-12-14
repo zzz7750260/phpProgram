@@ -8,8 +8,22 @@
 			$roleAddSql_db = mysql_query($roleAddSql);
 			echo $roleAddSql_db;
 			if($roleAddSql_db){
-				echo '<script>alert("角色添加成功")</script>';				
+				$returnAddRoleInfoArray = array(
+					status => 200,
+					msg => '角色添加成功',
+					result => ''
+				);
+				//echo '<script>alert("角色添加成功")</script>';				
 			}
+			else{
+				$returnAddRoleInfoArray = array(
+					status => 400,
+					msg => '角色添加失败',
+					result => ''
+				);						
+			}
+			$returnAddRoleInfoJson = json_encode($returnAddRoleInfoArray);
+			print_r($returnAddRoleInfoJson);
 		}
 		
 		function listRole(){

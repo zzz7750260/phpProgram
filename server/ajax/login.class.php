@@ -198,11 +198,11 @@ class theLogin{
 		$i = 0;
 		while($menuRoleSql_db_arr = mysql_fetch_assoc($menuRoleSql_db)){
 			$menuList[$i] = $menuRoleSql_db_arr;
-			$trole = $menuList[$i]['menurole'];
+			//$trole = $menuList[$i]['menurole'];
 			$tpid = $menuList[$i]['mid'];
 			//echo "角色:".$trole."<br>";
 			//echo "id:".$tpid."<br>";;					
-			$menuList[$i]['child'] = $this->getMenu($trole,$tpid);;
+			$menuList[$i]['child'] = $this->getMenu($therole,$tpid);;
 			$i++;
 		}
 		//print_r($menuList);

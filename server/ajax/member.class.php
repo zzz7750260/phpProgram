@@ -189,6 +189,47 @@ class theMember{
 		print($returnUpdateInfoJson);
 	}
 	
+	//更改用户密码
+	function changeUserPass(){
+		//获取用户名称
+		$getUserName = $_POST['theUserName'];
+		//获取密码
+		$getUserPass = $_POST['theUserPass'];
+		
+		//检验是否需要更改密码
+		$checkPassWord = "select password from member where username = '$getUserName'";
+		$checkPassWord_db = mysql_query($checkPassWord);
+		$checkPassWord_db_array = mysql_fetch_assoc($checkPassWord_db);
+		if($checkPassWord_db_array['password'] == $getUserPass){
+			$returnPassInfo = array(
+				status => 500,
+				msg => '密码不能与原密码相同',
+				result => ''
+			);
+		}
+		else{
+			$updateUserPassSql = "update member set password = '$getUserPass' where username = '$getUserName'";
+			$updateUserPassSql_db = mysql_query($updateUserPassSql);
+			if($updateUserPassSql_db){
+				$returnPassInfo = array(
+					status => 200,
+					msg => '密码更改成功',
+					result => ''
+				);
+			}
+			else{
+				$returnPassInfo = array(
+					status => 400,
+					msg => '密码更改失败',
+					result => ''
+				);		
+			}			
+		}
+				
+		$returnPassInfoJson = json_encode($returnPassInfo);
+		print($returnPassInfoJson);
+	}
+	
 	function theReturn($turl){
 		if($turl == 'registerAdd'){
 			$this->registerAdd();
@@ -201,6 +242,9 @@ class theMember{
 		}
 		if($turl == 'updateUserInfo'){
 			$this->updateUserInfo();			
+		}
+		if($turl == 'changeUserPass'){
+			$this->changeUserPass();
 		}
 	}	
 }

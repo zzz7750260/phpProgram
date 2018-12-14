@@ -2,6 +2,7 @@ $(document).ready(function(){
 	init_load();
 	//adminMenuAjax();
 	//adminRoleAjax();
+	//menuControl()
 	//adminCategory();
 	//adminArticle();
 	//systemControl();
@@ -45,12 +46,23 @@ function init_load(){
 		systemControl();		
 	}
 	
-	//用户操作加载
+	//用户系统加载
 	if(theAllUtil.theReg.selfControl('pathname','member')){
 		memberControl();
 		//邮箱验证
 		emailControl()
 	}
+	
+	//权限系统加载
+	if(theAllUtil.theReg.selfControl('pathname','role')){
+		adminRoleAjax();
+	}
+	
+	//菜单系统加载
+	if(theAllUtil.theReg.selfControl('pathname','menu')){
+		menuControl();
+		//adminArticle
+	}	
 }
 
 
@@ -163,7 +175,7 @@ function adminMenuAjax(){
 							$.each(item.child,function(index,items){																								
 								//console.log("===============分类信息内的信息==============");
 								//console.log(items);	
-								var theHtml2 = '<li><a href="article-list.html" title="'+items.menuname+'">'+items.menuname+'</a></li>';
+								var theHtml2 = '<li><a href="'+items.menuurl+'" title="'+items.menuname+'">'+items.menuname+'</a></li>';
 								//alert(theHtml2);
 								$(theHtml2).appendTo(".Hui-iconfont-"+item.mid+"");
 							})
@@ -263,13 +275,13 @@ function adminRoleAjax(){
 					var stheRoleYhArray = theRoleYhArray.toString();
 					
 					alert(theRoleName);
-					alert("栏目权限："+theRoleLmArray);
-					alert("文章权限："+theRoleWzArray);
-					alert("用户权限："+theRoleYhArray);					
+					//alert("栏目权限："+theRoleLmArray);
+					//alert("文章权限："+theRoleWzArray);
+					//alert("用户权限："+theRoleYhArray);					
 					
 					//获取form的数据
 					var t= $('#form-admin-role-add').serializeArray();
-					console.log(t);
+					//console.log(t);
 										
 					$.ajax({
 						url:'../server/ajax/therole.php',
@@ -277,7 +289,15 @@ function adminRoleAjax(){
 						data:{turl:'addRole',getRoleName:theRoleName,getRoleYw:theRoleYw,getRoleMs:theRoleMs,getRoleLmQx:stheRoleLmArray,getRoleWzQx:stheRoleWzArray,getRoleYhQx:stheRoleYhArray},
 						dataType:'json',
 						success:function(data){
-							alert(data)
+							console.log("============添加角色返回数据===============");
+							console.log(data);
+							if(data.status == 200){
+								layer.msg('角色添加成功');							
+							}
+							else{
+								layer.msg('角色添加失败');	
+							}
+							//alert(data)
 							
 						}
 						
@@ -300,9 +320,9 @@ function adminRoleAjax(){
 					console.log(dataJson);
 					$.each(dataJson,function(index,item){
 						//前端渲染
-						$listHtml = '<tr class="text-c"><td><input type="checkbox" value="" name=""></td><td>'+item.rid+'</td><td>'+item.rolename+'</td><td><a href="#">赵六</a>，<a href="#">钱七</a></td><td>'+item.rolems+'</td><td class="f-14"><a title="编辑" href="javascript:;" onclick="admin_role_edit(\'角色编辑\',\'admin-role-add.html?rid='+item.rid+'\',\''+item.rid+'\')" style="text-decoration:none"><i class="Hui-iconfont">&#xe6df;</i></a> <a title="删除" href="javascript:;" onclick="admin_role_del(this,\''+item.rid+'\')" class="ml-5" style="text-decoration:none"><i class="Hui-iconfont">&#xe6e2;</i></a></td></tr>';
+						$listHtml = '<tr class="text-c"><td><input type="checkbox" value="" name=""></td><td>'+item.rid+'</td><td>'+item.rolename+'</td><td><a href="#">赵六</a>，<a href="#">钱七</a></td><td>'+item.rolems+'</td><td class="f-14"><a title="编辑" href="javascript:;" onclick="admin_role_edit(\'角色编辑\',\'role-add.html?rid='+item.rid+'\',\''+item.rid+'\')" style="text-decoration:none"><i class="Hui-iconfont">&#xe6df;</i></a> <a title="删除" href="javascript:;" onclick="admin_role_del(this,\''+item.rid+'\')" class="ml-5" style="text-decoration:none"><i class="Hui-iconfont">&#xe6e2;</i></a></td></tr>';
 						
-						alert(item);
+						//alert(item);
 						$($listHtml).appendTo(".role-table-body");
 						
 					})					
@@ -465,6 +485,20 @@ function adminRoleAjax(){
 		
 	}
 	
+	if(theAllUtil.theReg.selfControl('pathname','role-list')){
+		theRole.listRole();
+	}	
+	
+	if(theAllUtil.theReg.selfControl('pathname','role-add')){
+		theRole.addRole();		
+		theRole.getEditRole();
+	}
+}
+
+////////////////////////
+//菜单管理系统
+////////////////////////
+function menuControl(){
 	var menuRole = {
 		listMenuRole:function(){
 			$.ajax({
@@ -473,11 +507,11 @@ function adminRoleAjax(){
 				data:{turl:"listRoleMenu",getMpid:0},
 				dataType:'json',
 				success:function(data){
-					console.log("=============用户菜单列表返回================");
-					console.log(data);
+					//console.log("=============用户菜单列表返回================");
+					//console.log(data);
 					$.each(data,function(index,item){
-						console.log("================用户菜单循环=============");
-						console.log(item);
+						//console.log("================用户菜单循环=============");
+						//console.log(item);
 						
 						//HTML渲染
 						var menuHtml = '<tr class="text-c"><td><input type="checkbox" value="'+item.mid+'" name=""></td><td>'+item.mid+'</td><td>'+item.mpid+'</td><td>'+item.menuname+'</td><td>'+item.menurole+'</td><td><a title="编辑" href="javascript:;" onclick="admin_permission_edit(\'角色编辑\',\'admin-permission-add.html\',\''+item.mid+'\',\'\',\'450\')" class="ml-5" style="text-decoration:none"><i class="Hui-iconfont">&#xe6df;</i></a> <a title="删除" href="javascript:;" onclick="admin_permission_del(this,\''+item.mid+'\')" class="ml-5" style="text-decoration:none"><i class="Hui-iconfont">&#xe6e2;</i></a></td></tr>';
@@ -578,19 +612,20 @@ function adminRoleAjax(){
 				}
 			})			
 		}		
+	}	
+	
+	if(theAllUtil.theReg.selfControl('pathname','menu-list')){
+		menuRole.listMenuRole();		
 	}
-			
 	
-	theRole.addRole();
-	theRole.listRole();
-	theRole.getEditRole();
-	
-	menuRole.listMenuRole();
-	menuRole.listMenuRoleList();
-	menuRole.listMenuRoleFather();
+	if(theAllUtil.theReg.selfControl('pathname','menu-add')){
+		menuRole.listMenuRoleList();
+		menuRole.listMenuRoleFather();
+	}
 	//menuRole.addMenuRole()
 	//theRole.updataRole(5);
 }
+
 
 /////////////////////
 //分类管理
@@ -2295,7 +2330,7 @@ function memberControl(){
 					//组装html：返回用户列表				
 					
 					data.result.forEach(function(item){					
-						var memberListHtml = '<tr class="text-c"><td><input type="checkbox" value="1" name=""></td><td>1</td><td><u style="cursor:pointer" class="text-primary" onclick="member_show(\'张三\',\'member-add.html?memberName='+item['username']+'\',\'10001\',\'360\',\'400\')">'+item['username']+'</u></td><td>'+item['sex']+'</td><td>'+item['tel']+'</td><td>'+item['email']+'</td><td class="text-l">'+item['city']+'</td><td>'+item['join_time']+'</td><td class="td-status"><span class="label label-success radius">'+item['rolename']+'</span></td><td class="td-manage"><a style="text-decoration:none" onClick="member_stop(this,\'10001\')" href="javascript:;" title="停用"><i class="Hui-iconfont">&#xe631;</i></a> <a title="编辑" href="javascript:;" onclick="member_edit(\'编辑\',\'member-add.html\',\'4\',\'\',\'510\')" class="ml-5" style="text-decoration:none"><i class="Hui-iconfont">&#xe6df;</i></a> <a style="text-decoration:none" class="ml-5"onClick="change_password(\'修改密码\',\'change-password.html\',\'10001\',\'600\',\'270\')" href="javascript:;" title="修改密码"><i class="Hui-iconfont">&#xe63f;</i></a> <a title="删除" href="javascript:;" onclick="member_del(this,\''+item['iid']+'\')" class="ml-5" style="text-decoration:none"><i class="Hui-iconfont">&#xe6e2;</i></a></td></tr>';
+						var memberListHtml = '<tr class="text-c"><td><input type="checkbox" value="1" name=""></td><td>1</td><td><u style="cursor:pointer" class="text-primary" onclick="member_show(\'张三\',\'member-add.html?memberName='+item['username']+'\',\'10001\',\'360\',\'400\')">'+item['username']+'</u></td><td>'+item['sex']+'</td><td>'+item['tel']+'</td><td>'+item['email']+'</td><td class="text-l">'+item['city']+'</td><td>'+item['join_time']+'</td><td class="td-status"><span class="label label-success radius">'+item['rolename']+'</span></td><td class="td-manage"><a style="text-decoration:none" onClick="member_stop(this,\'10001\')" href="javascript:;" title="停用"><i class="Hui-iconfont">&#xe631;</i></a> <a title="编辑" href="javascript:;" onclick="member_edit(\'编辑\',\'member-add.html?memberName='+item['username']+'\',\'4\',\'\',\'510\')" class="ml-5" style="text-decoration:none"><i class="Hui-iconfont">&#xe6df;</i></a> <a style="text-decoration:none" class="ml-5"onClick="change_password(\'修改密码\',\'change-password.html?username='+item['username']+'\',\'10001\',\'600\',\'270\')" href="javascript:;" title="修改密码"><i class="Hui-iconfont">&#xe63f;</i></a> <a title="删除" href="javascript:;" onclick="member_del(this,\''+item['iid']+'\')" class="ml-5" style="text-decoration:none"><i class="Hui-iconfont">&#xe6e2;</i></a></td></tr>';
 					
 						$(memberListHtml).appendTo(".member-list");
 						
