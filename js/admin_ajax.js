@@ -63,6 +63,8 @@ function init_load(){
 		menuControl();
 		//adminArticle
 	}	
+	
+	
 }
 
 
@@ -2236,6 +2238,18 @@ function systemControl(){
 			$("#user-header-file").val(theAllUserInfo.user_head);
 			$("#user-header-file").attr("value",theAllUserInfo.user_head);
 			
+			//判断如果为游客时，显示邮箱验证按钮
+			if(theAllUserInfo.role == 'visitor'){
+				$(".system-email-button").css({
+					"display":"block",			
+				})
+				
+				//点击打开新窗口验证
+				$('#system-email-check').click(function(){
+					window.open("./member-email.html");
+					
+				})
+			}			
 			//如果图片上传框发生变化时，进行对应的图片赋值
 			$("#user-header-file-base").change(function(){
 				var theFile = this.files[0];
