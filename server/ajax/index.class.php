@@ -57,6 +57,8 @@ class theIndex{
 	
 	//获取网站的设置信息
 	function getIndexInfo(){
+		$theType = $_GET['theType'];
+				
 		$getInfSql = "select * from web_info where 1 = 1";
 		$getInfSql_db = mysql_query($getInfSql);
 		$getInfSqlArray = array();
@@ -80,9 +82,17 @@ class theIndex{
 				'msg' => '网站信息返回成功',
 				'result' => $getInfSqlArray
 			);			
+		}	
+		if($theType  = 'json'){
+			$returnGetInfJson = json_encode($returnGetInfArray);
+			print_r($returnGetInfJson);
 		}
-		print_r($returnGetInfArray);
+		else{
+			print_r($returnGetInfArray);
+		}
 	}
+	
+	//
 	
 	//主页静态化请求
 	function obHtml(){

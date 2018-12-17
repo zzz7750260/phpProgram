@@ -24,24 +24,24 @@
 <![endif]-->
 <!--/meta 作为公共模版分离出去-->
 
-<title>新建网站角色 - 管理员管理 - H-ui.admin v3.0</title>
+<title>新建菜单 - 管理员管理 - H-ui.admin v3.0</title>
 <meta name="keywords" content="H-ui.admin v3.0,H-ui网站后台模版,后台模版下载,后台管理系统模版,HTML后台模版下载">
 <meta name="description" content="H-ui.admin v3.0，是一款由国人开发的轻量级扁平化网站后台模板，完全免费开源的网站后台管理系统模版，适合中小型CMS后台系统。">
 </head>
 <body>
 <article class="cl pd-20">
-	<form action="" method="post" class="form form-horizontal" id="form-admin-role-add">
+	<div class="form form-horizontal" id="form-admin-role-add">
 		<div class="row cl">
 			<label class="form-label col-xs-4 col-sm-3"><span class="c-red">*</span>菜单名称：</label>
 			<div class="formControls col-xs-8 col-sm-9">
-				<input type="text" class="input-text" value="" placeholder="" id="roleName" name="roleName" datatype="*4-16" nullmsg="用户账户不能为空">
+				<input type="text" class="input-text value-v" value="" placeholder="" id="categoryName" name="categoryName" datatype="*4-16" nullmsg="用户账户不能为空">
 			</div>
 		</div>
 		
 		<div class="row cl">
 			<label class="form-label col-xs-4 col-sm-3"><span class="c-red">*</span>菜单英文：</label>
 			<div class="formControls col-xs-8 col-sm-9">
-				<input type="text" class="input-text" value="" placeholder="" id="roleYw" name="roleYw" datatype="*4-16" nullmsg="用户英文不能为空">
+				<input type="text" class="input-text value-v" value="" placeholder="" id="categoryNameYw" name="categoryNameYw" datatype="*4-16" nullmsg="用户英文不能为空">
 			</div>
 		</div>	
 
@@ -49,8 +49,8 @@
 			<label class="form-label col-xs-4 col-sm-3"><span class="c-red">*</span>父类选择：</label>
 			<div class="formControls col-xs-8 col-sm-9">
 				<span class="select-box">
-				<select name="" class="select" id="category_select">
-					<option value="0">全部栏目</option>
+				<select name="category_select" class="select value-v" id="category_select">
+					<option value="0">根类</option>
 				</select>
 				</span>
 			</div>
@@ -59,18 +59,28 @@
 		<div class="row cl">
 			<label class="form-label col-xs-4 col-sm-3">菜单备注：</label>
 			<div class="formControls col-xs-8 col-sm-9">
-				<input type="text" class="input-text" value="" placeholder="" id="RoleMs" name="RoleMs">
+				<input type="text" class="input-text value-v" value="" placeholder="" id="categoryMs" name="categoryMs">
 			</div>
 		</div>
 		
 		<div class="row cl">
+			<label class="form-label col-xs-4 col-sm-3"><span class="c-red">*</span>分类的类型：</label>
+			<div class="formControls col-xs-8 col-sm-9">
+				<span class="select-box">
+				<select name="category_type" class="select value-v" id="category_type">
+					<option value="article">视频文章</option>
+					<option value="fm">FM文章</option>
+				</select>
+				</span>
+			</div>
+		</div>	
+		
+		<div class="row cl">
 			<div class="col-xs-8 col-sm-9 col-xs-offset-4 col-sm-offset-3">
-				<button type="button" class="btn btn-success radius" id="category-save" name="admin-role-save"><i class="icon-ok"></i> 确定</button>
-				<button type="button" class="btn btn-success radius" id="admin-role-update" name="admin-role-update" style="display:none;"><i class="icon-ok"></i> 更新</button>
-				
+				<button type="button" class="btn btn-success radius" id="category-save" name="category-save"><i class="icon-ok"></i> 确定</button>						
 			</div>
 		</div>
-	</form>
+	</div>
 </article>
 
 <!--_footer 作为公共模版分离出去-->
@@ -82,9 +92,13 @@
 <!--/_footer /作为公共模版分离出去-->
 
 <!--请在下方写此页面业务相关的脚本-->
-<script type="text/javascript" src="lib/jquery.validation/1.14.0/jquery.validate.js"></script> 
+
+
+
+
+<!--<script type="text/javascript" src="lib/jquery.validation/1.14.0/jquery.validate.js"></script> 
 <script type="text/javascript" src="lib/jquery.validation/1.14.0/validate-methods.js"></script> 
-<script type="text/javascript" src="lib/jquery.validation/1.14.0/messages_zh.js"></script> 
+<script type="text/javascript" src="lib/jquery.validation/1.14.0/messages_zh.js"></script> -->
 <script type="text/javascript">
 $(function(){
 	$(".permission-list dt input:checkbox").click(function(){
@@ -107,6 +121,8 @@ $(function(){
 		}
 	});
 	
+	
+	/*
 	$("#form-admin-role-add").validate({
 		rules:{
 			roleName:{
@@ -122,6 +138,8 @@ $(function(){
 			parent.layer.close(index);
 		}
 	});
+	
+	*/
 });
 </script>
 <script type="text/javascript" src="../js/admin_ajax.js"></script>

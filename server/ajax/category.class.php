@@ -50,7 +50,7 @@ class theCategory{
 	//在菜单管理中对菜单进行排列
 	function categoryListPageArray(){
 		//对分类进行输出并组成数组
-		$categoryListSql = "select * from category";
+		$categoryListSql = "select * from category where 1 = 1";
 		$categoryListSql_db = mysql_query($categoryListSql);
 		$categoryListArray = array();
 		while($categoryListSql_db_array = mysql_fetch_assoc($categoryListSql_db)){
@@ -82,8 +82,81 @@ class theCategory{
 		return $listResult;		
 	}
 	
-
+	//插入分类信息
+	function addCategory(){
+		//获取对应的信息
+		$theCategoryName = $_POST['categoryName'];
+		$theCategoryNameYw = $_POST['categoryNameYw'];
+		$theCategoryMs = $_POST['categoryMs'];
+		$theCategorySelect = $_POST['category_select'];
+		$theCategoryType = $_POST['category_type'];
+		
+		//获取存储的类型
+		$saveType = $_POST['save_type'];
+		
+		//为存储
+		if($saveType == 'save'){
+			//判断分类是否存在
+			$selectCategorySql = "select * from category where categoryname = '$theCategoryName' or categoryyw = '$theCategoryNameYw'";
+			$selectCategorySql_db = mysql_query($selectCategorySql);
+			$selectCategorySql_db_num = mysql_fetch_assoc($selectCategorySql_db);
+			if($selectCategorySql_db_num != 0){
+				$returnCategoryArray = array(
+					status => 500,
+					msg => '该分类名或分类英文已经存在',
+					result => ''			
+				);
+			}else{
+				$saveCategorySql = "insert into category (cpid, categoryname, categoryyw, categoryms, categorytype) values ('$theCategorySelect', '$theCategoryName', '$theCategoryNameYw', '$theCategoryMs', '$theCategoryType')";
+				$saveCategorySql_db = mysql_query($saveCategorySql);
+				
+				if($saveCategorySql_db){
+					$returnCategoryArray = array(
+						status => 200,
+						msg => '分类存储成功',
+						result => ''			
+					);		
+				}
+				else{
+					$returnCategoryArray = array(
+						status => 400,
+						msg => '分类存储失败',
+						result => ''			
+					);					
+				}
+			}
+			$returnCategoryJson = json_encode($returnCategoryArray);
+			print_r($returnCategoryJson);
+		}
+	}
 	
+	//根据id获取对应的分类
+	function getCategoryInfo(){
+		$theCategoryId = $_GET['the-category-id'];
+		
+		$theCategoryInfoSql = "select * from category where cid = '$theCategoryId'";
+		$theCategoryInfoSql_db = mysql_query($theCategoryInfoSql);
+		
+		if($theCategoryInfoSql_db){
+			$theCategoryInfoSql_db_array = mysql_fetch_assoc($theCategoryInfoSql_db);
+			$returnCategoryArray = array(
+				status => 200,
+				msg => "根据分类'$theCategoryId'返回对应分类信息",
+				result => $theCategoryInfoSql_db_array,
+			);
+		}
+		else{
+			$returnCategoryArray = array(
+				status => 400,
+				msg => "分类信息返回失败",
+				result =>'',
+			);					
+		}
+		
+		$returnCategoryJson = json_encode($returnCategoryArray);
+		print_r($returnCategoryJson);
+		
+	}
 	
 	function theReturn($turl){
 		if($turl == "listCategory"){
@@ -92,6 +165,11 @@ class theCategory{
 		if($turl == "pageListCategory"){
 			$this->categoryListPageArray();
 		}
-		
+		if($turl == "addCategory"){
+			$this->addCategory();
+		}
+		if($turl == "getCategoryInfo"){
+			$this->getCategoryInfo();
+		}
 	}		
 }

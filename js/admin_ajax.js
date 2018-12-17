@@ -62,8 +62,13 @@ function init_load(){
 	if(theAllUtil.theReg.selfControl('pathname','menu')){
 		menuControl();
 		//adminArticle
-	}	
+	}
 	
+	//分类系统加载
+	if(theAllUtil.theReg.selfControl('pathname','category')){
+		adminCategory();
+		//adminArticle
+	}		
 	
 }
 
@@ -662,7 +667,7 @@ function adminCategory(){
 			})			
 		},
 		//菜单管理页列表
-		pageListCategory:function(){
+		pageListCategoryShow:function(){
 			$.ajax({
 				url:"../server/ajax/thecategory.php",
 				type:'get',
@@ -685,11 +690,61 @@ function adminCategory(){
 				
 			})
 			
-		}
+		},
+		
+		//分类添加
+		addCategory:function(){
+			//向后端请求父类选项，并组成html
+			var fatherCategory = theAllUtil.categoryUtil.getAllCategoryTree();
+			//console.log("=============外部获取的分类信息=================")
+			//console.log(fatherCategory);
+			
+			//遍历数组，组装html到分类中
+			fatherCategory.forEach(function(item,index){
+				var categoryOptionHtml = '<option value="'+item['cid']+'">'+item['categoryname']+'</option>';
+				$(categoryOptionHtml).appendTo('#category_select');
+			})
+		
+					
+			
+			//获取分类信息
+			$("#category-save").click(function(){
+				var categoryArray = {};
+				$("#form-admin-role-add").find(".value-v").each(function(item){
+					var getCategoryName = $(this).attr("name");
+					var getCategoryValue = $(this).val();
+					categoryArray[getCategoryName] = getCategoryValue;
+				})	
+				console.log(categoryArray);
+				categoryArray['turl'] = 'addCategory';			
+				categoryArray['save_type'] = 'save';
+				
+				
+				//向后端提交分类提交数据
+				$.ajax({
+					url:"../server/ajax/thecategory.php",
+					data:categoryArray,
+					type:'post',
+					dataType:'json',
+					success:function(data){
+						console.log("================提交分类返回的数据=================");
+						console.log(data);
+					}
+				})
+			})
+			
+			
+		},
+		
+
 		
 	}
+	
+	
 	theCategory.listCategory();
-	theCategory.pageListCategory();
+	theCategory.pageListCategoryShow();
+	theCategory.addCategory();
+	
 		
 }
 
@@ -2195,6 +2250,30 @@ function coverControl(){
 function systemControl(){
 	var theSystem = {
 		setIndex:function(){
+			var webInfo;
+			//向后台请求获取数据
+			$.ajax({
+				url:"../server/ajax/theindex.php",
+				data:{turl:'getIndexInfo','theType':'json'},
+				type:'get',
+				dataType:'json',
+				async:false,
+				success:function(data){
+					console.log("===============后端返回的主页信息============");
+					console.log(data);
+					webInfo = data;
+					
+					//组装html
+					$("#index-main").val(webInfo.result[0].web_name);
+					$("#index-title").val(webInfo.result[0].web_title);
+					$("#index-keyword").val(webInfo.result[0].web_keyword);
+					$(".index-short").val(webInfo.result[0].web_short);
+					$("#index-author").val(webInfo.result[0].web_author);
+					$("#index-record").val(webInfo.result[0].web_record);
+				}			
+			})
+			
+			
 			var getInfoArr = {};
 			//点击获取网站的信息
 			$("#system-index-save").click(function(){
@@ -3196,7 +3275,7 @@ function util(){
 			})
 			return that.categoryJson;
 		},
-		
+				
 		//根据文章id返回详细的数据信息
 		getEditArticleInfo:function(articleId){
 			//向后端发出获取文章信息的请求
@@ -3346,6 +3425,25 @@ function util(){
 			console.log("==============后端获取的分类列表==================")
 			console.log(that.categoryList);
 			return that.categoryList
-		}
+		},
+		//获取所有的分类信息树
+		getAllCategoryTree:function(){
+			var theCategoryValue
+			$.ajax({
+				url:"../server/ajax/thecategory.php",
+				data:{turl:'pageListCategory'},
+				type:'get',
+				dataType:'json',
+				async:false,
+				success:function(data){
+					console.log("===========向后端请求分类返回结果===================");
+					console.log(data)
+					theCategoryValue = data;	
+					//对分类
+				}			
+			})
+			return theCategoryValue;
+		}		
+		
 	}	
 }
