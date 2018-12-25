@@ -447,9 +447,8 @@ class theFm{
 
 	}
 			
-	//fm文章页静态化
+	//fm文章页静态化(批量文章静态化)
 	function getFmArticleOb(){
-		//获取需要静态化的分类	
 		$theFmCategory = $_GET['fm-article-category'];
 		$getOb = $_GET['get-ob'];  //获取是否需要静态化
 		
@@ -520,6 +519,82 @@ class theFm{
 		$returnFmJson = json_encode($returnFmResult);
 		print($returnFmJson);
 	}
+	
+	//fm汇总根据分类进行静态化
+	function fmGetCategoryCollectList($cid=''){
+		if(!$cid){
+			$theFmCategoryId = $_GET['category-id'];
+		}
+		else{
+			$theFmCategoryId = $cid;
+		}
+		
+		//获取是否进行静态化
+		$theOb = $_GET['getOb'];
+		
+		//获取对应的fm分类
+		$selectFmCategoryInfoSql = "select * from category where cid= '$theFmCategoryId' and categorytype = 'fm'";
+		$selectFmCategoryInfoSql_db = mysql_query($selectFmCategoryInfoSql);
+			
+		if($selectFmCategoryInfoSql_db){
+			$selectFmCategoryInfoSql_db_array = mysql_fetch_assoc($selectFmCategoryInfoSql_db);		
+			//echo "检测：". $selectFmCategoryInfoSql_db_array;
+			if($theOb != 'ob'){
+				$selectFmCategoryInfoArray = array(
+					status => 600,
+					msg => 'fm的分类信息查看',
+					result => $selectFmCategoryInfoSql_db_array
+				);										
+			}
+			else{
+				//进行静态化
+				//设置静态化路径
+				$theUtil = new util();
+				$theFmCategoryInfoPathAfter = '/fm/'.$selectFmCategoryInfoSql_db_array['categoryyw'] . '/' . $selectFmCategoryInfoSql_db_array['categoryyw'] . '-list.html';
+				$theFmCategoryInfoPath = $theUtil->physicalPath($theFmCategoryInfoPathAfter);
+				
+				//传建对应的文件夹
+				//设置文件夹路径
+				$filePathB = $theUtil->physicalPath('/fm/');
+				
+				$theUtil->createFile($filePathB,$selectFmCategoryInfoSql_db_array['categoryyw']);
+				
+				//引入fm汇总的模板
+				$theCategoryFatherArray = $selectFmCategoryInfoSql_db_array;
+				include('../template/fm-category-collect-template.php');	
+				
+				//存储静态化文件
+				if(file_put_contents($theFmCategoryInfoPath,ob_get_clean())){
+					$theCategoryName = $selectFmCategoryInfoSql_db_array['categoryname'];
+														
+					$selectFmCategoryInfoArray = array(
+						status => 200,
+						msg => "fm的分类汇总'$theCategoryName'静态化成功",
+						result => ''
+					);			
+				}
+				else{
+					$selectFmCategoryInfoArray = array(
+						status => 500,
+						msg => "fm的分类汇总静态化失败",
+						result => ''
+					);									
+				}
+			}	
+		}
+		else{
+				$selectFmCategoryInfoArray = array(
+				status => 400,
+				msg => 'fm的分类信息返回错误',
+				result => ''
+			);				
+		}
+		
+		//将array转换为json返回给前端
+		$selectFmCategoryInfoJson = json_encode($selectFmCategoryInfoArray);
+		print_r($selectFmCategoryInfoJson);
+	}
+	
 	
 	//fm汇总列表静态化
 	function fmCategoryCollectList(){
@@ -728,6 +803,9 @@ class theFm{
 		if($turl == 'oneFmArticleOb'){
 			$this->oneFmArticleOb();		
 		}	
+		if($turl == 'fmGetCategoryCollectList'){
+			$this->fmGetCategoryCollectList();			
+		}		
 		if($turl == 'getFmArticleOb'){
 			$this->getFmArticleOb();
 		}

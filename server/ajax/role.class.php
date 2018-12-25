@@ -95,11 +95,24 @@
 		}
 		
 		
-		function addRoleMenu($theMpid,$theMenuname,$theMenurole,$theMenuyw,$theMenuurl){			
-			$addRoleMenuSql = "insert into menu (mpid,menuname,menurole,menuyw,menuurl) values ('$theMpid','$theMenuname','$theMenurole','$theMenuyw','$theMenuurl')";
+		function addRoleMenu($theMpid,$theMenuname,$theMenuInfo,$theMenurole,$theMenuyw,$theMenuurl){
+			$getType = $_POST['theType'];
+			$getMenuId = $_POST['theMenuId'];
+			if($getType == 'add'){
+				$addRoleMenuSql = "insert into menu (mpid,menuname,menuinfo,menurole,menuyw,menuurl) values ('$theMpid','$theMenuname','$theMenuInfo','$theMenurole','$theMenuyw','$theMenuurl')";								
+			}
+			if($getType == 'update'){
+				$addRoleMenuSql = "update menu set mpid = '$theMpid', menuname = '$theMenuname',menuinfo='$theMenuInfo',menurole = '$theMenurole', menuyw = '$theMenuyw', menuurl = '$theMenuurl' where mid = '$getMenuId'";									
+			}
+
 			$addRoleMenuSql_db = mysql_query($addRoleMenuSql);
 			if($addRoleMenuSql_db){
-				$addRoleMenuArray = array("status"=>200,"msg"=>"菜单插入成功","result"=>1);			
+				if($getType == 'add'){
+					$addRoleMenuArray = array("status"=>200,"msg"=>"菜单插入成功","result"=>1);	
+				}
+				if($getType == 'update'){
+					$addRoleMenuArray = array("status"=>200,"msg"=>"菜单更新成功","result"=>1);	
+				}
 			}
 			else{
 				$addRoleMenuArray = array("status"=>400,"msg"=>"菜单插入失败","result"=>2);				
@@ -127,6 +140,32 @@
 			//$listRoleMenuJson = json_encode($listRoleMenuArray);
 			//print_r($listRoleMenuJson);
 			return $listRoleMenuArray;	
+		}
+		
+		//根据mid获取对应的菜单信息
+		function getMenuInfo(){
+			$theMenuId = $_GET['menu-id'];
+			$theMenuInfoSql = "select * from menu where mid = '$theMenuId'";
+			$theMenuInfoSql_db = mysql_query($theMenuInfoSql);
+			if($theMenuInfoSql_db){
+				$theMenuInfoSql_db_array = mysql_fetch_assoc($theMenuInfoSql_db);
+				$returnMenuInfoArray = array(
+					status => 200,
+					msg => '菜单信息返回成功',
+					result => $theMenuInfoSql_db_array,
+				);
+			}
+			else{
+				$returnMenuInfoArray = array(
+					status => 400,
+					msg => '菜单信息返回成功',
+					result => '',
+				);			
+			}
+			
+			//将数组转换为json返回给前端
+			$returnMenuInfoJson = json_encode($returnMenuInfoArray);
+			print_r($returnMenuInfoJson);
 		}
 		
 		function getListRoleMenu(){
@@ -224,6 +263,7 @@
 			if($turl == "addRoleMenu"){
 				$theMpid = $_POST['postMpid'];				
 				$theMenuname = $_POST['postMenuname'];
+				$theMenuInfo = $_POST['postMenuInfo'];
 				$theMenurole = $_POST['postMenurole'];
 				$theMenuyw = $_POST['postMenuyw'];
 				$theMenuurl	= $_POST['postMenuurl'];
@@ -232,7 +272,7 @@
 				echo $theMenurole;
 				echo $theMenuyw;
 				echo $theMenuurl;
-				$this->addRoleMenu($theMpid,$theMenuname,$theMenurole,$theMenuyw,$theMenuurl);								
+				$this->addRoleMenu($theMpid,$theMenuname,$theMenuInfo,$theMenurole,$theMenuyw,$theMenuurl);								
 			}
 			
 			if($turl == "listRoleMenu"){
@@ -255,6 +295,9 @@
 				$this->delRoleMenu($delmid);				
 			}
 			
+			if($turl == 'getMenuInfo'){
+				$this->getMenuInfo();
+			}
 			
 		}	
 	}

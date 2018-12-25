@@ -301,7 +301,7 @@
 							<th width="80">分类英文</th>
 							<th width="80">父类ID</th>
 							<th>分类描述</th>
-							<th width="120">分类路径</th>
+							<th width="250">分类路径</th>
 							<th width="120">操作</th>
 						</tr>
 					</thead>
@@ -338,7 +338,82 @@
 <script type="text/javascript" src="lib/laypage/1.2/laypage.js"></script>
 <script type="text/javascript" src="../js/admin_ajax.js"></script>
 <script type="text/javascript">
+//向后端请求分类列表的数据
+var categoryList;
+
+function getCategoryList(){
+	$.ajax({
+		url:"../server/ajax/thecategory.php",
+		type:'get',
+		data:{
+			turl:"pageListCategory",
+		},
+		dataType:'json',
+		async:false,
+		success:function(data){
+			console.log("===============菜单页面后端传过来的数据=============");
+			console.log(data);
+			categoryList = data;
+		}	
+	})
+}
+
+getCategoryList();
+
 $('.table-sort').dataTable({
+	data:categoryList,
+	 columns: [
+			{ 
+				data: null,
+				render: function(data, type, row, meta) {
+					return '<input type="checkbox" name="checklist" value="' + row.cid + '" />'
+				}
+			},
+            { data: 'cid' },
+            { data: 'categoryname' },
+            { data: 'categoryyw' },
+			{ data: 'cpid' },
+			{ data: 'categoryms' },
+			{ 
+				data: 'categorytype',
+				render: function(data, type, row, meta) {
+					var returnPath;
+					if(row.cpid == 0){
+						if(data == 'article'){
+							returnPath = './article/'+ row.categoryyw +'/'+ row.categoryyw + '-list.html';	
+						}
+						if(data == 'fm'){
+							returnPath = './fm/'+ row.categoryyw +'/'+ row.categoryyw + '-list.html';	
+						}						
+					}
+					else{
+						if(data == 'article'){
+							returnPath = './article/'+ row.categoryyw +'/'+ row.categoryyw + '-1.html';	
+						}
+						if(data == 'fm'){
+							returnPath = './fm/'+ row.categoryyw +'/'+ row.categoryyw + '-1.html';	
+						}					
+					}
+					return returnPath;
+				}					
+			},
+			{ 
+				data: null,
+				render: function(data, type, row, meta) {	
+					var categoryControlHtml
+					//if(row.cpid == 0){
+						categoryControlHtml = '<a style="text-decoration:none" onClick="article_ob(\''+row['categorytype']+'\','+row['cid']+','+row.cpid+')" href="javascript:;" title="静态化"><i class="Hui-iconfont">&#xe6de;</i></a><a style="text-decoration:none" class="ml-5" onClick="article_edit(\'资讯编辑\',\'article-add.html\',\'10001\')" href="javascript:;" title="编辑"><i class="Hui-iconfont">&#xe6df;</i></a><a style="text-decoration:none" class="ml-5" onClick="article_del(this,\'10001\')" href="javascript:;" title="删除"><i class="Hui-iconfont">&#xe6e2;</i></a>';
+					//}
+					//else{
+					//	categoryControlHtml = '<a style="text-decoration:none" onClick="article_ob(\''+row['categorytype']+'\','+row['cid']+')" href="javascript:;" title="静态化"><i class="Hui-iconfont">&#xe6de;</i></a><a style="text-decoration:none" class="ml-5" onClick="article_edit(\'资讯编辑\',\'article-add.html\',\'10001\')" href="javascript:;" title="编辑"><i class="Hui-iconfont">&#xe6df;</i></a><a style="text-decoration:none" class="ml-5" onClick="article_del(this,\'10001\')" href="javascript:;" title="删除"><i class="Hui-iconfont">&#xe6e2;</i></a>'		
+					
+				//	}
+					
+					return categoryControlHtml;
+				}
+			},
+        ],
+	
 	"aaSorting": [[ 1, "desc" ]],//默认第几个排序
 	"bStateSave": true,//状态保存
 	"aoColumnDefs": [
@@ -346,6 +421,11 @@ $('.table-sort').dataTable({
 		//{"orderable":false,"aTargets":[0,8]}// 不参与排序的列
 	]
 });
+
+$(document).ready(function(){
+	//article_del(obj,id)
+
+})
 
 /*资讯-添加*/
 function article_add(title,url,w,h){
@@ -365,6 +445,50 @@ function article_edit(title,url,id,w,h){
 	});
 	layer.full(index);
 }
+
+/*分类栏目静态化*/
+article_ob = function(obj,id,fid){
+	var dateUrl;
+	var postObArray = {};
+	if(obj == 'article'){
+		dateUrl = '../server/ajax/thearticle.php';	
+		if(fid == 0){
+			postObArray['turl'] = 'categoryArrayCollectOb';
+			postObArray['theCategoryId'] = id;
+			postObArray['theOb'] = 'Ob';			
+		}
+		else{
+			postObArray['turl'] = 'frontArticleListOb';
+			postObArray['getCategoryId'] = id;
+			postObArray['getOb'] = 'ob';				
+		}
+	}
+	if(obj == 'fm'){
+		dateUrl = '../server/ajax/thefm.php';
+		if(fid == 0){
+			postObArray['turl'] = 'fmGetCategoryCollectList';
+			postObArray['category-id'] = id;
+			postObArray['getOb'] = 'ob';			
+		}
+		else{
+			postObArray['turl'] = 'fmCategoryList';
+			postObArray['get-category-id'] = id;
+			postObArray['getOb'] = 'ob';		
+		}
+
+	}	
+	$.ajax({
+		url:dateUrl,
+		data:postObArray,
+		type:'get',
+		dataType:'json',
+		success:function(data){
+			console.log("==================提交分类静态化返回的数据===============");
+			console.log(data);
+		}
+	})
+}
+
 /*资讯-删除*/
 function article_del(obj,id){
 	layer.confirm('确认要删除吗？',function(index){

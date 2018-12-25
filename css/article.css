@@ -15,6 +15,48 @@
 	width:100%;
 }
 
+/*文章评论区*/
+.comment-more{
+	text-align:center;
+	background:#fcfcfc;
+	color:#f00;
+}
+
+/*评论区的背景颜色*/
+.comment-list-odd{
+	background:#ccc;
+	padding-bottom:15px;
+	padding-top:15px;
+}
+
+.comment-list-even{
+	background:#999;
+	padding-bottom:15px;
+	padding-top:15px;
+}
+
+.comment-list-1{
+	padding-left:15px;
+}
+
+.comment-list-2{
+	padding-left:30px;
+}
+
+.comment-list-3{
+	padding-left:45px;
+}
+
+.comment-list-4{
+	padding-left:60px;
+}
+
+.comment-list-5{
+	padding-left:75px;
+}
+
+
+
 /*FM控制*/
 .FM-dmwall{
 	position:relative;

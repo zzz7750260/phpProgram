@@ -68,6 +68,12 @@ function init_load(){
 	if(theAllUtil.theReg.selfControl('pathname','category')){
 		adminCategory();
 		//adminArticle
+	}	
+
+	//封面系统加载
+	if(theAllUtil.theReg.selfControl('pathname','cover')){
+		coverControl();
+		//adminArticle
 	}		
 	
 }
@@ -521,12 +527,12 @@ function menuControl(){
 						//console.log(item);
 						
 						//HTML渲染
-						var menuHtml = '<tr class="text-c"><td><input type="checkbox" value="'+item.mid+'" name=""></td><td>'+item.mid+'</td><td>'+item.mpid+'</td><td>'+item.menuname+'</td><td>'+item.menurole+'</td><td><a title="编辑" href="javascript:;" onclick="admin_permission_edit(\'角色编辑\',\'admin-permission-add.html\',\''+item.mid+'\',\'\',\'450\')" class="ml-5" style="text-decoration:none"><i class="Hui-iconfont">&#xe6df;</i></a> <a title="删除" href="javascript:;" onclick="admin_permission_del(this,\''+item.mid+'\')" class="ml-5" style="text-decoration:none"><i class="Hui-iconfont">&#xe6e2;</i></a></td></tr>';
+						var menuHtml = '<tr class="text-c"><td><input type="checkbox" value="'+item.mid+'" name=""></td><td>'+item.mid+'</td><td>'+item.mpid+'</td><td>'+item.menuname+'</td><td>'+item.menurole+'</td><td><a title="编辑" href="javascript:;" onclick="admin_permission_edit(\'角色编辑\',\'menu-add.html?menuId='+item.mid+'\',\''+item.mid+'\',\'\',\'450\')" class="ml-5" style="text-decoration:none"><i class="Hui-iconfont">&#xe6df;</i></a> <a title="删除" href="javascript:;" onclick="admin_permission_del(this,\''+item.mid+'\')" class="ml-5" style="text-decoration:none"><i class="Hui-iconfont">&#xe6e2;</i></a></td></tr>';
 						
 						$(menuHtml).appendTo(".list-menu-qx");
 						
 						$.each(item.child,function(index,items){
-							var childMenuHtml = '<tr class="text-c"><td><input type="checkbox" value="'+items.mid+'" name=""></td><td>'+items.mid+'</td><td>'+items.mpid+'</td><td>'+items.menuname+'</td><td>'+items.menurole+'</td><td><a title="编辑" href="javascript:;" onclick="admin_permission_edit(\'角色编辑\',\'admin-permission-add.html\',\''+items.mid+'\',\'\',\'450\')" class="ml-5" style="text-decoration:none"><i class="Hui-iconfont">&#xe6df;</i></a> <a title="删除" href="javascript:;" onclick="admin_permission_del(this,\''+items.mid+'\')" class="ml-5" style="text-decoration:none"><i class="Hui-iconfont">&#xe6e2;</i></a></td></tr>';
+							var childMenuHtml = '<tr class="text-c"><td><input type="checkbox" value="'+items.mid+'" name=""></td><td>'+items.mid+'</td><td>'+items.mpid+'</td><td>'+items.menuname+'</td><td>'+items.menurole+'</td><td><a title="编辑" href="javascript:;" onclick="admin_permission_edit(\'角色编辑\',\'menu-add.html?menuId='+items.mid+'\',\''+items.mid+'\',\'\',\'450\')" class="ml-5" style="text-decoration:none"><i class="Hui-iconfont">&#xe6df;</i></a> <a title="删除" href="javascript:;" onclick="admin_permission_del(this,\''+items.mid+'\')" class="ml-5" style="text-decoration:none"><i class="Hui-iconfont">&#xe6e2;</i></a></td></tr>';
 							
 							$(childMenuHtml).appendTo(".list-menu-qx");
 							
@@ -538,7 +544,51 @@ function menuControl(){
 		},
 		
 		addMenuRole:function(){
+			//判断是否存在menu的参数，如果有参数获取该菜单下的信息，并改为编辑模式
+			var menuId = theAllUtil.theReg.getUrlParamsReg("menuId");			
+					
+			if(menuId){
+				//向后端获取该菜单的信息
+				$.ajax({
+					url:"../server/ajax/therole.php",
+					data:{turl:'getMenuInfo','menu-id':menuId},
+					type:"get",
+					dataType:"json",
+					async:false,
+					success:function(data){
+						console.log("==============后端返回对应的菜单信息==============");
+						console.log(data);	
+						if(data.status == 200){
+							//组装返回的menu信息的HTML
+							$("#roleMenuName").val(data.result.menuname);
+							$("#roleMenuYw").val(data.result.menuyw);
+							$("#RoleMenuUrl").val(data.result.menuurl);
+							$("#RoleMenuMs").val(data.result.menuinfo);
+							
+							//赋值复选框
+							if(data.result.menurole.indexOf(",") >0){
+								//将字符串转换为数组
+								var menuRoleArray = theAllUtil.commUtil.strChangeArr(data.result.menurole);
+								
+								//遍历数组，将值填到CheckBox中
+								menuRoleArray.forEach(function(item){
+									$("input:checkbox[name='menu-Character-0-0-0'][value='"+item+"']").prop('checked','checked');									
+								})						
+							}
+							else{
+								$("input:checkbox[name='menu-Character-0-0-0'][value='"+data.result.menurole+"']").prop('checked','checked');
+							}
+
+							//赋值选择框
+							$("#roleMenuSelect").find("option[value='"+data.result.mpid+"']").prop("selected",true);
+							
+						}					
+					}				
+				})			
+			} 
+		
 			$("#admin-roleMenu-save").click(function(){
+				var getType,getMenuId;
 				var MenuName = $("#roleMenuName").val();
 				var MenuYw = $("#roleMenuYw").val();
 				var MenuMs = $("#RoleMenuMs").val();
@@ -555,6 +605,16 @@ function menuControl(){
 				//将数组转成字符串存放到数据库中
 				var MenuRoleString = MenuRoleArray.toString();
 				
+				//当存在参数时为编辑，不存在时为添加
+				if(menuId){
+					getType = 'update';
+					getMenuId = menuId;				
+				}
+				else{
+					getType = 'add';
+					getMenuId = '';											
+				}		
+				
 				$.ajax({
 					url:'../server/ajax/therole.php',
 					type:'post',
@@ -562,17 +622,21 @@ function menuControl(){
 						turl:"addRoleMenu",
 						postMpid:MenuSelect,
 						postMenuname:MenuName,
+						postMenuInfo:MenuMs,
 						postMenuyw:MenuYw,
 						postMenuurl:MenuUrl,
-						postMenurole:MenuRoleString,			
+						postMenurole:MenuRoleString,
+						theType:getType,
+						theMenuId:getMenuId,
 					},
 					dataType:'json',
 					success:function(data){
 						console.log("=================获取返回的添加菜单的信息===============");
 						console.log(data)
-						
+																	
 					}					
 				})
+				//延迟刷新
 				window.location.reload();
 			})						
 		},
@@ -595,7 +659,7 @@ function menuControl(){
 						$(roleListHtml).appendTo(".permission-list-role");
 					})	
 
-					that.addMenuRole();
+					//that.addMenuRole();
 				}
 			})			
 		},
@@ -628,6 +692,11 @@ function menuControl(){
 	if(theAllUtil.theReg.selfControl('pathname','menu-add')){
 		menuRole.listMenuRoleList();
 		menuRole.listMenuRoleFather();
+		//延迟加载，为了将上部分进行加载先
+		setTimeout(function(){
+			menuRole.addMenuRole();
+		},500)
+		
 	}
 	//menuRole.addMenuRole()
 	//theRole.updataRole(5);
@@ -681,7 +750,30 @@ function adminCategory(){
 					
 					//html渲染
 					$.each(data,function(index,item){
-						var listHtml = '<tr class="text-c"><td><input type="checkbox" value="" name=""></td><td>'+item['cid']+'</td><td class="text-l"><u style="cursor:pointer" class="text-primary" onClick="article_edit(\'查看\',\'article-zhang.html\',\'10001\')" title="查看">'+item['categoryname']+'</u></td><td>'+item['categoryyw']+'</td><td>'+item['cpid']+'</td><td>'+item['categoryms']+'</td><td>aaa.html</td><td class="f-14 td-manage"><a style="text-decoration:none" onClick="article_stop(this,\'10001\')" href="javascript:;" title="下架"><i class="Hui-iconfont">&#xe6de;</i></a><a style="text-decoration:none" class="ml-5" onClick="article_edit(\'资讯编辑\',\'article-add.html\',\'10001\')" href="javascript:;" title="编辑"><i class="Hui-iconfont">&#xe6df;</i></a><a style="text-decoration:none" class="ml-5" onClick="article_del(this,\'10001\')" href="javascript:;" title="删除"><i class="Hui-iconfont">&#xe6e2;</i></a></td></tr>';
+						//组装分类路径
+						var theCategoryPath;
+						if(item.cpid != 0){
+							if(item.categorytype == 'article'){
+								theCategoryPath = './article/'+item['categoryyw']+'/'+item['categoryyw']+'-1.html';
+							}
+							if(item.categorytype == 'fm'){
+								theCategoryPath = './fm/'+item['categoryyw']+'/'+item['categoryyw']+'-1.html';							
+							}
+							
+							var listHtml = '<tr class="text-c"><td><input type="checkbox" value="" name=""></td><td>'+item['cid']+'</td><td class="text-l"><u style="cursor:pointer" class="text-primary" onClick="article_edit(\'查看\',\'article-zhang.html\',\'10001\')" title="查看">'+item['categoryname']+'</u></td><td>'+item['categoryyw']+'</td><td>'+item['cpid']+'</td><td>'+item['categoryms']+'</td><td>'+theCategoryPath+'</td><td class="f-14 td-manage"><a style="text-decoration:none" onClick="article_ob('+item['categorytype']+','+item['cid']+')" href="javascript:;" title="下架"><i class="Hui-iconfont">&#xe6de;</i></a><a style="text-decoration:none" class="ml-5" onClick="article_edit(\'资讯编辑\',\'article-add.html\',\'10001\')" href="javascript:;" title="编辑"><i class="Hui-iconfont">&#xe6df;</i></a><a style="text-decoration:none" class="ml-5" onClick="article_del(this,\'10001\')" href="javascript:;" title="删除"><i class="Hui-iconfont">&#xe6e2;</i></a></td></tr>';
+							
+						}
+						else{
+							if(item.categorytype == 'article'){
+								theCategoryPath = './article/'+item['categoryyw']+'/'+item['categoryyw']+'-list.html';
+							}
+							if(item.categorytype == 'fm'){
+								theCategoryPath = './fm/'+item['categoryyw']+'/'+item['categoryyw']+'-list.html';							
+							}						
+							var listHtml = '<tr class="text-c"><td><input type="checkbox" value="" name=""></td><td>'+item['cid']+'</td><td class="text-l"><u style="cursor:pointer" class="text-primary" onClick="article_edit(\'查看\',\'article-zhang.html\',\'10001\')" title="查看">'+item['categoryname']+'</u></td><td>'+item['categoryyw']+'</td><td>'+item['cpid']+'</td><td>'+item['categoryms']+'</td><td>'+theCategoryPath+'</td><td class="f-14 td-manage"><a style="text-decoration:none" class="ml-5" onClick="article_edit(\'资讯编辑\',\'article-add.html\',\'10001\')" href="javascript:;" title="编辑"><i class="Hui-iconfont">&#xe6df;</i></a><a style="text-decoration:none" class="ml-5" onClick="article_del(this,\'10001\')" href="javascript:;" title="删除"><i class="Hui-iconfont">&#xe6e2;</i></a></td></tr>';							
+						}
+						
+						//var listHtml = '<tr class="text-c"><td><input type="checkbox" value="" name=""></td><td>'+item['cid']+'</td><td class="text-l"><u style="cursor:pointer" class="text-primary" onClick="article_edit(\'查看\',\'article-zhang.html\',\'10001\')" title="查看">'+item['categoryname']+'</u></td><td>'+item['categoryyw']+'</td><td>'+item['cpid']+'</td><td>'+item['categoryms']+'</td><td>'+theCategoryPath+'</td><td class="f-14 td-manage"><a style="text-decoration:none" onClick="article_stop(this,\'10001\')" href="javascript:;" title="下架"><i class="Hui-iconfont">&#xe6de;</i></a><a style="text-decoration:none" class="ml-5" onClick="article_edit(\'资讯编辑\',\'article-add.html\',\'10001\')" href="javascript:;" title="编辑"><i class="Hui-iconfont">&#xe6df;</i></a><a style="text-decoration:none" class="ml-5" onClick="article_del(this,\'10001\')" href="javascript:;" title="删除"><i class="Hui-iconfont">&#xe6e2;</i></a></td></tr>';
 						
 						$(listHtml).appendTo(".page-category-list");
 					})
@@ -704,8 +796,9 @@ function adminCategory(){
 				var categoryOptionHtml = '<option value="'+item['cid']+'">'+item['categoryname']+'</option>';
 				$(categoryOptionHtml).appendTo('#category_select');
 			})
-		
-					
+			
+			//检测是否有分类的id数，如果有就进行对应的编辑
+			
 			
 			//获取分类信息
 			$("#category-save").click(function(){
@@ -741,9 +834,11 @@ function adminCategory(){
 	}
 	
 	
-	theCategory.listCategory();
-	theCategory.pageListCategoryShow();
-	theCategory.addCategory();
+	//theCategory.listCategory();
+	//theCategory.pageListCategoryShow();
+	if(theAllUtil.theReg.selfControl('pathname','category-add')){
+		theCategory.addCategory();
+	}
 	
 		
 }
@@ -782,10 +877,32 @@ function adminArticle(){
 			var theCoverInfo = theUtil.memberUtil.getCoverInfo();
 			console.log("===============外部的封面列表============");
 			console.log(theCoverInfo);
-			theCoverInfo.result.forEach(function(item){
-				var coverHtml = '<option value="'+item['ptitle']+'">'+item['ptitle']+'</option>';
-				$(coverHtml).appendTo("#article-cover");
-			})
+			
+			//当返回的状态为300时，说明该账户还没有传建封面
+			if(theCoverInfo.status == 300){
+				//询问框
+				layer.confirm('恁目前还没创建文章频道，如果不传建不能进行文章的提交，现在进行创建吗？', {
+				  btn: ['好的','暂不创建'] //按钮
+				}, function(){
+					window.open('./cover-index.html');
+				}, function(){
+				  //layer.msg('也可以这样', {
+					//time: 20000, //20s后自动关闭
+					//btn: ['明白了', '知道了']
+				  //});
+				  layer.msg('好的，稍后再创建吧', {icon: 1});
+				});
+				
+			}
+			if(theCoverInfo.status == 200){
+				theCoverInfo.result.forEach(function(item){
+					var coverHtml = '<option value="'+item['ptitle']+'">'+item['ptitle']+'</option>';
+					$(coverHtml).appendTo("#article-cover");
+				})
+				
+			}
+			
+
 			
 			//通过公共模块获取分类列表，并进行html组装
 			var getCategoryList = theUtil.categoryUtil.getListCategory();
@@ -1511,6 +1628,22 @@ function adminArticle(){
 				})				
 			})
 			
+			
+			//FM父类汇总列表静态化请求
+			$("#get-father-fm-ob").click(function(){
+				//向后端发出静态化请求
+				$.ajax({
+					url:"../server/ajax/thefm.php",
+					data:{turl:'fmCategoryCollectList','getOb':'ob'},
+					type:'get',
+					dataType:'json',
+					success:function(data){
+						console.log("=============fm父类汇总静态化列表返回数据===============");
+						console.log(data);
+					}
+				})
+			})
+			
 			//首页静态化
 			$('#get-index-ob').click(function(){
 				$.ajax({
@@ -2234,7 +2367,7 @@ function coverControl(){
 			
 			//循环组装html加入到封面列表中
 			theCoverListInfo.result.forEach(function(item){
-				var coverLiHtml = '<li class="col-md-2"><div><div class="cover-header"><h4>'+item['title']+'</h4></div><div class="cover-body"><div class="cover-body-img"><img width ="100%" class="img-responsive" src="../upload/user_cover/'+item['cover_img']+'"></div><div class="cover-body-text">'+item['cover_introduction']+'</div><div class="cover-body-edit"><a title="编辑" href="javascript:;" onclick="member_add(\'编辑封面\',\'cover-index.html?coverId='+item['pid']+'\',\'\',\'510\')" class="ml-5" style="text-decoration:none"><i class="Hui-iconfont">&#xe6df;</i></a> <a title="删除" href="javascript:;" onclick="member_del(this,\''+item['pid']+'\')" class="ml-5" style="text-decoration:none"><i class="Hui-iconfont">&#xe6e2;</i></a></div></div></li>';
+				var coverLiHtml = '<li class="col-md-2"><div><div class="cover-header"><h4>'+item['ptitle']+'</h4></div><div class="cover-body"><div class="cover-body-img"><img width ="100%" class="img-responsive" src="../upload/user_cover/'+item['cover_img']+'"></div><div class="cover-body-text">'+item['cover_introduction']+'</div><div class="cover-body-edit"><a title="编辑" href="javascript:;" onclick="member_add(\'编辑封面\',\'cover-add.html?coverId='+item['pid']+'\',\'\',\'510\')" class="ml-5" style="text-decoration:none"><i class="Hui-iconfont">&#xe6df;</i></a> <a title="删除" href="javascript:;" onclick="member_del(this,\''+item['pid']+'\')" class="ml-5" style="text-decoration:none"><i class="Hui-iconfont">&#xe6e2;</i></a></div></div></li>';
 				$(coverLiHtml).appendTo(".cover-ul");
 			})
 			

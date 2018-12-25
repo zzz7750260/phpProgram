@@ -84,12 +84,13 @@ class theCover{
 		while($theCoverSql_db_array = mysql_fetch_assoc($theCoverSql_db)){
 			$coverArray[] = $theCoverSql_db_array;
 		}
-		if(count(coverArray)>0){
+		if(count($coverArray)>0){
 			//组装数组返
 			$returnCoverArray = array(
 				status => 200,
 				msg => '封面返回成功',
-				result => $coverArray
+				result => $coverArray,
+				num => count($coverArray),
 			);
 			
 		}
@@ -98,7 +99,8 @@ class theCover{
 			$returnCoverArray = array(
 				status => 300,
 				msg => '该用户还没传建封面',
-				result => ''
+				result => '',
+				num => count($coverArray),
 			);		
 		}
 		//转换为json返回给前端数组

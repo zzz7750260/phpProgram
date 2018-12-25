@@ -26,7 +26,7 @@
   </head>
   <body>
 	<nav class="navbar navbar-default" role="navigation"><div class="container-fluid"><div class="navbar-header"><button type="button" class="navbar-toggle" data-toggle="collapse"
-data-target="#example-navbar-collapse"><span class="sr-only">切换导航</span><span class="icon-bar"></span><span class="icon-bar"></span><span class="icon-bar"></span></button><a class="navbar-brand" href="http://www.10mins.com">课间十分钟</a></div><div class="collapse navbar-collapse" id="example-navbar-collapse"><ul class="nav navbar-nav navbar-left"><li><a href="http://www.10mins.com/article/music/music-0.html" class="dropdown-toggle" data-toggle="dropdown">音乐<b class="caret"></b><ul class="dropdown-menu"><li><a href="http://www.10mins.com/article/oldmusic/oldmusic-1.html">古典音乐</a></li><li><a href="http://www.10mins.com/article/lxmusic/lxmusic-1.html">流行音乐</a></li></ul></a></li><li><a href="http://www.10mins.com/article/article/article-0.html" class="dropdown-toggle" data-toggle="dropdown">文章<b class="caret"></b><ul class="dropdown-menu"></ul></a></li><li><a href="http://www.10mins.com/article/fm-channal/fm-channal-0.html" class="dropdown-toggle" data-toggle="dropdown">FM测试<b class="caret"></b><ul class="dropdown-menu"><li><a href="http://www.10mins.com/article/fm-happy/fm-happy-1.html">欢快</a></li></ul></a></li><li><a href="http://www.10mins.com/article/vision/vision-0.html" class="dropdown-toggle" data-toggle="dropdown">视频<b class="caret"></b><ul class="dropdown-menu"></ul></a></li></ul><ul class="nav navbar-nav navbar-right"><li class="navbar-nav-user"></li></ul></nav></div>	<div class="container">
+data-target="#example-navbar-collapse"><span class="sr-only">切换导航</span><span class="icon-bar"></span><span class="icon-bar"></span><span class="icon-bar"></span></button><a class="navbar-brand" href="http://www.10mins.com">课间十分钟</a></div><div class="collapse navbar-collapse" id="example-navbar-collapse"><ul class="nav navbar-nav navbar-left"><li><a href="http://www.10mins.com/article/music/music-0.html" class="dropdown-toggle" data-toggle="dropdown">音乐<b class="caret"></b><ul class="dropdown-menu"><li><a href="http://www.10mins.com/article/oldmusic/oldmusic-1.html">古典音乐</a></li><li><a href="http://www.10mins.com/article/lxmusic/lxmusic-1.html">流行音乐</a></li></ul></a></li><li><a href="http://www.10mins.com/article/article/article-0.html" class="dropdown-toggle" data-toggle="dropdown">文章<b class="caret"></b><ul class="dropdown-menu"></ul></a></li><li><a href="http://www.10mins.com/article/fm-channal/fm-channal-0.html" class="dropdown-toggle" data-toggle="dropdown">FM测试<b class="caret"></b><ul class="dropdown-menu"><li><a href="http://www.10mins.com/article/fm-happy/fm-happy-1.html">欢快</a></li></ul></a></li><li><a href="http://www.10mins.com/article/vision/vision-0.html" class="dropdown-toggle" data-toggle="dropdown">视频<b class="caret"></b><ul class="dropdown-menu"></ul></a></li><li><a href="http://www.10mins.com/article/test/test-0.html" class="dropdown-toggle" data-toggle="dropdown">测试<b class="caret"></b><ul class="dropdown-menu"><li><a href="http://www.10mins.com/article/test-vs/test-vs-1.html">测试分类1</a></li></ul></a></li></ul><ul class="nav navbar-nav navbar-right"><li class="navbar-nav-user"></li></ul></nav></div>	<div class="container">
 		<div>
 			<!--引入面包屑-->
 			
@@ -131,29 +131,47 @@ data-target="#example-navbar-collapse"><span class="sr-only">切换导航</span>
 		</div>
 	</div>
 	<!--回复框，只有点击评论回复的时候才会出现-->
-	<div class="the-reply" style="display:none">
-		<div class="col-md-12">
-			<button type="button" class="close commit-close" aria-hidden="true" >
-				&times;
-			</button>
+	
+	<!--添加窗口回复的模态框-->
+	
+	<!-- 模态框（Modal） -->
+		<div class="modal fade" id="commentModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+			<div class="modal-dialog">
+				<div class="modal-content">
+					<div class="modal-header">
+						<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+						<h4 class="modal-title" id="myModalLabel">回复内容</h4>
+					</div>
+					<div class="modal-body">
+						<div class="the-reply" style="display:none">
+							<div class="col-md-12">
+								<button type="button" class="close commit-close" aria-hidden="true" >
+									&times;
+								</button>
+							</div>
+							<div class="row">		
+								<span class="col-md-4 col-sm-4 col-xs-4"><input class="reply-v form-control userInput" type="text" name="theName" autocomplete="on" placeholder="请输入用户名"></span>
+								<span class="col-md-4 col-sm-4 col-xs-4"><input class="reply-v form-control emailInput" type="text" name="theEmail" autocomplete="on" placeholder="请输入邮箱"></span>
+								<span class="col-md-4 col-sm-4 col-xs-4"><input class="reply-v form-control webInput" type="text" name="theWeb" autocomplete="on" placeholder="请输入网站"></span>
+								<div class="clear"></div>
+								<br/>	
+							</div>
+							<div>
+								<textarea class="reply-v form-control" rows="6"  name="theComment" autocomplete="on" placeholder="请输入回复内容">
+									
+								</textarea>
+								<br/>			
+							</div>
+							<div class="">
+								<input type="button" class="btn btn-primary" value="提交评论" id="reply-push">
+							</div>
+						</div>												
+					</div>
+
+				</div><!-- /.modal-content -->
+			</div><!-- /.modal -->
 		</div>
-		<div class="row">		
-			<span class="col-md-4 col-sm-4 col-xs-4"><input class="reply-v form-control userInput" type="text" name="theName" autocomplete="on" placeholder="请输入用户名"></span>
-			<span class="col-md-4 col-sm-4 col-xs-4"><input class="reply-v form-control emailInput" type="text" name="theEmail" autocomplete="on" placeholder="请输入邮箱"></span>
-			<span class="col-md-4 col-sm-4 col-xs-4"><input class="reply-v form-control webInput" type="text" name="theWeb" autocomplete="on" placeholder="请输入网站"></span>
-			<div class="clear"></div>
-			<br/>	
-		</div>
-		<div>
-			<textarea class="reply-v form-control" rows="6"  name="theComment" autocomplete="on" placeholder="请输入回复内容">
-				
-			</textarea>
-			<br/>			
-		</div>
-		<div class="">
-			<input type="button" class="btn btn-primary" value="提交评论" id="reply-push">
-		</div>
-	</div>
+	
 </div>						</div>
 						<div class="article-comment-list">
 							<ul class="article-comment-list-k">

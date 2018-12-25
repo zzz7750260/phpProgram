@@ -5,6 +5,9 @@ $(document).ready(function(){
 	userControl();	
 })
 
+//按需控制:获取对应的地址进行对应的操作
+var theSelfControl = new selfControl();
+
 //登录查询用户名是否存在
 function loginYZ(){
 	//失焦时
@@ -349,6 +352,8 @@ function userControl(){
 			$(document).on('click','.article-comment-list-k-li-put',function(){
 				//alert("aa");
 				
+				//打开对话模态框
+				$("#commentModal").modal();							
 				var commentId = $(this).parent().data("commentid");
 				var articleId = $(this).parent().data("articleid");
 				console.log("评论的id："+commentId);
@@ -388,7 +393,21 @@ function userControl(){
 						}					
 					})
 				})				
-			})						
+			})
+
+			//点击加载更多的评论
+			$(document).on("click",".comment-more", function(){
+				//获取对应的commentId 
+				var theCommentId = $(this).data('commentid');
+				//组成对应的跳转链接
+				var theHostUrl = window.location.hostname;
+				var theProUrl = window.location.protocol;
+				var theUrl = theProUrl + '//' + theHostUrl + '/common/comment.html?commentId=' + theCommentId;
+				alert(theUrl);
+				window.open(theUrl);
+
+			})
+			
 			
 			//关闭回复框窗口
 			$(".commit-close").click(function(){
@@ -572,11 +591,26 @@ function userControl(){
 			})
 								
 		},	
-	
+			
+		//点击tag跳转到对应的tag搜索结果
+		searchTagValue:function(){
+			$(".theArticle-tag-li").find('span').click(function(){
+				//获取对应的文字
+				var theTag = $(this).text();
+				//组建提交地址
+				var theHostUrl = window.location.hostname;
+				var theProUrl = window.location.protocol;
+				var theUrl = theProUrl + '//' + theHostUrl + '/common/tag.html?tagWord=' + theTag;
+				alert(theUrl);
+				window.open(theUrl);
+				
+			})		
+		}	
 	}
 	theClick.searchClick();
 	theClick.commentPush();
 	theClick.imgVideoLoad();
+	theClick.searchTagValue();
 	
 	//滚动加载
 	var theScroll = {
@@ -634,7 +668,7 @@ function userControl(){
 	}
 	
 	//按需控制:获取对应的地址进行对应的操作
-	var theSelfControl = new selfControl();
+	//var theSelfControl = new selfControl();
 	//var theUrlPath = theSelfControl.urlCheck('pathname','user-page')
 	//alert("当前的地址为："+theUrlPath);
 	if(theSelfControl.urlCheck('pathname','user-page') || theSelfControl.urlCheck('pathname','cover-page') &&!theSelfControl.urlCheck('pathname','list')){
@@ -666,6 +700,7 @@ function userControl(){
 			})		
 		}		
 	}
+	
 	dragControl.windowDrag();
 	
 	var fmUtil={
@@ -821,14 +856,18 @@ function userControl(){
 		}
 		
 	}
-	fmUtil.setFmHeight();
-	fmUtil.fmControl();	
+	
+	if(theSelfControl.urlCheck('pathname','fm-') && theSelfControl.urlCheck('pathname','.html')){
+		fmUtil.setFmHeight();
+		fmUtil.fmControl();	
+	}
+	
 }
 
 //打开时自动加载的
 function autoLoad(){
 	that = this;
-	var theSelfControl = new selfControl();	
+	//var theSelfControl = new selfControl();	
 	
 	var theLoad = {
 		//文章页面自动加载
@@ -850,9 +889,18 @@ function autoLoad(){
 						if(data.status ==200){
 							//遍历data组装html
 							data.result.forEach(function(item){
+								//console.log(item);
 								//data-commentid 存储评论的对应id
 								//data-articleid 存储评论的对应的文章的id
-								var listHtml = '<li class="article-comment-list-k-li" data-commentid="'+item['cmid']+'" data-articleid="'+item['cmtid']+'"><div class=""><div class="article-comment-list-k-li-info"><span style="margin:5px">用户:'+item['cm_name']+'</span><span style="margin:5px">时间：'+item['cm_time']+'</span></div><div class="article-comment-list-k-li-detail">'+item['cm_comment']+'</div></div><input type="button" value="回复" class="article-comment-list-k-li-put btn btn-primary" style="float:right"><br/><ul>'+childComment(item['childComment'])+'</ul><hr/></li>';
+								var listHtml = '';
+								listHtml = '<li class="article-comment-list-k-li" data-commentid="'+item['cmid']+'" data-articleid="'+item['cmtid']+'"><div class=""><div class="article-comment-list-k-li-info"><span style="margin:5px">用户:'+item['cm_name']+'</span><span style="margin:5px">时间：'+item['cm_time']+'</span></div><div class="article-comment-list-k-li-detail">'+item['cm_comment']+'</div></div><input type="button" value="回复" class="article-comment-list-k-li-put btn btn-primary" style="float:right"><br/><ul>'+childComment(item['childComment'])+'</ul>';
+								
+								if(item['childCommentNum'] > 3){
+									listHtml += '<div class="comment-more" data-commentid = "'+item['cmid']+'">更多评论</div><hr/></li>';					
+								}
+								else{
+									listHtml += '<hr/></li>';
+								}							
 								$(listHtml).appendTo(".article-comment-list-k");
 								
 								//console.log(childComment(item['childComment']));
@@ -864,23 +912,26 @@ function autoLoad(){
 				})				
 			}	
 
-			//评论回复
+			//评论回复(子评论)
 			function childComment(childCommentArray){
+				//console.log(childCommentArray);
 				var childHtml ='';
-				if(childCommentArray.length > 0){
-					
-					childCommentArray.forEach(function(item){
-						
-						//console.log(typeof(item));
-						if(typeof(item) != "undefined"){
-							//console.log(item);
-							childHtml += '<li class="article-child-comment-list-k-li" data-commentid="'+item['cmid']+'" data-articleid="'+item['cmtid']+'"><div class=""><div class="article-comment-list-k-li-info"><span style="margin:5px">用户:'+item['cm_name']+'</span><span style="margin:5px">时间：'+item['cm_time']+'</span></div><div class="article-comment-list-k-li-detail">'+item['cm_comment']+'</div></div><input type="button" value="回复" class="article-comment-list-k-li-put  btn btn-primary" style="float:right"><br/><hr/></li>';														
-						}
+				if(childCommentArray != null){
+					if(childCommentArray.length > 0){					
+						childCommentArray.forEach(function(item){
+							
+							//console.log(typeof(item));
+							if(typeof(item) != "undefined"){
+								//console.log(item);
+								childHtml += '<li class="article-child-comment-list-k-li" data-commentid="'+item['cmid']+'" data-articleid="'+item['cmtid']+'"><div class=""><div class="article-comment-list-k-li-info"><span style="margin:5px">用户:'+item['cm_name']+'</span><span style="margin:5px">时间：'+item['cm_time']+'</span></div><div class="article-comment-list-k-li-detail">'+item['cm_comment']+'</div></div><input type="button" value="回复" class="article-comment-list-k-li-put  btn btn-primary" style="float:right"><br/><hr/></li>';														
+							}
 
-					})	
+						})					
+						
+					}					
 					
-					
-				}	
+				}
+	
 				//console.log(childHtml)
 				return childHtml;
 			}
@@ -989,6 +1040,7 @@ function autoLoad(){
 			})
 			
 			
+			
 			//随机文章调用
 			var getRandArticle = theSelfControl.getRandArticle();
 			console.log(getRandArticle);
@@ -1001,6 +1053,40 @@ function autoLoad(){
 					$(randArticleHtml).appendTo(".search-container-right")
 				})
 			}
+		},
+		
+		//返回tag对应的文章列表
+		findTagValue:function(){
+			var theTagWord = theSelfControl.getUrlParame('tagWord');	
+			//console.log(theTagWord);
+			//将链接上tag的值进行转码为中文
+			var cTheTagWord = decodeURI(encodeURI(theTagWord));
+			console.log(cTheTagWord);
+			
+			//向后端提交请求
+			$.ajax({
+				url:"../server/ajax/thearticle.php",
+				data:{turl:"findTagArticleList",'theTag':cTheTagWord},
+				type:'get',
+				dataType:'json',
+				success:function(data){
+					console.log("=============后端返回的tag的结果==============");
+					console.log(data)
+					if(data.status == 200){
+						if(data.num > 0){
+							//遍历数组，组装html
+							data.result.forEach(function(item,index){
+								var articleHtml = '<div class="media"> <div class="media-left"><img src="../upload/cover/'+item.article_img+'" class="media-object" style="width:200px"></div><div class="media-body"><h3 class="media-heading">'+item.title+'</h3><p>'+item.article_short+'</p></div></div>';	
+								
+								$(articleHtml).appendTo(".tag-container-left-article-k");
+							})
+													
+						}
+						
+					}
+					
+				}
+			})		
 		},
 		
 		//登录检测,如果检测到已经登录后，返回对应的登录信息
@@ -1061,7 +1147,52 @@ function autoLoad(){
 				})
 				
 			})			
-		}
+		},
+		
+		//评论页面调用
+		showComment:function(){
+			//获取对应的评论树
+			var theCommentId = theSelfControl.getUrlParame('commentId');
+			//向后端发出评论请求
+			$.ajax({
+				url:"../server/ajax/thecomment.php",
+				data:{turl:"getIdCommentTree",'comment-id':theCommentId},
+				type:'get',
+				dataType:'json',
+				success:function(data){
+					console.log("==============后端返回的评论信息===============");
+					console.log(data);
+					
+					//组装html
+					var fatherCommentLi = '<li class="article-comment-list-k-li" data-commentid="'+data[0]['cmid']+'" data-articleid="'+data[0]['cmtid']+'"><div class=""><div class="article-comment-list-k-li-info"><span style="margin:5px">用户:'+data[0]['cm_name']+'</span><span style="margin:5px">时间：'+data[0]['cm_time']+'</span></div><div class="article-comment-list-k-li-detail">'+data[0]['cm_comment']+'</div></div><input type="button" value="回复" class="article-comment-list-k-li-put btn btn-primary" style="float:right"><br/><ul>'+childComment(data[0]['cmid'],data[1])+'</ul></li>';
+					
+					$(fatherCommentLi).appendTo(".comment-father-k-show");
+				}
+			})
+			
+			//功能:查询子评论
+			//fcid:评论的父分类
+			//commentArray:传递过来的评论数组
+			//padNum:评论的分层数
+			
+			function childComment(fcid,commentArray,padNum=0){
+				var childCommentLi = '';
+				padNum = padNum + 1; 
+				
+				//遍历数组，如果和父类的id相同时组装html
+				commentArray.forEach(function(item,index){
+					if(item['cmpid'] == fcid){						
+						if(index%2 == 0){
+							childCommentLi	+= '<li class="article-comment-list-k-li comment-list-odd comment-list-'+padNum+'" data-commentid="'+item['cmid']+'" data-articleid="'+item['cmtid']+'"><div class=""><div class="article-comment-list-k-li-info"><span style="margin:5px">用户:'+item['cm_name']+'</span><span style="margin:5px">时间：'+item['cm_time']+'</span></div><div class="article-comment-list-k-li-detail">'+item['cm_comment']+'</div></div><input type="button" value="回复" class="article-comment-list-k-li-put btn btn-primary" style="float:right"><br/><ul>'+childComment(item['cmid'],commentArray,padNum)+'</ul></li>'															
+						}
+						else{
+							childCommentLi	+= '<li class="article-comment-list-k-li comment-list-even comment-list-'+padNum+'" data-commentid="'+item['cmid']+'" data-articleid="'+item['cmtid']+'"><div class=""><div class="article-comment-list-k-li-info"><span style="margin:5px">用户:'+item['cm_name']+'</span><span style="margin:5px">时间：'+item['cm_time']+'</span></div><div class="article-comment-list-k-li-detail">'+item['cm_comment']+'</div></div><input type="button" value="回复" class="article-comment-list-k-li-put btn btn-primary" style="float:right"><br/><ul>'+childComment(item['cmid'],commentArray,padNum)+'</ul></li>'						
+						}	
+					}
+				})
+				return childCommentLi;
+			}
+		}		
 	}
 	
 	
@@ -1088,7 +1219,17 @@ function autoLoad(){
 	//搜索页调用
 	if(theSelfControl.urlCheck('pathname','search')){
 		theLoad.searchValue();		
-	}			
+	}
+	
+	//标签页调用
+	if(theSelfControl.urlCheck('pathname','tag')){
+		theLoad.findTagValue();				
+	}
+
+	//评论页调用
+	if(theSelfControl.urlCheck('pathname','comment')){
+		theLoad.showComment();		
+	}
 }
 
 //按需控制

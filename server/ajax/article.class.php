@@ -594,11 +594,15 @@ class theArticleClass{
 	}
 	
 	//前端文章列表静态化
-	function frontArticleListOb(){
+	function frontArticleListOb($getLimitNum = 5){
 		//获取分类
-		$theCategoryObId = $_GET['getCategoryId'];
+		$theCategoryObId = $_GET['getCategoryId'];		
 		//获取展示的文章数量
 		$theLimitOb = $_GET['getLimit'];
+		
+		if(!$theLimitOb){
+			$theLimitOb = $getLimitNum;	
+		}
 		
 		//页码类型分类
 		$typePage = "list";
@@ -700,9 +704,11 @@ class theArticleClass{
 		foreach($theFatherCategoryArray as $key =>$value){
 			//调用有分页的列表
 			//$this->categoryArrayPageOb($value['cid']);
-			//调用展示各个分类信息的列表
-			if($this->categoryArrayCollectOb($value['cid'])){
-				$r++;
+			//调用展示各个分类信息的列表，当分类的类型为文章类型才进行调用
+			if($value['categorytype'] == 'article'){
+				if($this->categoryArrayCollectOb($value['cid'])){
+					$r++;
+				}				
 			}
 		}
 		if($r>0){
@@ -727,7 +733,7 @@ class theArticleClass{
 	}
 	
 	//总分类页静态化（这个为有分页列表）
-	function categoryArrayPageOb($fid){
+	function categoryArrayPageOb($fid = ''){
 		if(!$fid){
 			//获取需要静态化的分类组合
 			$theCategoryId = $_GET['theCategoryId'];			
@@ -735,7 +741,7 @@ class theArticleClass{
 		else{
 			$theCategoryId = $fid;
 		}
-		
+			
 		echo $theCategoryId;
 		//页码类型分类
 		$typePage = "categoryList";
@@ -823,8 +829,8 @@ class theArticleClass{
 		}			
 	}
 	
-	//总分类页静态化（这个为有分页列表）
-	function categoryArrayCollectOb($fid){
+	//总分类页静态化（这个为没有分页列表）
+	function categoryArrayCollectOb($fid=''){
 		if(!$fid){
 			//获取需要静态化的分类组合
 			$theCategoryId = $_GET['theCategoryId'];				
@@ -991,10 +997,39 @@ class theArticleClass{
 		$returnFindArticleJson = json_encode($returnFindArticleArray);
 		print $returnFindArticleJson;
 	}
-		
 	
 	
+	//tag查询调用
+	function findTagArticleList(){
+		$theTagWord = $_GET['theTag'];
+		$findTagArticleListSql = "select * from article where article_tag like '%$theTagWord%'";
+		$findTagArticleListSql_db = mysql_query($findTagArticleListSql);
+		if($findTagArticleListSql_db){
+			$findTagArticleListArray = array();
+			while($findTagArticleListSql_db_array = mysql_fetch_assoc($findTagArticleListSql_db)){
+				$findTagArticleListArray[] = $findTagArticleListSql_db_array;
+			}
 			
+			$findTagArticleListSql_db_num = mysql_num_rows($findTagArticleListSql_db);
+			
+			$returnTagArticleArray = array(
+				status => 200,
+				msg => "返回'$theTagWord'对应的列表",
+				result => $findTagArticleListArray,
+				num => $findTagArticleListSql_db_num,
+			);
+		}
+		else{
+			$returnTagArticleArray = array(
+				status => 400,
+				msg => "查询出现错误",
+				result => '',
+			);			
+		}
+		$returnTagArticleJson = json_encode($returnTagArticleArray);
+		print_r($returnTagArticleJson);
+	}
+				
 	//调用功能类
 	function theReturn($turl){
 		if($turl == "addArticle"){
@@ -1048,5 +1083,9 @@ class theArticleClass{
 		if($turl == 'userArticleList'){
 			$this->userArticleList();
 		}
+		if($turl == 'findTagArticleList'){
+			$this->findTagArticleList();			
+		}
+		
 	}
 }
