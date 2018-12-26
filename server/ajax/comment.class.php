@@ -164,7 +164,53 @@
 			}
 			return $childArray;
 		}
-					
+		
+		//后端对应的列表
+		function showCommentList(){
+			$theUser = $_GET['the-user'];
+			$commentType = $_GET['comment-type'];
+						
+			if($theUser == 'admin'){
+				if($commentType == 'mine'){
+					$getCommentListSql = "select a.title,b.* from article as a right join comment as b on a.aid = b.cmtid where cm_name = 'admin'";
+				}
+				if($commentType == 'all'){
+					$getCommentListSql = "select a.title,b.* from article as a right join comment as b on a.aid = b.cmtid";
+				}
+			}
+			else{
+				if($commentType == 'all'){
+					$getCommentListSql = "select a.title,b.* from article as a right join comment as b on a.aid = b.cmtid where a.article_author = '$theUser'";	
+				}
+				if($commentType == 'mine'){
+					$getCommentListSql = "select a.title,b.* from article as a right join comment as b on a.aid = b.cmtid where cm_name = '$theUser'";
+				}
+				
+			}
+			$getCommentListSql_db = mysql_query($getCommentListSql);
+			if($getCommentListSql_db){
+				$getCommentListArray = array();
+				while($getCommentListSql_db_array = mysql_fetch_assoc($getCommentListSql_db)){
+					$getCommentListArray[] = $getCommentListSql_db_array;
+					$returnCommentArray = array(
+						status => 200,
+						msg => '返回对应的评论信息成功',
+						result => $getCommentListArray,
+					);
+				}				
+			}
+			else{
+				$returnCommentArray = array(
+					status => 400,
+					msg => '没有对应的评论信息',
+					result => $getCommentListArray,
+				);				
+			}
+			
+			$returnCommentJson = json_encode($returnCommentArray);
+			print_r($returnCommentJson);
+		}
+		
 		function returnComment($turl){
 			if($turl == "insertComment"){
 				$this->insertComment();				
@@ -177,6 +223,9 @@
 			}
 			if($turl == 'getIdCommentTree'){
 				$this->getIdCommentTree();
+			}
+			if($turl == 'showCommentList'){
+				$this->showCommentList();				
 			}
 		}
 	}

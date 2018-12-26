@@ -1179,8 +1179,20 @@ function autoLoad(){
 				var childCommentLi = '';
 				padNum = padNum + 1; 
 				
-				//遍历数组，如果和父类的id相同时组装html
-				commentArray.forEach(function(item,index){
+				//遍历数组，如果和父类的id相同时组装html(这样做会导致数组进行筛选，而不是连续的，因而需要通过filter对数据进行重组)
+				var theCommentArray = commentArray.filter(function(item){
+					var saiCommentArray = {}
+					var i = 0;
+					if(item['cmpid'] == fcid){	
+						saiCommentArray[i] = item;
+						i++;
+					}
+					return saiCommentArray;
+				})
+				//console.log("==============筛选的对象========");
+				//console.log(theCommentArray);
+				
+				theCommentArray.forEach(function(item,index){
 					if(item['cmpid'] == fcid){						
 						if(index%2 == 0){
 							childCommentLi	+= '<li class="article-comment-list-k-li comment-list-odd comment-list-'+padNum+'" data-commentid="'+item['cmid']+'" data-articleid="'+item['cmtid']+'"><div class=""><div class="article-comment-list-k-li-info"><span style="margin:5px">用户:'+item['cm_name']+'</span><span style="margin:5px">时间：'+item['cm_time']+'</span></div><div class="article-comment-list-k-li-detail">'+item['cm_comment']+'</div></div><input type="button" value="回复" class="article-comment-list-k-li-put btn btn-primary" style="float:right"><br/><ul>'+childComment(item['cmid'],commentArray,padNum)+'</ul></li>'															
