@@ -386,13 +386,33 @@
 			dataType:'json',
 			async:false,
 			success:function(data){
-				console.log("===============后端传递过来的文章列表==============");
+				console.log("===============后端传递过来的评论列表==============");
 				console.log(data);
-				articleList = data.result;
+				commentList = data.result;
+				
+				//对数据进行重组
+				var returnComment = {},returnCommentLi = {};
+				//遍历数组，对数据进行重组
+				$.each(commentList,function(index,item){
+					//遍历数组重新获值
+					//console.log(item)
+					$.each(item,function(indexs,itemChild){
+						//console.log(indexs);
+						if(itemChild != null){
+							returnCommentLi[indexs] = itemChild;
+							returnCommentLi['heArray'] = [item['cmid'],item['cmtid']];
+						}	
+					})	
+					returnComment[index] = returnCommentLi
+											
+				})
+				
+				console.log("=============组装后的数据================");
+				console.log(returnComment);
 								
 				//组装列表
 				$('.table-sort').dataTable({
-					data:articleList,
+					data:commentList,
 					columns: [
 						{ 	data: null,
 							render: function(data, type, row, meta) {
@@ -406,12 +426,13 @@
 						{ data: 'cm_time' },
 						{ 	data: null, 
 							render:function(data, type, row, meta) {
-								if(userInfo['role'] == 'admin' && row.article_status == 'public'){
-									return '<a style="text-decoration:none" onClick="article_ob(\''+row.cmid+'\')" href="javascript:;" title="静态化"><i class="Hui-iconfont">&#xe6de;</i></a><a style="text-decoration:none" class="ml-5" onClick="article_edit(\'article-add.html\',\''+row.cmid+'\')" href="javascript:;" title="编辑"><i class="Hui-iconfont">&#xe6df;</i></a><a style="text-decoration:none" class="ml-5" onClick="article_del(this,\''+row.cmid+'\')" href="javascript:;" title="删除"><i class="Hui-iconfont">&#xe6e2;</i></a>';								
+								console.log(data);
+								if(userInfo['username'] == data.cm_name){
+									return '<a style="text-decoration:none" onClick="comment_edit(\'comment-add.html\',\'edit\',\''+data.cmid+'\')" href="javascript:;" title="编辑"><i class="Hui-iconfont">&#xe6de;</i></a><a style="text-decoration:none" class="ml-5" onClick="comment_add(\'comment-add.html\',\'add\',\''+data.cmid+'\',\''+data.cmtid+'\')" href="javascript:;" title="回复"><i class="Hui-iconfont">&#xe6df;</i></a><a style="text-decoration:none" class="ml-5" onClick="comment_del(this,\''+row.cmid+'\')" href="javascript:;" title="删除"><i class="Hui-iconfont">&#xe6e2;</i></a>';								
 								
 								}
 								else{
-									return '<a style="text-decoration:none" class="ml-5" onClick="article_edit(\'article-add.html\',\''+row.cmid+'\')" href="javascript:;" title="编辑"><i class="Hui-iconfont">&#xe6df;</i></a><a style="text-decoration:none" class="ml-5" onClick="article_del(this,\''+row.cmid+'\')" href="javascript:;" title="删除"><i class="Hui-iconfont">&#xe6e2;</i></a>';							
+									return '<a style="text-decoration:none" class="ml-5" onClick="article_edit(\'article-add.html\',\''+row.cmid+'\')" href="javascript:;" title="回复"><i class="Hui-iconfont">&#xe6df;</i></a><a style="text-decoration:none" class="ml-5" onClick="article_del(this,\''+row.cmid+'\')" href="javascript:;" title="删除"><i class="Hui-iconfont">&#xe6e2;</i></a>';							
 								}
 							}	
 						},
@@ -427,17 +448,17 @@
 		})	
 	}
 
-	//加载列表
+	//加载评论列表
 	 getCommentList();
 	
-	//点击加载公开文章
+	//点击加载所有的评论
 	$("#comment-all").click(function(){
 		$(".table-sort").dataTable().fnDestroy()
 		getCommentList("all");
 	})
 	
 	//点击加载草稿文章
-		//点击加载公开文章
+	//点击加载自己发表的评论
 	$("#comment-mine").click(function(){
 		$(".table-sort").dataTable().fnDestroy()
 		 getCommentList("mine");
@@ -455,11 +476,14 @@ $('.table-sort').dataTable({
 */
 
 /*资讯-添加*/
-function article_add(title,url,w,h){
+function comment_add(url,type,id,tid){	
+	//组装url
+	var addCommentUrl = './'+ url + '?comment-type=' + type + '&comment-id=' + id + '&comment-article=' + tid;
+
 	var index = layer.open({
 		type: 2,
-		title: title,
-		content: url
+		//title: title,
+		content: addCommentUrl
 	});
 	layer.full(index);
 }
@@ -467,9 +491,12 @@ function article_add(title,url,w,h){
 
 
 /*资讯-编辑*/
-function article_edit(url,id){
+function comment_edit(url,type,id){
+	//设置url
+	var editUrl = './' + url + '?comment-type=' + type + '&comment-id=' +id;
+	
 	//设置打开的url
-	var editUrl = url + "?editArticleId=" + id;
+	//var editUrl = url + "?editArticleId=" + id;
 	var index = layer.open({
 		type: 2,
 		//title: title,
@@ -498,12 +525,12 @@ function article_ob(articleId){
 }
 
 /*资讯-删除*/
-function article_del(obj,theArticleId){
+function comment_del(obj,commentId){
 	
 	layer.confirm('确认要删除吗？',function(index){
 		$.ajax({		
-			url: '../server/ajax/thearticle.php',
-			data:{'turl':'delArticle','article-id':theArticleId},
+			url: '../server/ajax/thecomment.php',
+			data:{'turl':'delComment','comment-id':commentId},
 			type: 'get',
 			dataType: 'json',
 			success: function(data){

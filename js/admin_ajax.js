@@ -76,6 +76,10 @@ function init_load(){
 		//adminArticle
 	}		
 	
+	//评论系统加载
+	if(theAllUtil.theReg.selfControl('pathname','comment-add')){
+		commentControl();	
+	}	
 }
 
 
@@ -2906,6 +2910,91 @@ function emailControl(){
 	theEmail.emailAdd();
 }
 
+
+//回复控制管理
+function commentControl(){
+	var theComment = {
+		commentAdd:function(){
+			//获取对应的信息
+			var commentType = theAllUtil.theReg.getUrlParamsReg('comment-type');
+			var commentId = theAllUtil.theReg.getUrlParamsReg('comment-id');
+			var arrayCommentDate = {}
+			
+			if(commentType == 'edit'){
+				//向后端提交获取该评论信息的请求
+				$.ajax({
+					url:"../server/ajax/thecomment.php",
+					data:{turl:'getCommentInfo','theCommentId':commentId},
+					type:'get',
+					dataType:'json',
+					success:function(data){
+						console.log("==============后端返回的数据请求=========");
+						console.log(data);		
+						
+						//组装html
+						$(".userInput").val(data.result.cm_name);
+						$(".emailInput").val(data.result.cm_email);
+						$(".webInput").val(data.result.cm_web);
+						$(".commentInput").val(data.result.cm_comment);
+					}
+				})
+			}
+			else{
+				//组装html
+				$(".userInput").val(theAllUserInfo.result.username);
+				$(".emailInput").val(theAllUserInfo.result.email);
+			}
+			
+			
+			
+			if(commentType == 'edit'){
+				//组装提交数据
+				arrayCommentDate['turl'] = "insertComment";
+				arrayCommentDate['theCommentType'] = "edit";
+				arrayCommentDate['theCommentId'] = commentId;					
+			}
+			
+			if(commentType == 'add'){
+				//组装提交数据
+				var commentArticle = theAllUtil.theReg.getUrlParamsReg('comment-article');
+				
+				arrayCommentDate['articleId'] = commentArticle;
+				arrayCommentDate['turl'] = "insertComment";
+				arrayCommentDate['theCommentType'] = "add";
+				arrayCommentDate['theCPid'] = commentId;						
+			}
+					
+			//获取对应的信息并进行后端提交
+			$("#reply-push").click(function(){
+				$("#comment-add").find(".reply-v").each(function(index,item){
+					console.log(item);
+					var theIndex = $(item).attr("name");
+					var theValue = $(item).val();
+					arrayCommentDate[theIndex] = theValue;
+				})
+				console.log(arrayCommentDate);
+				$.ajax({
+					url:"../server/ajax/thecomment.php",
+					data:arrayCommentDate,
+					type:"post",
+					dataType:'json',
+					success:function(data){
+						console.log("==============向后端提交评论信息返回的数据=================");
+						console.log(data)
+					}
+				})
+				
+			})
+		}
+	}
+	
+	//当为添加页时进行加载
+	if(theAllUtil.theReg.selfControl('pathname','comment-add')){
+		theComment.commentAdd();
+	}
+	
+}
+
 //用户主页模块
 function userIndexPage(){
 	//that = this;
@@ -3264,7 +3353,6 @@ function userIndexPage(){
 		
 	userDate.creatInfo();
 }
-
 
 //正则表达式分类
 function util(){	

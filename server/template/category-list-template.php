@@ -130,45 +130,44 @@
 		<section>
 			<div>
 				<ul class="pager">
-					<?php 
-					
+					<?php 				
 						if($typePage == "categoryList"){
 							if($p == 1){
 								$n = $p + 1;
-								echo '<li><a href="./'.$categoryInfoArray['categoryyw'].'-list-'.$n.'.html">Next</a></li>';	
+								echo '<li class="col-md-2"><a href="./'.$categoryInfoArray['categoryyw'].'-list-'.$n.'.html">Next</a></li>';	
 							}	
 							else if($p == $getPageNum){
 								$s  = $p - 1;
-								echo '<li><a href="./'.$categoryInfoArray['categoryyw'].'-list-'.$s.'.html">Previous</a></li>';							
+								echo '<li class="col-md-2"><a href="./'.$categoryInfoArray['categoryyw'].'-list-'.$s.'.html">Previous</a></li>';							
 							}
 							else{
 								$n = $p + 1;
 								$s  = $p - 1;
-								echo '<li><a href="./'.$categoryInfoArray['categoryyw'].'-list-'.$s.'.html">Previous</a></li><li><a href="./'.$categoryInfoArray['categoryyw'].'-list-'.$n.'.html">Next</a></li>';					
+								echo '<li class="col-md-2"><a href="./'.$categoryInfoArray['categoryyw'].'-list-'.$s.'.html">Previous</a></li><li class="col-md-2"><a href="./'.$categoryInfoArray['categoryyw'].'-list-'.$n.'.html">Next</a></li>';					
 							}														
 						}
 						
 						if($typePage == "list"){
 							if($w == 1){
 								$n = $w + 1;
-								echo '<li><a href="./'.$categoryInfoArray['categoryyw'].'-'.$n.'.html">Next</a></li>';	
+								echo '<li class="col-md-2"><a href="./'.$categoryInfoArray['categoryyw'].'-'.$n.'.html">Next</a></li>';	
 							}	
 							else if($w == $pageNumZ){
 								$s  = $w - 1;
-								echo '<li><a href="./'.$categoryInfoArray['categoryyw'].'-'.$s.'.html">Previous</a></li>';							
+								echo '<li class="col-md-2"><a href="./'.$categoryInfoArray['categoryyw'].'-'.$s.'.html">Previous</a></li>';							
 							}
 							else{
 								$n = $w + 1;
 								$s  = $w - 1;
-								echo '<li><a href="./'.$categoryInfoArray['categoryyw'].'-'.$s.'.html">Previous</a></li><li><a href="./'.$categoryInfoArray['categoryyw'].'-'.$n.'.html">Next</a></li>';					
+								echo '<li class="col-md-2"><a href="./'.$categoryInfoArray['categoryyw'].'-'.$s.'.html">Previous</a></li><li class="col-md-2"><a href="./'.$categoryInfoArray['categoryyw'].'-'.$n.'.html">Next</a></li>';					
 							}								
 							
 						}
 											
 					?>
-					<li>
-						<select onchange="window.location.href = this.value">
-							<option>选择页数</option>
+					<li class="col-md-3">
+						<select onchange="window.location.href = this.value" class="form-control">
+							<option >选择页数</option>
 							<?php 
 								if($typePage =="categoryList"){
 									//因为p为分页数，如果这里用p的话，会影响到静态化

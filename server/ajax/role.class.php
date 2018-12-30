@@ -220,6 +220,44 @@
 			return $delRoleMenuSql_db_json;
 		}
 		
+		
+		/*前端返回对应的菜单数组*/
+		function webMenuList(){
+			$getMenuInfoArraySql = "select * from category where categorytype !='' and cpid = 0";
+			$getMenuInfoArraySql_db = mysql_query($getMenuInfoArraySql);
+			$getMenuInfoArray = array();
+			while($getMenuInfoArraySql_db_array = mysql_fetch_assoc($getMenuInfoArraySql_db)){
+				$getMenuInfoArray[] = $getMenuInfoArraySql_db_array ;
+			}
+			//遍历数组获取对应的子类
+			foreach($getMenuInfoArray as $getMenuInfoKey => $getMenuInfoValue){
+				$MenuChildListArray = $this->webMenuChildList($getMenuInfoValue['cid']);
+				$getMenuInfoArray[$getMenuInfoKey]['childlist'] = $MenuChildListArray;
+			}
+			
+			//组装返回前端数组
+			$returnMenuListArray = array(
+				status => 200,
+				msg => "分类列表返回成功",
+				result => $getMenuInfoArray,
+			);
+			
+			$returnMenuListJson = json_encode($returnMenuListArray);
+			
+			print_r($returnMenuListJson);
+		}
+		
+		//递归查询返回的子数组
+		function webMenuChildList($fid){
+			$getMenuChildInfoArray = array();
+			$getMenuChildInfoArraySql = "select * from category where cpid = '$fid'";
+			$getMenuChildInfoArraySql_db = mysql_query($getMenuChildInfoArraySql);
+			while($getMenuChildInfoArraySql_db_array = mysql_fetch_assoc($getMenuChildInfoArraySql_db)){
+				$getMenuChildInfoArray[] = $getMenuChildInfoArraySql_db_array;	
+			}
+			return $getMenuChildInfoArray;
+		}
+		
 		function theRuturnRole($turl){
 			if($turl == "addRole"){
 				$theRoleName = $_POST['getRoleName'];
@@ -298,7 +336,9 @@
 			if($turl == 'getMenuInfo'){
 				$this->getMenuInfo();
 			}
-			
+			if($turl == 'webMenuList'){
+				$this->webMenuList();
+			}
 		}	
 	}
 ?>

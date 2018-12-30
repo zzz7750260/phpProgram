@@ -1,7 +1,7 @@
 <?php 
 	class theComment{
 		//插入对应的评论
-		function insertComment(){
+		function insertComment($theType = 'add'){
 			//获取对应的数据
 			$theCPid = $_POST['theCPid'];//评论的父类id
 			$articleId = $_POST['articleId'];
@@ -11,20 +11,46 @@
 			$theComment = $_POST['theComment'];					
 			//echo $theName;
 			
+			//获取编辑的类型
+			$getCommentType = $_POST['theCommentType'];
+			
+			//获取需要编辑的评论id
+			$theCommentId = $_POST['theCommentId'];
+										
+			if(!$getCommentType){
+				$getCommentType = $theType;
+			}
+						
 			//获取评论的时间
 			$theCmDate = date("Y-m-d h:i:sa");
 			
-			//设置sql
-			$insertSql = "insert into comment(cmpid, cmtid, cm_name, cm_email, cm_web, cm_comment, cm_time)values('$theCPid','$articleId','$theName','$theEmail','$theWeb','$theComment', '$theCmDate')";
-			
+			if($getCommentType == 'add'){
+				//设置sql
+				$insertSql = "insert into comment(cmpid, cmtid, cm_name, cm_email, cm_web, cm_comment, cm_time)values('$theCPid','$articleId','$theName','$theEmail','$theWeb','$theComment', '$theCmDate')";			
+			}
+			if($getCommentType == 'edit'){
+				//执行编辑的sql
+				$insertSql = "update comment set cm_name = '$theName', cm_email = '$theEmail', cm_web = '$theWeb',cm_comment = '$theComment' where cmid = '$theCommentId'";
+				
+			}
+				
 			$insertSql_db = mysql_query($insertSql);
 			
 			if($insertSql_db){
-				$returnCommentArray = array(
-					status => 200,
-					msg => "评论插入成功",
-					result => ''
-				);
+				if($getCommentType == 'add'){
+					$returnCommentArray = array(
+						status => 200,
+						msg => "评论插入成功",
+						result => ''
+					);										
+				}
+				if($getCommentType == 'edit'){
+					$returnCommentArray = array(
+						status => 200,
+						msg => "评论编辑成功",
+						result => ''
+					);								
+				}
 			}
 			else{
 				$returnCommentArray = array(
@@ -128,6 +154,32 @@
 			print_r($returnDelCommentJson);
 		}
 		
+		//根据评论id获取对应的评论信息
+		function getCommentInfo(){
+			$commentId = $_GET['theCommentId'];
+			//echo $commentId;
+			$selectComment = "select * from comment where cmid = '$commentId'";
+			$selectComment_db = mysql_query($selectComment);
+			$selectCommentArray = array();
+			if($selectComment_db){
+				$selectComment_db_array = mysql_fetch_assoc($selectComment_db);
+				$returnCommentArray = array(
+					status => 200,
+					msg => '选择评论成功',
+					result => $selectComment_db_array
+				);
+			}
+			else{
+				$returnCommentArray = array(
+					status => 400,
+					msg => '没有该评论',
+					result => ''
+				);								
+			}
+			$returnCommentJson = json_encode($returnCommentArray);
+			print_r($returnCommentJson);
+		}
+		
 		//根据评论id获取该评论下的所有评论
 		function getIdCommentTree($cid=''){
 			if(!$cid){
@@ -211,6 +263,7 @@
 			print_r($returnCommentJson);
 		}
 		
+		
 		function returnComment($turl){
 			if($turl == "insertComment"){
 				$this->insertComment();				
@@ -226,6 +279,9 @@
 			}
 			if($turl == 'showCommentList'){
 				$this->showCommentList();				
+			}
+			if($turl == 'getCommentInfo'){
+				$this->getCommentInfo();			
 			}
 		}
 	}

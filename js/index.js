@@ -1204,7 +1204,59 @@ function autoLoad(){
 				})
 				return childCommentLi;
 			}
-		}		
+		},
+
+		//菜单分类加载
+		showMenuList:function(){
+			//向后端请求数组
+			$.ajax({
+				url:'../server/ajax/therole.php',
+				data:{turl:"webMenuList"},
+				type:'get',
+				dataType:'json',
+				success:function(data){
+					console.log("=============后端返回的分类菜单列表===============");
+					console.log(data)
+					var menuListArray = data.result;
+					var menuListHtml;
+					
+					//设置分类路径
+					var theHost = window.location.hostname;
+					var thePort = window.location.protocol;
+					//alert(thePort);
+					
+					var thePathB = thePort + '//' + theHost + '/';
+					
+					//遍历数组，组装html
+					menuListArray.forEach(function(item){
+						console.log(item);
+						menuListHtml = '<li class="dropdown"><a href="#" class="dropdown-toggle" data-toggle="dropdown">'+item['categoryname']+' <b class="caret"></b></a>';
+						if(item['childlist'] != ''){
+							//遍历子分类
+							menuListHtml += '<ul class="dropdown-menu">'
+							item['childlist'].forEach(function(itemChild){
+								if(itemChild['categorytype'] == 'article'){
+									var thePath = thePathB +'article/'+ itemChild['categoryyw'] + '/' + itemChild['categoryyw'] + '-1.html';
+									menuListHtml += '<li><a href="'+thePath+'">'+itemChild['categoryname']+'</a></li>';				
+								}
+								if(itemChild['categorytype'] == 'fm'){
+									var thePath = thePathB +'fm/'+ itemChild['categoryyw'] + '/' + itemChild['categoryyw'] + '-1.html';
+									menuListHtml += '<li><a href="'+thePath+'">'+itemChild['categoryname']+'</a></li>';					
+								}
+								
+							})
+							menuListHtml += '</ul>'			
+						}
+						menuListHtml += '</li>';	
+						
+						$(menuListHtml).appendTo(".the-nav");
+					})
+					
+					//var menuListHtml = '';
+					
+				}		
+			})
+		}
 	}
 	
 	
@@ -1231,17 +1283,21 @@ function autoLoad(){
 	//搜索页调用
 	if(theSelfControl.urlCheck('pathname','search')){
 		theLoad.searchValue();		
+		theLoad.showMenuList();
 	}
 	
 	//标签页调用
 	if(theSelfControl.urlCheck('pathname','tag')){
-		theLoad.findTagValue();				
+		theLoad.findTagValue();			
+		theLoad.showMenuList();
 	}
 
 	//评论页调用
 	if(theSelfControl.urlCheck('pathname','comment')){
 		theLoad.showComment();		
+		theLoad.showMenuList();
 	}
+	
 }
 
 //按需控制

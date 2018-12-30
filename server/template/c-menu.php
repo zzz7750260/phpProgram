@@ -12,7 +12,8 @@ define('LISTPATH',dirname(dirname(dirname(__FILE__))));
 function getMenu(){
 	$commonUtil = new util();
 	//echo '内部的:'.LISTPATH;
-	$menuSql = "select * from category where categorytype = 'article' or categorytype = 'fm'";
+	//$menuSql = "select * from category where categorytype = 'article' or categorytype = 'fm'";
+	$menuSql = "select * from category where categorytype != ''";
 	$menuSql_db = mysql_query($menuSql);
 	$menuArray = array();
 	while($menuSql_db_array = mysql_fetch_assoc($menuSql_db)){
