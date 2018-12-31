@@ -298,11 +298,12 @@ function userControl(){
 				//获取连接
 				var theUrl = window.location.href;
 				//页面跳转
-				window.location.href= theUrl+"server/template/search.php?&getPage=0&getLimit=2&getKeyWord="+inputVal; 
+				//window.location.href= theUrl+"server/template/search.php?&getPage=0&getLimit=2&getKeyWord="+inputVal; 
+				window.location.href = theUrl + "common/search.html?keyword=" +inputVal;
 			}
 			
 			//进行相关操作
-			$('.the-button').on('click',function(){
+			$('.search-button').on('click',function(){
 				//获取input的value值
 				var theInputV = $('.form-control').val()
 				alert(theInputV);
@@ -1035,7 +1036,11 @@ function autoLoad(){
 								$(articleHtml).appendTo(".search-container-left-article-k");
 							})
 						}
-					}										
+					}		
+					if(data.status == 400){
+						var noSeachValHtml = "<div><strong>没有对应的查询结果</strong></div>";
+						$(noSeachValHtml).appendTo(".search-container-left-page-k");	
+					}
 				}
 			})
 			

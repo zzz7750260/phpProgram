@@ -956,46 +956,63 @@ class theArticleClass{
 		$theKeyword = $_GET['theKeyword'];
 		$theNum = $_GET['theNum'];
 		//echo $theKeyword;
-		
-		//查找相关封面
-		$findThePageArraySql = "select * from page where ptitle like '%$theKeyword%' limit 0,$theNum";	
-		$findThePageArraySql_db = mysql_query($findThePageArraySql);
-		$findThePageArray = array();
-		while($findThePageArraySql_db_array = mysql_fetch_assoc($findThePageArraySql_db)){
-			$findThePageArray[] = $findThePageArraySql_db_array;
+		if($theKeyword != ''){
+			//查找相关封面
+			$findThePageArraySql = "select * from page where ptitle like '%$theKeyword%' limit 0,$theNum";	
+			$findThePageArraySql_db = mysql_query($findThePageArraySql);
+			$findThePageArray = array();
+			while($findThePageArraySql_db_array = mysql_fetch_assoc($findThePageArraySql_db)){
+				$findThePageArray[] = $findThePageArraySql_db_array;
+			}
+			
+			//查找出页面总数量
+			$findThePageNumSql = "select * from page where ptitle like '%$theKeyword%'";
+			$findThePageNumSql_db = mysql_query($findThePageNumSql);
+			$findThePageArrayNum = mysql_num_rows($findThePageNumSql_db);
+			
+			//查找相关文章
+			$findTheArticleArraySql = "select * from article where title like '%$theKeyword%' limit 0,$theNum";
+			$findTheArticleArraySql_db = mysql_query($findTheArticleArraySql);
+			$findTheArticleArray = array();
+			while($findTheArticleArraySql_db_array = mysql_fetch_assoc($findTheArticleArraySql_db)){
+				$findTheArticleArray[] = $findTheArticleArraySql_db_array;
+			}
+			
+			//查找相关文章的总数量
+			$findTheArticleNumSql = "select * from article where title like '%$theKeyword%'";
+			$findTheArticleNumSql_db = mysql_query($findTheArticleNumSql);
+			$findTheArticleArrayNum = mysql_num_rows($findTheArticleNumSql_db);
+			
+			//组装返回前端数组
+			$returnFindArticleArray = array(
+				status => 200,
+				msg => '查找信息返回',
+				pageNum => $findThePageArrayNum,
+				pageResult => $findThePageArray,
+				articleNum => $findTheArticleArrayNum,
+				articleResult => $findTheArticleArray,
+			);
+			if($findThePageArrayNum == 0 && $findTheArticleArrayNum == 0){
+				$returnFindArticleArray = array(
+					status => 400,
+					msg => '没有相关的信息',
+					result => ''
+				);	
+			}
 		}
-		
-		//查找出页面总数量
-		$findThePageNumSql = "select * from page where ptitle like '%$theKeyword%'";
-		$findThePageNumSql_db = mysql_query($findThePageNumSql);
-		$findThePageArrayNum = mysql_num_rows($findThePageNumSql_db);
-		
-		//查找相关文章
-		$findTheArticleArraySql = "select * from article where title like '%$theKeyword%' limit 0,$theNum";
-		$findTheArticleArraySql_db = mysql_query($findTheArticleArraySql);
-		$findTheArticleArray = array();
-		while($findTheArticleArraySql_db_array = mysql_fetch_assoc($findTheArticleArraySql_db)){
-			$findTheArticleArray[] = $findTheArticleArraySql_db_array;
+		else{
+			//组装返回前端数组
+			$returnFindArticleArray = array(
+				status => 400,
+				msg => '没有相关的信息',
+				result => ''
+			);	
 		}
-		
-		//查找相关文章的总数量
-		$findTheArticleNumSql = "select * from article where title like '%$theKeyword%'";
-		$findTheArticleNumSql_db = mysql_query($findTheArticleNumSql);
-		$findTheArticleArrayNum = mysql_num_rows($findTheArticleNumSql_db);
-		
-		//组装返回前端数组
-		$returnFindArticleArray = array(
-			status => 200,
-			msg => '查找信息返回',
-			pageNum => $findThePageArrayNum,
-			pageResult => $findThePageArray,
-			articleNum => $findTheArticleArrayNum,
-			articleResult => $findTheArticleArray,
-		);				
 		
 		//将数组转为json返给前端
 		$returnFindArticleJson = json_encode($returnFindArticleArray);
-		print $returnFindArticleJson;
+		print $returnFindArticleJson;	
+		
 	}
 	
 	
